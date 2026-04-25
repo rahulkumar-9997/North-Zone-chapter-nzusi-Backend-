@@ -2,91 +2,94 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="North Zone chapter of Urological Society of India (NZUSI) Forgot Password page.">    
-    <meta name="author" content="NZUSI">
-    <link rel="icon" href="{{asset('backend/assets/images/fav.png')}}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{asset('backend/assets/images/fav.png')}}" type="image/x-icon">
-    <title>NZUSI - Forgot Password</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/font-awesome.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/vendors/icofont.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/vendors/themify.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/vendors/bootstrap.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/style.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/responsive.css')}}">
+    <meta name="author" content="Mac Capital">
+    <meta name="robots" content="index, follow">
+    <title>North Zone chapter of Urological Society of India :: Forgot Password</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{{asset('backend/assets/images/fav.png')}}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{asset('backend/assets/images/fav.png')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/plugins/fontawesome/css/fontawesome.min.css')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/plugins/fontawesome/css/all.min.css')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/plugins/tabler-icons/tabler-icons.css')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/css/style.css')}}">
 </head>
-<body class="authentication-background">
-    <div class="container p-0">
-        <div class="row justify-content-center align-items-center authentication authentication-basic h-100 m-0">
-            <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 col-sm-8 col-12">
-                <div class="login-card login-dark my-4">
-                    <div>
-                        <div>
-                            <a class="logo" href="{{route('login')}}">
-                                <img class="img-fluid for-dark" src="{{asset('backend/assets/images/logo/nzusi.png')}}" alt="looginpage">
-                                <img class="img-fluid for-light" src="{{asset('backend/assets/images/logo/nzusi.png')}}" alt="looginpage">
-                            </a>
-                        </div>
-                        <div class="login-main">
-                            <form class="theme-form authentication-form" action="{{ route('forget.password.submit') }}" method="post" id="forgetPasswordForm">
-                                @csrf                               
-                                @if(session('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+<body class="account-page authentication-background">
+    <div class="main-wrapper">
+        <div class="account-content">
+            <div class="login-wrapper login-new">
+                <div class="row justify-content-center align-items-center authentication authentication-basic">
+                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-5 col-sm-8 col-12">
+                        <div class="login-content user-login">
+                            <div class="card custom-card my-4">
+                                <div class="card-body p-4">
+                                    <div class="login-logo">
+                                        <img src="{{asset('backend/assets/images/logo.png')}}" alt="img">
+                                        <a href="{{route('login')}}" class="login-logo logo-white">
+                                            <img src="{{asset('backend/assets/images/logo.png')}}" alt="Img">
+                                        </a>
                                     </div>
-                                @endif
-                                @if(session('error'))
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        {{ session('error') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                    </div>
-                                @endif
-                                
-                                @if($errors->any())
-                                    <div class="alert alert-danger">
-                                        <p class="mb-1"><strong class="text-white">Opps Something went wrong</strong></p>
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
+                                    <form action="{{ route('forget.password.submit') }}" method="post">
+                                        @csrf
+                                       
+                                        <div class="login-userheading">
+                                            <h3>Forgot password?</h3>
+                                        </div>
+                                        @if($errors->any())
+                                        <div class="alert alert-danger">
+                                            <p><strong>Opps Something went wrong</strong></p>
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
-                                <h4>Forgot Password</h4>
-                                <p>Enter your email address to reset your password</p>
-                                <div class="form-group">
-                                    <label class="col-form-label">Email Address</label>
-                                    <input class="form-control" type="email" name="email">
-                                    @error('email')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>                                
-                                <div class="form-group mb-0">                                    
-                                    <div class="text-end mt-3">
-                                        <button class="btn btn-primary btn-block w-100" type="submit">Submit</button>
-                                    </div>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
+                                        @if(session()->has('error'))
+                                        <div class="alert alert-danger">
+                                            {{ session()->get('error') }}
+                                        </div>
+                                        @endif
+                                        @if(session()->has('success'))
+                                        <div class="alert alert-success">
+                                            {{ session()->get('success') }}
+                                        </div>
+                                        @endif
+                                        <div class="mb-3">
+                                            <label class="form-label">Enter your registered email id/user id <span class="text-danger"> *</span></label>
+                                            <div class="input-group">
+                                                <input type="email" class="form-control border-end-0" name="email">
+                                                <span class="input-group-text border-start-0">
+                                                    <i class="ti ti-mail"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="form-login">
+                                            <button type="submit" class="btn btn-login">Submit</button>
+                                        </div>
+                                        <div class="signinform text-center">
+                                            <h4>Return to<a href="{{route('login')}}" class="hover-a"> login </a></h4>
+                                        </div>
+                                    </form>
                                 </div>
-                                <div class="signinform text-center mt-2">
-                                    <h5>Return to<a href="{{route('login')}}" class="hover-a"> login </a></h5>
-                                </div>
-                            </form>
+                            </div>
                         </div>
+                        <div class="my-4 d-flex justify-content-center align-items-center copyright-text">
+                            <p class="text-white">Copyright &copy; {{ date('Y') }} North Zone chapter of Urological Society of India. (NZUSI) All rights reserved.</p>
+                        </div>                            
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
-    <script src="{{asset('backend/assets/js/jquery.min.js')}}"></script>
-    <script src="{{asset('backend/assets/js/bootstrap/bootstrap.bundle.min.js')}}"></script>
-    <script src="{{asset('backend/assets/js/icons/feather-icon/feather.min.js')}}"></script>
-    <script src="{{asset('backend/assets/js/icons/feather-icon/feather-icon.js')}}"></script>
-    <script src="{{asset('backend/assets/js/script.js')}}"></script>
+    <!-- /Main Wrapper -->
+    <script src="{{asset('backend/assets/js/jquery-3.7.1.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('backend/assets/js/feather.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('backend/assets/js/bootstrap.bundle.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('backend/assets/js/script.js')}}" type="text/javascript"></script>
 </body>
 
 </html>

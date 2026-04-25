@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\LoginController;
 use App\Http\Controllers\Backend\ForgotPasswordController;
+use App\Http\Controllers\Backend\DashboardController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);
@@ -13,4 +14,8 @@ Route::prefix('admin')->group(function () {
     Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
     Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+});
+Route::group(['middleware' => ['auth:web']], function() {
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 });

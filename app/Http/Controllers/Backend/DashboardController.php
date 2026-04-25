@@ -16,18 +16,8 @@ use Illuminate\Support\Facades\Log;
 class DashboardController extends Controller
 {
     public function index(){
-        $user = Auth::user();
-        $data['category_count'] = Category::count();
-        $data['product_count'] = Product::count();
-        $data['attribute_count'] = Attribute::count();
-        $data['attributeValue_count'] = Attribute_values::count();
-        $data['brand_count'] = Brand::count();
-        $data['customer_count'] = 0;
-        $data['order_count'] = 0;
-        $data['order_status_count'] = collect();
-        $data['button_counter'] = collect();
-        $data['click_tracker'] = 0;
-        return view('backend.pages.dashboard.index', compact('data'));
+        $user = Auth::user();        
+        return view('backend.pages.dashboard.index');
     }
 
     public function getFilteredProductData(Request $request){

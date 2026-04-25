@@ -2,104 +2,112 @@
 <html lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="North Zone chapter of Urological Society of India (NZUSI).">    
     <meta name="author" content="NZUSI">
-    <link rel="icon" href="{{asset('backend/assets/images/fav.png')}}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{asset('backend/assets/images/fav.png')}}" type="image/x-icon">
-    <title>NZUSI - Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/font-awesome.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/vendors/icofont.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/vendors/themify.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/vendors/bootstrap.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/style.css')}}">
-    <link rel="stylesheet" type="text/css" href="{{asset('backend/assets/css/responsive.css')}}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="robots" content="index, follow">
+    <title>North Zone chapter of Urological Society of India :: Login</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{{asset('backend/assets/images/fav.png')}}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{asset('backend/assets/images/fav.png')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/css/bootstrap.min.css')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/plugins/fontawesome/css/fontawesome.min.css')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/plugins/fontawesome/css/all.min.css')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/plugins/tabler-icons/tabler-icons.css')}}">
+    <link rel="stylesheet" href="{{asset('backend/assets/css/style.css')}}">
 </head>
-<body class="authentication-background">
-    <div class="container p-0">
-        <div class="row justify-content-center align-items-center authentication authentication-basic h-100 m-0">
-            <div class="col-xxl-5 col-xl-5 col-lg-5 col-md-6 col-sm-8 col-12">
-                <div class="login-card login-dark my-4">
-                    <div>
-                        <div>
-                            <a class="logo" href="{{route('login')}}">
-                                <img class="img-fluid for-dark" src="{{asset('backend/assets/images/logo/nzusi.png')}}" alt="looginpage">
-                                <img class="img-fluid for-light" src="{{asset('backend/assets/images/logo/nzusi.png')}}" alt="looginpage">
-                            </a>
-                        </div>
-                        <div class="login-main">
-                            <form class="theme-form authentication-form" action="{{route('login')}}" method="post" id="loginForm">
-                                @csrf
-                                @if(session('success'))
-                                    <div class="alert txt-success border-success outline-2x alert-dismissible fade show alert-icons" role="alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+<body class="account-page authentication-background">
+    <div class="main-wrapper">
+        <div class="account-content">
+            <div class="login-wrapper login-new">
+                <div class="row justify-content-center align-items-center authentication authentication-basic">
+                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-5 col-sm-8 col-12">
+                        <div class="login-content user-login">
+                            <div class="card custom-card my-4">
+                                <div class="card-body p-4">
+                                    <div class="login-logo">
+                                        <img src="{{asset('backend/assets/images/logo.png')}}" alt="img">
+                                        <a href="{{route('login')}}" class="login-logo logo-white">
+                                            <img src="{{asset('backend/assets/images/logo.png')}}" alt="Img">
+                                        </a>
                                     </div>
-                                @endif
-                                @if(session('error'))
-                                    <div class="alert txt-danger border-danger outline-2x alert-dismissible fade show alert-icons" role="alert">
-                                        {{ session('error') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                    </div>
-                                @endif
-                                
-                                @if($errors->any())
-                                    <div class="alert alert-danger">
-                                        <p class="mb-1"><strong class="text-white">Opps Something went wrong</strong></p>
-                                        <ul>
-                                            @foreach ($errors->all() as $error)
+                                    <form action="{{route('login')}}" method="post">
+                                        @csrf                                        
+                                        <div class="login-userheading">
+                                            <h3>Sign In</h3>
+                                        </div>
+                                        @if($errors->any())
+                                        <div class="alert alert-danger">
+                                            <p class="mb-0"><strong>Opps Something went wrong</strong></p>
+                                            <ul>
+                                                @foreach ($errors->all() as $error)
                                                 <li>{{ $error }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
-                                <h4>Sign in to account </h4>
-                                <p>Enter your email OR Username & password to login</p>
-                                <div class="form-group">
-                                    <label class="col-form-label">Email Address Or Username</label>
-                                    <input class="form-control" type="text" name="email">
-                                    @error('email')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        @endif
+                                        @if(session()->has('error'))
+                                        <div class="alert alert-danger">
+                                            {{ session()->get('error') }}
+                                        </div>
+                                        @endif
+                                        @if(session()->has('success'))
+                                        <div class="alert alert-success">
+                                            {{ session()->get('success') }}
+                                        </div>
+                                        @endif
+                                        <div class="mb-3">
+                                            <label class="form-label">Enter your Registered Email OR User Name <span class="text-danger"> *</span></label>
+                                            <div class="input-group">
+                                                <input type="text" value="" class="form-control border-end-0" name="email">
+                                                <span class="input-group-text border-start-0">
+                                                    <i class="ti ti-mail"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Password <span class="text-danger"> *</span></label>
+                                            <div class="pass-group">
+                                                <input type="password" class="pass-input form-control" name="password">
+                                                <span class="ti toggle-password ti-eye-off text-gray-9"></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-login authentication-check">
+                                            <div class="row">
+                                                <div class="col-12 d-flex align-items-center justify-content-between">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <label class="checkboxs ps-4 mb-0 pb-0 line-height-1 fs-16 text-gray-6">
+                                                            <input type="checkbox" class="form-control">
+                                                            <span class="checkmarks"></span>Remember me
+                                                        </label>
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <a class="text-orange fs-16 fw-medium" href="{{route('forget.password')}}">Forgot Password?</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-login">
+                                            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                                        </div>
+                                    </form>
                                 </div>
-                                <div class="form-group">
-                                    <label class="col-form-label">Password </label>
-                                    <div class="form-input position-relative">
-                                        <input class="form-control" type="password" name="password">
-                                        <div class="show-hide"> <span class="show"></span></div>
-                                    </div>
-                                    @error('password')
-                                        <small class="text-danger">{{ $message }}</small>
-                                    @enderror
-                                </div>
-                                <div class="form-group mb-0">
-                                    <div class="checkbox p-0">
-                                        <input id="checkbox1" type="checkbox">
-                                        <label class="text-muted" for="checkbox1">Remember password</label>
-                                    </div>
-                                    <a class="link" href="{{route('forget.password')}}">Forgot password?</a>
-                                    <div class="text-end mt-3">
-                                        <button class="btn btn-primary btn-block w-100" type="submit">Sign in</button>
-                                    </div>
-                                </div>
-                            </form>
+                            </div>
+                        </div>
+                        <div class="my-4 d-flex justify-content-center align-items-center copyright-text">
+                            <p class="text-white">Copyright &copy; {{ date('Y') }} North Zone chapter of Urological Society of India. (NZUSI) All rights reserved.</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
-    <script src="{{asset('backend/assets/js/jquery.min.js')}}"></script>
-    <script src="{{asset('backend/assets/js/bootstrap/bootstrap.bundle.min.js')}}"></script>
-    <script src="{{asset('backend/assets/js/icons/feather-icon/feather.min.js')}}"></script>
-    <script src="{{asset('backend/assets/js/icons/feather-icon/feather-icon.js')}}"></script>
-    <script src="{{asset('backend/assets/js/script.js')}}"></script>
+    <!-- /Main Wrapper -->
+    <script src="{{asset('backend/assets/js/jquery-3.7.1.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('backend/assets/js/feather.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('backend/assets/js/bootstrap.bundle.min.js')}}" type="text/javascript"></script>
+    <script src="{{asset('backend/assets/js/script.js')}}" type="text/javascript"></script>
 </body>
 
 </html>

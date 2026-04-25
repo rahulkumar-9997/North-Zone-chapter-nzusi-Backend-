@@ -42,7 +42,7 @@ class LoginController extends Controller
             $user->save();
             $request->session()->regenerate();
             return redirect()->intended('dashboard')
-                ->with('success', 'Welcome back, ' . $user->name . '!');
+            ->with('success', 'Welcome back, ' . $user->name . '!');
         }
         $user = User::where($field, $loginInput)->first();
         if ($user) {
