@@ -21,17 +21,17 @@
     <div class="main-wrapper">
         <div class="account-content">
             <div class="login-wrapper login-new">
-                <div class="row w-100">
-                    <div class="col-lg-4 mx-auto">
+                <div class="row justify-content-center align-items-center authentication authentication-basic">
+                    <div class="col-xxl-4 col-xl-4 col-lg-4 col-md-5 col-sm-8 col-12">
                         <div class="login-content user-login">
-                            <div class="login-logo">
-                                <img src="{{asset('backend/assets/images/logo.png')}}" alt="img">
-                                <a href="{{route('login')}}" class="login-logo logo-white">
-                                    <img src="{{asset('backend/assets/images/logo.png')}}" alt="Img">
-                                </a>
-                            </div>
-                            <div class="card w-100">
-                                <div class="card-body p-5">
+                            <div class="card custom-card my-4">
+                                <div class="card-body p-4">
+                                    <div class="login-logo">
+                                        <img src="{{asset('backend/assets/images/logo.png')}}" alt="img">
+                                        <a href="{{route('login')}}" class="login-logo logo-white">
+                                            <img src="{{asset('backend/assets/images/logo.png')}}" alt="Img">
+                                        </a>
+                                    </div>                                    
                                     @if($errors->any())
                                     <div class="alert alert-danger">
                                         <ul>
@@ -67,7 +67,7 @@
                                             <input type="password" id="password_confirmation" name="password_confirmation" class="form-control bg-">
                                         </div>
                                         <div class="col-lg-12 mb-2">
-                                            <a href="{{route('login')}}" class="float-end text-muted text-unline-dashed mb-3">Go to Login</a>
+                                            <a href="{{route('login')}}" class="float-end text-muted text-unline-dashed mb-3">Return to <strong>login</strong></a>
                                         </div>
 
                                         <div class="col-lg-12 mb-3 text-center d-grid">
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div class="my-4 d-flex justify-content-center align-items-center copyright-text">
-                            <p>Copyright &copy; {{ date('Y') }} North Zone chapter of Urological Society of India. (NZUSI) All rights reserved.</p>
+                            <p class="text-white">Copyright &copy; {{ date('Y') }} North Zone chapter of Urological Society of India. (NZUSI) All rights reserved.</p>
                         </div>
                     </div>
                 </div>

@@ -17050,7 +17050,7 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu > ul > li.submenu-open ul l
   /* border-bottom: 1px solid #E6EAED; */
 }
 .sidebar .sidebar-logo .logo img {
-  width: 130px;
+  width: 50px;
 }
 .sidebar .sidebar-logo .logo-small {
   display: none;
@@ -45979,5 +45979,8 @@ span.flatpickr-weekday {
   background-repeat: no-repeat;
   z-index: -1;
   opacity: 0.15;
+}
+.cke_notifications_area{
+  display: none;
 }
 /*# sourceMappingURL=style.css.map */

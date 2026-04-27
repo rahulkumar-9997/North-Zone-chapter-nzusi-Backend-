@@ -4,6 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\LoginController;
 use App\Http\Controllers\Backend\ForgotPasswordController;
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\CkeditorController;
+use App\Http\Controllers\Backend\CacheController;
+use App\Http\Controllers\Backend\PageController;
+use App\Http\Controllers\Backend\MenuController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);
@@ -16,6 +20,21 @@ Route::prefix('admin')->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 Route::group(['middleware' => ['auth:web']], function() {
+    Route::post('/ckeditor/upload', [CkeditorController::class, 'upload'])->name('ckeditor.upload');
+    Route::get('/ckeditor/images', [CkeditorController::class, 'imageList'])->name('ckeditor.images');
+    Route::delete('/ckeditor/image', [CkeditorController::class, 'deleteImage'])->name('ckeditor.delete');
+    
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-
+    Route::get('/get-daily-visitors', [DashboardController::class, 'getDailyVisitors'])->name('get-daily-visitors');
+    Route::get('/clear-cache', [CacheController::class, 'clearCache'])->name('clear-cache');
+    Route::resource('pages', PageController::class);
+    Route::resource('menus', MenuController::class);
+    Route::get('menu/items/{menu}', [MenuController::class, 'displayMenuItem'])->name('menus.items');
+    Route::post('menu/{menu}/item', [MenuController::class, 'storeItem'])->name('menu.item.store');
+    
+    Route::get('menu/{menu}/item/{item}/edit', [MenuController::class, 'editItem'])
+    ->name('menu.item.edit');
+    Route::put('menu/{menu}/item/{item}', [MenuController::class, 'updateItem'])->name('menu.item.update');
+    Route::delete('menu/{menu}/item/{item}', [MenuController::class, 'destroyItem'])->name('menu.item.destroy');
+    Route::post('menus/{menu}/items/order', [MenuController::class, 'orderItems'])->name('menus.items.order');
 });

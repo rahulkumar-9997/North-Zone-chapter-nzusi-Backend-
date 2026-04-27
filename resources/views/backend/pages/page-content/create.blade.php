@@ -1,9 +1,6 @@
 @extends('backend.layouts.master')
 @section('title','Create Pages')
 @push('styles')
-<!-- <link rel="stylesheet" href="{{asset('backend/assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css')}}"> -->
-<link rel="stylesheet" href="{{asset('backend/assets/plugins/summernote/summernote-bs4.min.css')}}">
-
 @endpush
 @section('main-content')
 <div class="content">
@@ -15,14 +12,11 @@
             </div>
         </div>
     </div>
-
-    <!-- /product list -->
     <div class="card">
         <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
             <a href="{{ url()->previous() }}" data-title="Go Back to Category" data-bs-toggle="tooltip" class="btn btn-sm btn-purple" data-bs-original-title="Go Back to Previous Page">
                 &lt;&lt; Go Back to Previous Page
             </a>
-
         </div>
         <div class="accordion-body border-top">
             <form action="{{ route('pages.store') }}" method="POST" enctype="multipart/form-data">
@@ -52,8 +46,7 @@
                     <div class="col-lg-12">
                         <div class="summer-description-box mb-3">
                             <label class="form-label">Page Content</label>
-                            <textarea id="content" name="content" hidden>{{ old('content', $page->content ?? '') }}</textarea>
-                            <div id="summernote">{!! old('content', $page->content ?? '') !!}</div>
+                            <textarea name="content" class="ckeditorUpdate4">{{ old('content', $page->content ?? '') }}</textarea>
                         </div>
                     </div>
                 </div>
@@ -131,28 +124,39 @@
                     </div>
                 </div>
             </form>
-
-
         </div>
     </div>
-    <!-- /product list -->
 </div>
-
 @endsection
 @push('scripts')
+<script src="{{ asset('backend/assets/ckeditor-4/ckeditor.js') }}?v={{ env('ASSET_VERSION', '1.0') }}"></script>
 <script>
-    $(document).ready(function() {
-        $('#summernote').summernote({
-            height: 300,
-            
-            callbacks: {
-                onChange: function(contents, $editable) {
-                    $('#content').val(contents);
-                }
-            }
+window.CKEDITOR_ROUTES = {
+    upload: "{{ route('ckeditor.upload') }}",
+    imagelist: "{{ route('ckeditor.images') }}",
+    delete: "{{ route('ckeditor.delete') }}"
+};
+window.csrfToken = "{{ csrf_token() }}";
+</script>
+<script src="{{ asset('backend/assets/ckeditor-4/ckeditor-r-create-config.js') }}?v={{ env('ASSET_VERSION', '1.0') }}">
+</script>
+<script>
+    document.querySelectorAll('.ckeditorUpdate4').forEach(function(el) {
+        CKEDITOR.replace(el, {
+            removePlugins: 'exportpdf'
         });
-        $('form').on('submit', function() {
-            $('#content').val($('#summernote').summernote('code'));
+    });
+    $(document).ready(function() {
+       $("form").on("submit", function (e) {
+            let $form = $(this);
+            let $btn = $form.find("button[type='submit']");
+            if ($btn.length) {
+                $btn.prop("disabled", true);
+                let $spinner = $btn.find(".spinner-border");
+                let $text = $btn.find(".btn-text");
+                if ($spinner.length) $spinner.removeClass("d-none");
+                if ($text.length) $text.text("Please wait...");
+            }
         });
     });
 </script>

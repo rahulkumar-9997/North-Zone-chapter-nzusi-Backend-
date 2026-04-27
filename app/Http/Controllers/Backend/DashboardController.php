@@ -1,23 +1,21 @@
 <?php
 namespace App\Http\Controllers\Backend;
+namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Product;
-use App\Models\Category;
-use App\Models\Attribute;
-use App\Models\Attribute_values;
-use App\Models\Brand;
+use App\Models\Page;
+use App\Models\Menu;
+use App\Models\MenuItems;
 use Illuminate\Support\Facades\Log;
 class DashboardController extends Controller
 {
     public function index(){
-        $user = Auth::user();        
-        return view('backend.pages.dashboard.index');
+        $data = [
+            'totalPages' => Page::count(),
+            'totalMenus' => Menu::count(),
+            'totalMenuItems' => MenuItems::count(),
+        ];     
+        return view('backend.pages.dashboard.index', compact('data'));
     }
 
     public function getFilteredProductData(Request $request){
