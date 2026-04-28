@@ -8,6 +8,8 @@ use App\Http\Controllers\Backend\CkeditorController;
 use App\Http\Controllers\Backend\CacheController;
 use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\MenuController;
+use App\Http\Controllers\Backend\BlogCategoryController;
+use App\Http\Controllers\Backend\BlogPostController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);
@@ -19,7 +21,7 @@ Route::prefix('admin')->group(function () {
     Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
-Route::group(['middleware' => ['auth:web']], function() {
+Route::middleware(['auth:web', 'admin'])->group(function () {
     Route::post('/ckeditor/upload', [CkeditorController::class, 'upload'])->name('ckeditor.upload');
     Route::get('/ckeditor/images', [CkeditorController::class, 'imageList'])->name('ckeditor.images');
     Route::delete('/ckeditor/image', [CkeditorController::class, 'deleteImage'])->name('ckeditor.delete');
@@ -37,4 +39,7 @@ Route::group(['middleware' => ['auth:web']], function() {
     Route::put('menu/{menu}/item/{item}', [MenuController::class, 'updateItem'])->name('menu.item.update');
     Route::delete('menu/{menu}/item/{item}', [MenuController::class, 'destroyItem'])->name('menu.item.destroy');
     Route::post('menus/{menu}/items/order', [MenuController::class, 'orderItems'])->name('menus.items.order');
+
+    Route::resource('blog-category', BlogCategoryController::class);
+    Route::resource('blog-post', BlogPostController::class);
 });

@@ -6053,7 +6053,7 @@ hr.text-danger {
 }
 
 .form-control[type=file] {
-  padding: 0.3rem 0.5rem;
+  padding: 0.45rem 0.85rem;
 }
 .form-control[type=file].form-control-sm {
   padding: 0.25rem 0.5rem !important;
@@ -8602,7 +8602,7 @@ table .edit-delete-action.data {
   padding: 1.25rem;
 }
 .card .card-title {
-  font-size: 18px;
+  font-size: 1rem;
   font-weight: 700;
   text-transform: capitalize;
   color: #212B36;
@@ -8611,7 +8611,7 @@ table .edit-delete-action.data {
   border-color: #E6EAED;
   position: relative;
   background: transparent;
-  padding: 1rem 1.25rem 1rem;
+  padding: 10px;
 }
 .card .card-header .card-title {
   margin-bottom: 0rem;
@@ -11197,11 +11197,11 @@ svg.collapse-open, svg.collapse-close {
   color: #ffffff;
 }
 .modal .modal-footer {
-  padding: 15px 20px;
+  padding: 10px 5px;
   border-top: 1px solid #E6EAED;
 }
 .modal .modal-footer .btn {
-  margin: 0;
+  margin: 0px 5px;
 }
 .modal .modal-footer .btn-print {
   display: -webkit-box;
@@ -16519,11 +16519,11 @@ div#global-loader .whirly-loader:not(:required) {
 }
 .sidebar .sidebar-menu > ul > li.submenu-open ul li a span, .settings-sidebar .sidebar-menu > ul > li.submenu-open ul li a span {
   white-space: nowrap;
-  font-size: 14px;
-  color: #e4e9f4;
+  font-size: 15px;
+  color: #ffffff;
 }
 .sidebar .sidebar-menu > ul > li.submenu-open ul li a i, .settings-sidebar .sidebar-menu > ul > li.submenu-open ul li a i {
-  color: #e4e9f4;
+  color: #ffffff;
 }
 .sidebar .sidebar-menu > ul > li.submenu-open ul li a.active, .settings-sidebar .sidebar-menu > ul > li.submenu-open ul li a.active {
   color: #FE9F43;
@@ -16546,10 +16546,11 @@ div#global-loader .whirly-loader:not(:required) {
 .sidebar .sidebar-menu > ul > li.submenu-open ul li a:hover span, .sidebar .sidebar-menu > ul > li.submenu-open ul li a:hover i, .settings-sidebar .sidebar-menu > ul > li.submenu-open ul li a:hover span, .settings-sidebar .sidebar-menu > ul > li.submenu-open ul li a:hover i {
   color: #212B36;
 }
-.sidebar .sidebar-menu > ul > li.submenu-open ul > li.active a, .settings-sidebar .sidebar-menu > ul > li.submenu-open ul > li.active a {
-  background: rgba(254, 159, 67, 0.08);
-  border-radius: 5px;
-  color: #FE9F43;
+.sidebar .sidebar-menu ul li.active > a,
+.settings-sidebar .sidebar-menu ul li.active > a {
+    background: rgba(254, 159, 67, 0.08);
+    border-radius: 5px;
+    color: #FE9F43;
 }
 .sidebar .sidebar-menu > ul > li.submenu-open ul > li.active a span, .sidebar .sidebar-menu > ul > li.submenu-open ul > li.active a i, .settings-sidebar .sidebar-menu > ul > li.submenu-open ul > li.active a span, .settings-sidebar .sidebar-menu > ul > li.submenu-open ul > li.active a i {
   color: #FE9F43;
@@ -17046,7 +17047,8 @@ body.mini-sidebar.expand-menu .sidebar .sidebar-menu > ul > li.submenu-open ul l
   align-items: center;
   padding: 0 24px;
   height: 65px;
-  background: #fff;
+  background: #262d34;
+  justify-content: center;
   /* border-bottom: 1px solid #E6EAED; */
 }
 .sidebar .sidebar-logo .logo img {

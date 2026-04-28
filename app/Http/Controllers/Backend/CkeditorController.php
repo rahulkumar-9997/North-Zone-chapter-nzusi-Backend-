@@ -30,13 +30,13 @@ class CkeditorController extends Controller
                 if (!in_array($imageFile->getMimeType(), ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
                     throw new \Exception('Invalid file type. Only images are allowed.');
                 }
-
                 $originalName = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $baseName = ImageHelper::generateFileName($originalName, 'ckeditor');
+                $baseName = ImageHelper::generateFileName($originalName);
                 $fileName = ImageHelper::uploadSingleImageWebpOnly(
                     $imageFile,
                     $baseName,
-                    'ckeditor'
+                    'ckeditor',
+                    null
                 );
                 $url = asset('storage/images/ckeditor/' . $fileName);
                 $CKEditorFuncNum = $request->input('CKEditorFuncNum');

@@ -15,6 +15,7 @@
                     @yield('main-content')
                 </div>
                 @include('backend.layouts.footer')
+                @include('backend.layouts.common-modal-form')
             </div>
         </div>
         @include('backend.layouts.footer-js')        
