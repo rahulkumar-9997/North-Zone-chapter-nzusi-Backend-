@@ -16,7 +16,7 @@
             <div class="table-responsive">
                 @if($blogCategories->count() > 0)
                 <div class="blog-category-list-table-render">
-                    @include('backend.pages.blog.partials.category-list', ['blogCategories' => $blogCategories])
+                    @include('backend.pages.blog.partials.blog-list', ['blogCategories' => $blogCategories])
                 </div>
                 @else
                 <div class="text-center p-4">

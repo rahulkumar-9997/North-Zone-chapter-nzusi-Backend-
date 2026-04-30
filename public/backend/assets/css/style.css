@@ -6036,7 +6036,7 @@ hr.text-danger {
 }
 
 .form-control {
-  border-color: #E6EAED;
+  border-color: #c9cdcf;
   color: #212B36;
   background-color: #ffffff;
   font-size: 0.875rem;
@@ -6047,7 +6047,7 @@ hr.text-danger {
 }
 .form-control:focus {
   box-shadow: none;
-  border-color: #E6EAED;
+  border-color: #c9cdcf;
   background-color: #ffffff;
   box-shadow: 0 0.0625rem 0.125rem 0 rgba(0, 0, 0, 0.05);
 }
@@ -6111,7 +6111,7 @@ hr.text-danger {
 
 .form-select {
   background-color: #ffffff;
-  border: 1px solid #E6EAED;
+  border: 1px solid #c9cdcf;
   color: #646B72;
   font-size: 14px;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
@@ -11576,7 +11576,7 @@ span.select2-container.select2-container--default.select2-container--open {
 .select2-container--default .select2-selection--multiple,
 .select2-container--classic .select2-selection--single .select2-selection__arrow,
 .select2-container--classic .select2-selection--single .select2-selection__rendered {
-  border-color: #E6EAED;
+  border-color: #c9cdcf;
   color: #212B36;
   height: 38px;
   line-height: 38px;
