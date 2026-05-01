@@ -130,5 +130,44 @@ class ImageHelper{
         }
     }
 
+    public static function uploadPdf($file, $name, $folder, $oldFile = null)
+    {
+        if (!$file || !$file->isValid()) {
+            return null;
+        }
+        $fileName = $name . '.pdf';
+        $path = storage_path("app/public/pdf/{$folder}/");
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0755, true);
+        }
+        if (!empty($oldFile)) {
+            $oldPath = $path . $oldFile;
+            if (File::exists($oldPath)) {
+                File::delete($oldPath);
+            }
+        }
+
+        try {
+            $file->move($path, $fileName);
+            return $fileName;
+
+        } catch (\Exception $e) {
+            Log::error('PDF Upload Error: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public static function pdfFileDelete($pdfFileName, $folder)
+    {
+        if (empty($pdfFileName)) {
+            return false;
+        }
+        $path = storage_path("app/public/pdf/{$folder}/" . $pdfFileName);
+        if (File::exists($path)) {
+            return File::delete($path);
+        }
+        return false;
+    }
+
     
 }

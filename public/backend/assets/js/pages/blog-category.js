@@ -44,8 +44,6 @@ $(document).ready(function () {
                 submitButton.prop('disabled', false).html('Save Category');
                 if (response.status === 'success') {
                     if(response.category_type && response.category_type === 'simple') {
-                        form[0].reset();
-                        $('#commanModel').modal('hide');
                         $('.blog-category-list-table-render').html(response.blogCategoryContent);
                         Toastify({
                             text: response.message,
@@ -54,9 +52,13 @@ $(document).ready(function () {
                             position: "right",
                             className: "bg-success"
                         }).showToast();
-                    } else {
-                        
+                    } else if(response.category_type && response.category_type === 'select') {
+                        $('#blog_category').append(
+                            `<option value="${response.id}" selected>${response.title}</option>`
+                        );
                     }
+                    form[0].reset();
+                    $('#commanModel').modal('hide');
                 }
             },
             error: function (xhr) {

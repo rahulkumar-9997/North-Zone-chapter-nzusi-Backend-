@@ -42,4 +42,6 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
 
     Route::resource('blog-category', BlogCategoryController::class);
     Route::resource('blog-post', BlogPostController::class);
+    Route::delete('/blog-more-image/{id}', [BlogPostController::class, 'deleteImage'])
+    ->name('blog.image.delete');
 });

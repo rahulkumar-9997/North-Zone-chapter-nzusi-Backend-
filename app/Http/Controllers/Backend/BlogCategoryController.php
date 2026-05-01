@@ -97,12 +97,23 @@ class BlogCategoryController extends Controller
                 'blogCategories' => BlogCategory::latest()->get()
             ])->render();
             DB::commit();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Blog category created successfully',
-                'category_type' => $request->category_type ?? 'default',
-                'blogCategoryContent' => $html,
-            ]);
+            
+            if($request->category_type =='select'){
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Blog category created successfully',
+                    'category_type' => 'select',
+                    'id' => $blogCategory->id,
+                    'title' => $blogCategory->title
+                ]);
+            }else{
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Blog category created successfully',
+                    'category_type' => $category_type ?? 'default',
+                    'blogCategoryContent' => $html,
+                ]);
+            }
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -254,4 +265,5 @@ class BlogCategoryController extends Controller
             ], 500);
         }
     }
+    
 }
