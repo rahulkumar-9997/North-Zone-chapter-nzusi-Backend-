@@ -77,6 +77,21 @@
                         </li>
                      </ul>
                   </li>
+                  <li class="submenu {{ request()->routeIs('manage-member.*') || request()->routeIs('member-type.*') ? 'open active' : '' }}">
+                     <a href="javascript:void(0);">
+                        <i class="ti ti-user fs-16 me-2"></i>
+                        <span>Manage Member</span>
+                        <span class="menu-arrow"></span>
+                     </a>
+                     <ul style="{{ request()->routeIs('manage-member.*') || request()->routeIs('member-type.*') ? 'display:block;' : '' }}">
+                        <li class="{{ request()->routeIs('member-type.*') ? 'active' : '' }}">
+                           <a href="{{ route('member-type.index') }}">Member Type</a>
+                        </li>
+                        <li class="{{ request()->routeIs('manage-member.*') ? 'active' : '' }}">
+                           <a href="{{ route('manage-member.index') }}">Member</a>
+                        </li>
+                     </ul>
+                  </li>
 
                </ul>
             </li>

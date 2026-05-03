@@ -1,3 +1,4 @@
+@if(isset($blogCategories) && count($blogCategories) > 0)
 <table class="table align-middle mb-0 table-hover table-centered">
     <thead>
         <tr>
@@ -57,3 +58,9 @@
         @endforeach
     </tbody>
 </table>
+@else
+<div class="text-center p-4">
+    <h4 class="mb-2">No Blog Category Found</h4>
+    <p class="mb-0">Start creating your first blog category.</p>
+</div>
+@endif

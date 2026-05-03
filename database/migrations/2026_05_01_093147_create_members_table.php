@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('members', function (Blueprint $table) {
             $table->id();
-            $table->string('membership_no')->nullable()->unique();
+            $table->string('membership_no')->nullable()->unique()->index();
             $table->string('name')->nullable();
-            $table->string('email')->nullable()->index();
+            $table->string('email')->nullable()->unique();
             $table->string('password')->nullable();
             $table->enum('gender', ['male', 'female', 'other'])->nullable();
             $table->string('city_name')->nullable();
             $table->string('mobile_no')->nullable();
-            $table->foreignId('membership_type_id')->nullable()->constrained('member_types')->cascadeOnDelete();
+            $table->foreignId('membership_type_id')->nullable()->constrained('member_types')->nullOnDelete();
             $table->date('dob')->nullable();
             $table->enum('preferred_address', ['office', 'residence'])->nullable();
             $table->date('membership_approved_date')->nullable();

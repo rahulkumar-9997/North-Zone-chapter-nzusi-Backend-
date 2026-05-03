@@ -1,12 +1,12 @@
 $(document).ready(function () {
-    $(document).on('click', 'a[data-blog-category-add="true"]', function () {
+    $(document).on('click', 'a[data-member-type-add="true"]', function () {
         var title = $(this).data('title');
         var size = ($(this).data('size') == '') ? 'md' : $(this).data('size');
         var url = $(this).data('route');
-        var category_type = $(this).data('type') ? $(this).data('type') : 'default';
+        var format_type = $(this).data('format') ? $(this).data('format') : 'default';
         var data = {
             _token: $('meta[name="csrf-token"]').attr('content'),
-            category_type: category_type
+            format_type: format_type,
         };
         $("#commanModel .modal-title").html(title);
         $("#commanModel .modal-dialog").addClass('modal-' + size);
@@ -24,15 +24,13 @@ $(document).ready(function () {
         });
     });
     
-    $(document).off('click', '#saveBlogCategoryBtn').on('click', '#saveBlogCategoryBtn', function (event) {
+    $(document).off('click', '#save-member-btn').on('click', '#save-member-btn', function (event) {
         event.preventDefault();
-        let form = $('#addBlogCategoryForm');
+        let form = $('#add-member-type-form');
         let submitButton = $(this);
         $('.form-control').removeClass('is-invalid');
         $('.invalid-feedback').remove();
-        submitButton
-            .prop('disabled', true)
-            .html('<span class="spinner-border spinner-border-sm"></span> Saving...');
+        submitButton.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> Saving...');
         let formData = new FormData(form[0]);
         $.ajax({
             url: form.attr('action'),
@@ -44,7 +42,7 @@ $(document).ready(function () {
                 submitButton.prop('disabled', false).html('Save Category');
                 if (response.status === 'success') {
                     if(response.category_type && response.category_type == 'simple') {
-                        $('.blog-category-list-table-render').html(response.blogCategoryContent);
+                        $('.member-type-list-table-render').html(response.memberTypeContent);
                         Toastify({
                             text: response.message,
                             duration: 3000,
@@ -83,7 +81,7 @@ $(document).ready(function () {
         });
     });
 
-    $(document).on('click', 'a[data-blog-category-edit="true"]', function () {
+    $(document).on('click', 'a[data-member-type-edit="true"]', function () {
         var title = $(this).data('title');
         var size = ($(this).data('size') == '') ? 'md' : $(this).data('size');
         var url = $(this).data('route');
@@ -106,12 +104,12 @@ $(document).ready(function () {
         });
     });
 
-    $(document).off('click', '#updateBlogCategoryBtn').on('click', '#updateBlogCategoryBtn', function (event) {
+    $(document).off('click', '#update-member-btn').on('click', '#update-member-btn', function (event) {
         event.preventDefault();
-        let form = $('#editBlogCategoryForm');
+        let form = $('#edit-member-type-form');
         let submitButton = $(this);
         if (!form.length) {
-            console.error('Edit blog category form not found');
+            console.error('Edit member type form not found');
             return;
         }
         $('.form-control').removeClass('is-invalid');
@@ -127,11 +125,11 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                submitButton.prop('disabled', false).html('Update Category');
+                submitButton.prop('disabled', false).html('Update Member');
                 if (response.status === 'success') {
                     form[0].reset();
                     $('#commanModel').modal('hide');
-                    $('.blog-category-list-table-render').html(response.blogCategoryContent);
+                    $('.member-type-list-table-render').html(response.memberTypeContent);
                     Toastify({
                         text: response.message,
                         duration: 3000,
@@ -190,7 +188,7 @@ $(document).ready(function () {
                     },
                     success: function (response) {
                         if (response.status === 'success') {
-                            $('.blog-category-list-table-render').html(response.blogCategoryContent);
+                            $('.member-type-list-table-render').html(response.memberTypeContent);
                             Swal.fire("Deleted!", response.message, "success");
                         }
                     },

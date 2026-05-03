@@ -97,7 +97,7 @@ class BlogCategoryController extends Controller
                 'blogCategories' => BlogCategory::latest()->get()
             ])->render();
             DB::commit();
-            
+            $category_type = $request->category_type;
             if($request->category_type =='select'){
                 return response()->json([
                     'status' => 'success',

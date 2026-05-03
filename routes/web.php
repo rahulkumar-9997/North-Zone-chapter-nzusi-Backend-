@@ -10,6 +10,8 @@ use App\Http\Controllers\Backend\PageController;
 use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\BlogCategoryController;
 use App\Http\Controllers\Backend\BlogPostController;
+use App\Http\Controllers\Backend\ManageMemberController;
+use App\Http\Controllers\Backend\MemberTypeController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);
@@ -44,4 +46,14 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
     Route::resource('blog-post', BlogPostController::class);
     Route::delete('/blog-more-image/{id}', [BlogPostController::class, 'deleteImage'])
     ->name('blog.image.delete');
+
+    Route::prefix('manage-member')->name('manage-member.')->group(function () {
+        Route::get('import', [ManageMemberController::class, 'importIndex'])->name('import');
+        Route::post('import', [ManageMemberController::class, 'importStore'])->name('import.store');
+    });
+
+    Route::resource('member-type', MemberTypeController::class);
+    Route::resource('manage-member', ManageMemberController::class);
+    
+    
 });
