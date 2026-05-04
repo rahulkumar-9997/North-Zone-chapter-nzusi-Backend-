@@ -3,8 +3,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="{{ csrf_token() }}" />
-<meta name="base-url" content="{{URL::to('/')}}">
-<meta name="author" content="Mac Capital">
+<meta name="base-url" content="{{ url('/') }}">
+<meta name="author" content="NZUSI">
 <meta name="robots" content="index, follow">
 @yield('meta')
 <title>@yield('title')</title>
@@ -13,16 +13,13 @@
 <link rel="stylesheet" href="{{asset('backend/assets/css/bootstrap.min.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/css/animate.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/select2/css/select2.min.css')}}">
-
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/flatpickr/flatpickr.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/daterangepicker/daterangepicker.css')}}">
-
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/tabler-icons/tabler-icons.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/fontawesome/css/fontawesome.min.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/fontawesome/css/all.min.css')}}">
-
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/toastr/toastify.min.css')}}">
-<link rel="stylesheet" href="{{asset('backend/assets/css/style.css')}}">
+<link rel="stylesheet" href="{{ asset('backend/assets/css/style.css') }}?v={{ filemtime(public_path('backend/assets/css/style.css')) }}">
 @stack('styles')
  

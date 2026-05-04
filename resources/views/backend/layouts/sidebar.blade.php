@@ -26,9 +26,15 @@
                         <span>Dashboard</span>
                      </a>
                   </li>
+                  <li class="{{ request()->routeIs('label.*') ? 'active' : '' }}">
+                     <a href="{{ route('label.index') }}">
+                        <i class="ti ti-brand-beats fs-16 me-2"></i>
+                        <span>Label</span>
+                     </a>
+                  </li>
 
                   {{-- Manage Pages --}}
-                  <li class="submenu {{ request()->routeIs('pages.*') ? 'open active' : '' }}">
+                  <!-- <li class="submenu {{ request()->routeIs('pages.*') ? 'open active' : '' }}">
                      <a href="javascript:void(0);">
                         <i class="ti ti-brand-apple-arcade fs-16 me-2"></i>
                         <span>Manage Pages</span>
@@ -42,10 +48,10 @@
                            <a href="{{ route('pages.create') }}">Create Page</a>
                         </li>
                      </ul>
-                  </li>
+                  </li> -->
 
                   {{-- Manage Menus --}}
-                  <li class="submenu {{ request()->routeIs('menus.*') ? 'open active' : '' }}">
+                  <!-- <li class="submenu {{ request()->routeIs('menus.*') ? 'open active' : '' }}">
                      <a href="javascript:void(0);">
                         <i class="ti ti-layout-grid-add fs-16 me-2"></i>
                         <span>Manage Menus</span>
@@ -59,7 +65,7 @@
                            <a href="{{ route('menus.create') }}">Create Menu</a>
                         </li>
                      </ul>
-                  </li>
+                  </li> -->
 
                   {{-- Manage Blog --}}
                   <li class="submenu {{ request()->routeIs('blog-category.*') || request()->routeIs('blog-post.*') ? 'open active' : '' }}">

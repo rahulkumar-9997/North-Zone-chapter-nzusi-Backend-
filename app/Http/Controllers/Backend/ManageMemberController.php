@@ -10,32 +10,50 @@ use App\Imports\MembersImport;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\MemberType;
+use Illuminate\Support\Facades\Auth;
 
 class ManageMemberController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $member_lists = Member::with([
+        $query = Member::with([
             'type',
             'officeAddress',
             'residenceAddress',
             'presentDesignations',
             'academicQualifications'
-        ])
-        ->orderBy('id', 'desc')
-        ->paginate(30);
-        //return response()->json($member_lists);
-        return view('backend.pages.member.members.index', compact('member_lists'));
+        ]);
+        if ($request->member_type) {
+            $query->where('membership_type_id', $request->member_type);
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+        if ($request->search) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('membership_no', 'like', "%$search%")
+                ->orWhere('name', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%")
+                ->orWhere('mobile_no', 'like', "%$search%");
+            });
+        }
+        $member_lists = $query->orderBy('id', 'desc')->paginate(30);
+        if ($request->ajax()) {
+            return view('backend.pages.member.members.partials.members-list', compact('member_lists'))->render();
+        }
+        $members_type = MemberType::select('id', 'title')->get();
+        return view('backend.pages.member.members.index', compact('member_lists', 'members_type'));
     }
 
     public function create()
     {
-        $MemberType = MemberType::select('id', 'title')
+        $memberTypes = MemberType::select('id', 'title')
         ->where('status', 1)
         ->orderBy('id', 'desc')
         ->get();
         //return response()->json($MemberType);
-        return view('backend.pages.member.members.index', compact('MemberType'));
+        return view('backend.pages.member.members.create', compact('memberTypes'));
     }
 
 
@@ -67,13 +85,13 @@ class ManageMemberController extends Controller
             'excel_file.mimes' => 'Only Excel or CSV files allowed',
         ]);
         try {
-            $import = new MembersImport();
+            $import = new MembersImport(Auth::id());
             Log::info('Import class loaded: ' . get_class($import));
             Log::info('Import failures', [
                 'failures' => $import->failures()
             ]);
             //Excel::import($import, $request->file('excel_file'));
-            Excel::queueImport(new MembersImport, $request->file('excel_file'));
+            Excel::queueImport($import, $request->file('excel_file'));
             if ($import->failures()->isNotEmpty()) {
                 $errors = [];
                 foreach ($import->failures() as $failure) {
@@ -86,7 +104,8 @@ class ManageMemberController extends Controller
             }
             return response()->json([
                 'status' => 'success',
-                'message' => 'Members imported successfully!'
+                'message' => 'Members imported successfully!',
+                'route_redirect' => route('manage-member.index')
             ]);
         } catch (\Exception $e) {
             Log::error('Import Errors', $e->getMessage());

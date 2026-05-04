@@ -26,7 +26,11 @@ class MembersImport implements
     ShouldQueue
 {
     use SkipsFailures;
-
+    private $userId;
+    public function __construct($userId)
+    {
+        $this->userId = $userId;
+    }
     public function chunkSize(): int
     {
         return 200;
@@ -68,7 +72,7 @@ class MembersImport implements
         }
         static $password;
         if (!$password) {
-            $password = Hash::make('123456');
+            $password =  Hash::make(Str::random(8));
         }
         /** @var array<string, MemberType> $types */
         static $types = [];
@@ -99,6 +103,7 @@ class MembersImport implements
                 'mobile_no' => $mobile,
                 'membership_type_id' => $memberType?->id,
                 'status' => 'approved',
+                'user_id' => $this->userId,
                 'is_active' => true,
                 'is_verified' => true,
             ]

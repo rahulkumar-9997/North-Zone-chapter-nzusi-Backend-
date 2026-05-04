@@ -29,9 +29,16 @@
                 @endif
             </td>
             <td>
-                {{ $blog->user->name }}
+                {{ $blog->user->name  ?? ''}}
             </td>
-            <td>{{ $blog->category->title ?? 'N/A' }}</td>
+            <td>
+                {{ $blog->category->title ?? 'N/A' }}
+                @if($blog->label)
+                    <br><span class="badge bg-info">
+                        {{ $blog->label->title ?? '-' }}
+                    </span>
+                @endif
+            </td>
             <td>
                 @if($blog->status)
                 <span class="badge bg-success">Active</span>

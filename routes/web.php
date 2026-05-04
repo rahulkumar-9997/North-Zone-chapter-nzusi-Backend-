@@ -12,6 +12,7 @@ use App\Http\Controllers\Backend\BlogCategoryController;
 use App\Http\Controllers\Backend\BlogPostController;
 use App\Http\Controllers\Backend\ManageMemberController;
 use App\Http\Controllers\Backend\MemberTypeController;
+use App\Http\Controllers\Backend\LabelController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);
@@ -54,6 +55,6 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
 
     Route::resource('member-type', MemberTypeController::class);
     Route::resource('manage-member', ManageMemberController::class);
-    
+    Route::resource('label', LabelController::class);   
     
 });

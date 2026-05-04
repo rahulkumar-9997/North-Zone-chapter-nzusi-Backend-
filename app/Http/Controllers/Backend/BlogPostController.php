@@ -11,6 +11,7 @@ use App\Helpers\ImageHelper;
 use App\Models\BlogCategory;
 use App\Models\Blog;
 use App\Models\BlogMoreImage;
+use App\Models\Label;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -19,7 +20,7 @@ class BlogPostController extends Controller
     public function index()
     {
         $blogCategories = BlogCategory::orderBy('id', 'desc')->get();
-        $blogs = Blog::with(['category', 'user', 'images'])
+        $blogs = Blog::with(['category', 'user', 'images', 'label'])
         ->latest()
         ->paginate(10);
         return view('backend.pages.blog.index', compact('blogCategories', 'blogs'));
@@ -28,7 +29,8 @@ class BlogPostController extends Controller
     public function create()
     {
         $blogCategories = BlogCategory::orderBy('id', 'desc')->get();
-        return view('backend.pages.blog.create', compact('blogCategories'));
+        $labels = Label::where('status', 1)->orderBy('id', 'desc')->get();
+        return view('backend.pages.blog.create', compact('blogCategories', 'labels'));
     }
 
     public function store(Request $request)
@@ -36,6 +38,7 @@ class BlogPostController extends Controller
         //Log::info('blog', ['all' => $request->all()]); 
         $validated = $request->validate([
             'blog_category'      => 'required|exists:blog_categories,id',
+            'label'      => 'required|exists:labels,id',
             'title'              => 'required|max:255',
             'meta_title'         => 'nullable|max:255',
             'meta_description'   => 'nullable|max:500',
@@ -72,6 +75,7 @@ class BlogPostController extends Controller
             }
             $blog = Blog::create([
                 'category_id'       => $request->blog_category,
+                'label_id'       => $request->label,
                 'title'             => $request->title,
                 'meta_title'        => $request->meta_title,
                 'meta_description'  => $request->meta_description,
@@ -110,7 +114,8 @@ class BlogPostController extends Controller
     {
         $blog = Blog::with('images')->findOrFail($id);
         $blogCategories = BlogCategory::orderBy('id', 'desc')->get();
-        return view('backend.pages.blog.create', compact('blog', 'blogCategories'));
+        $labels = Label::where('status', 1)->orderBy('id', 'desc')->get();
+        return view('backend.pages.blog.create', compact('blog', 'blogCategories', 'labels'));
     }
 
     public function update(Request $request, $id)
@@ -118,6 +123,7 @@ class BlogPostController extends Controller
         $blog = Blog::findOrFail($id);
         $validated = $request->validate([
             'blog_category'      => 'required|exists:blog_categories,id',
+            'label'      => 'required|exists:labels,id',
             'title'              => 'required|max:255',
             'meta_title'         => 'nullable|max:255',
             'meta_description'   => 'nullable|max:500',
@@ -155,6 +161,7 @@ class BlogPostController extends Controller
             }
             $blog->update([
                 'category_id'       => $request->blog_category,
+                'label_id'       => $request->label,
                 'title'             => $request->title,
                 'meta_title'        => $request->meta_title,
                 'meta_description'  => $request->meta_description,

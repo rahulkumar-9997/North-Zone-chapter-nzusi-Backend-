@@ -3,45 +3,33 @@ namespace App\Http\Controllers\Backend;
 namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Page;
-use App\Models\Menu;
-use App\Models\MenuItems;
+use App\Models\Blog;
+use App\Models\BlogCategory;
+use App\Models\MemberType;
+use App\Models\Member;
+use App\Models\Label;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 class DashboardController extends Controller
 {
     public function index(){
+        $memberCounts = Member::selectRaw('status, COUNT(*) as count')
+        ->groupBy('status')
+        ->pluck('count', 'status');
         $data = [
-            'totalPages' => Page::count(),
-            'totalMenus' => Menu::count(),
-            'totalMenuItems' => MenuItems::count(),
+            'label' => Label::count(),
+            'blog' => Blog::count(),
+            'BlogCategory' => BlogCategory::count(),
+            'MemberType' => MemberType::count(),
+            'member_total' => $memberCounts->sum(),
+            'member_approved' => $memberCounts['approved'] ?? 0,
+            'member_pending' => $memberCounts['pending'] ?? 0,
+            'member_rejected' => $memberCounts['rejected'] ?? 0,
         ];     
         return view('backend.pages.dashboard.index', compact('data'));
     }
 
-    public function getFilteredProductData(Request $request){
-        $filter = $request->input('filter', 'all');
-        $query = Product::selectRaw('MONTH(created_at) as month, COUNT(*) as total_products')
-            ->groupBy('month')->orderBy('month');
-        if ($filter === '1M') {
-            $query->where('created_at', '>=', now()->subMonth());
-        } elseif ($filter === '6M') {
-            $query->where('created_at', '>=', now()->subMonths(6));
-        } elseif ($filter === '1Y') {
-            $query->where('created_at', '>=', now()->subYear());
-        }
-        $filteredData = $query->get();
-        $formattedData = [
-            'months' => [],
-            'totals' => []
-        ];
-        foreach ($filteredData as $data) {
-            $formattedData['months'][] = date('F', mktime(0, 0, 0, $data->month, 1)); 
-            $formattedData['totals'][] = $data->total_products;
-        }
-        return response()->json($formattedData); // Return JSON response
-    }
-
-
+    
     public function showProfileUpdateForm(){
         $user = Auth::user();
         return view('backend.profile.index' , compact('user'));

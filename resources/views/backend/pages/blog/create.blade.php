@@ -71,8 +71,26 @@
                                 <small class="text-danger">{{ $message }}</small>
                             @enderror
                         </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Select Label
+                            </label>
+                            <select class="select" name="label" id="label">
+                                <option value="">Select Label</option>
+                                @foreach($labels as $label)
+                                    <option 
+                                    value="{{ $label->id }}"
+                                    {{ old('label', $label->label_id ?? '') == $label->id ? 'selected' : '' }}>{{ $label->title }}</option>
+                                @endforeach
+                            </select>
+                            @error('label')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
                     </div>                   
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">Reading Title</label>
                             <input type="text" name="reading_title" class="form-control" value="{{ old('reading_title', $blog->reading_title ?? '') }}" placeholder="1 Min Read">
@@ -81,7 +99,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <select class="select" name="status">
