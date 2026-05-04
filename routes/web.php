@@ -30,6 +30,7 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
     Route::delete('/ckeditor/image', [CkeditorController::class, 'deleteImage'])->name('ckeditor.delete');
     
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('member-analytics', [DashboardController::class, 'memberAnalytics'])->name('member.analytics');
     Route::get('/get-daily-visitors', [DashboardController::class, 'getDailyVisitors'])->name('get-daily-visitors');
     Route::get('/clear-cache', [CacheController::class, 'clearCache'])->name('clear-cache');
     Route::resource('pages', PageController::class);

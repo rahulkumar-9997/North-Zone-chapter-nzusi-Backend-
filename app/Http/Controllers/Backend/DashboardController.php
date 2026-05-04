@@ -10,6 +10,8 @@ use App\Models\Member;
 use App\Models\Label;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class DashboardController extends Controller
 {
     public function index(){
@@ -99,73 +101,41 @@ class DashboardController extends Controller
         }
     }
 
-    public function getVisitorStats(){
-        $monthlyData = VisitorTracking::selectRaw('DATE(visited_at) as date, COUNT(DISTINCT ip_address) as unique_visitors')
-        ->whereBetween('visited_at', [Carbon::now()->startOfYear(), Carbon::now()->endOfYear()])
-        ->groupBy('date')
-        ->orderBy('date', 'ASC')
-        ->get();
-
-        $formattedData = [];
-        $categories = [];
-
-        foreach ($monthlyData as $data) {
-            $formattedData[] = $data->unique_visitors; 
-            $categories[] = Carbon::parse($data->date)->format('M d');
+    public function memberAnalytics(Request $request)
+    {
+        $year = $request->year ?? date('Y');
+        $data = Member::select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('COUNT(*) as total'),
+                DB::raw("SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) as approved"),
+                DB::raw("SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending"),
+                DB::raw("SUM(CASE WHEN status = 'rejected' THEN 1 ELSE 0 END) as rejected")
+            )
+            ->whereYear('created_at', $year)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->get();
+        $months = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $months[$i] = [
+                'month' => date('M', mktime(0, 0, 0, $i, 1)),
+                'total' => 0,
+                'approved' => 0,
+                'pending' => 0,
+                'rejected' => 0,
+            ];
         }
 
-        return response()->json([
-            'data' => $formattedData,
-            'categories' => $categories
-        ]);
-    
-    }
+        foreach ($data as $row) {
+            $months[$row->month] = [
+                'month' => date('M', mktime(0, 0, 0, $row->month, 1)),
+                'total' => $row->total,
+                'approved' => $row->approved,
+                'pending' => $row->pending,
+                'rejected' => $row->rejected,
+            ];
+        }
 
-    public function getVisitorList(){
-        $data['visitor_list'] = VisitorTracking::orderBy('id', 'desc')->paginate(50);
-        $data['page_counts'] = VisitorTracking::selectRaw('
-                page_name, 
-                COUNT(*) as visitor_count'
-            )
-            ->groupBy('page_name')
-            ->get()
-            ->keyBy(function($item) {
-                return $item->page_name;
-            });
-        return view('backend.pages.dashboard.visitor-list', compact('data')); 
-    }
-
-    public function getClickDetails()
-    {
-        $data['click-link'] = ClickTrackers::orderBy('click_time', 'desc')->paginate(50);
-        return view('backend.pages.dashboard.click-list', compact('data'));
-    }
-
-    public function bulkDeleteVisitor(Request $request){
-        $request->validate([
-            'ids' => 'required|array|min:1',
-            'ids.*' => 'integer'
-        ]);
-        Log::info('Request Data:', $request->all());
-        $deleted = VisitorTracking::whereIn('id', $request->ids)->delete();
-        Log::info('Deleted rows: '.$deleted);
-        $data['visitor_list'] = VisitorTracking::orderBy('id', 'desc')->paginate(50);
-        $data['page_counts'] = VisitorTracking::selectRaw('
-                page_name,
-                COUNT(*) as visitor_count
-            ')
-            ->groupBy('page_name')
-            ->get()
-            ->keyBy(function($item) {
-                return $item->page_name;
-            });
-
-        return response()->json([
-            'success' => true,
-            'deleted' => $deleted,
-            'html' => view('backend.pages.dashboard.partials.ajax-visitor-list', [
-                'data' => $data
-            ])->render()
-        ]);
+        return response()->json(array_values($months));
     }
 }
