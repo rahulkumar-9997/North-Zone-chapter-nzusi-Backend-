@@ -14,6 +14,7 @@ use App\Models\BlogMoreImage;
 use App\Models\Label;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 
 class BlogPostController extends Controller
 {
@@ -103,6 +104,7 @@ class BlogPostController extends Controller
                 }
             }
             DB::commit();
+            Cache::tags(['blogs'])->flush();
             return redirect()->route('blog-post.index')->with('success', 'Blog created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -188,6 +190,7 @@ class BlogPostController extends Controller
                 }
             }
             DB::commit();
+            Cache::tags(['blogs'])->flush();
             return redirect()->route('blog-post.index')->with('success', 'Blog updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();

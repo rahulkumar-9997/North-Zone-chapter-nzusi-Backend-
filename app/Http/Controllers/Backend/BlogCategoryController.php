@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use App\Models\BlogCategory;
 use App\Helpers\ImageHelper;
+use Illuminate\Support\Facades\Cache;
 
 class BlogCategoryController extends Controller
 {
@@ -93,6 +94,7 @@ class BlogCategoryController extends Controller
                 'image'             => $imageName,
                 'is_active'         => $request->has('is_active') ? 1 : 0,
             ]);
+            Cache::forget('api_blog_category_list');
             $html = view('backend.pages.blog.category.partials.category-list', [
                 'blogCategories' => BlogCategory::latest()->get()
             ])->render();
@@ -212,6 +214,7 @@ class BlogCategoryController extends Controller
                 'image'             => $imageName,
                 'status'         => $request->has('is_active') ? 1 : 0,
             ]);
+            Cache::forget('api_blog_category_list');
             $html = view('backend.pages.blog.category.partials.category-list', [
                 'blogCategories' => BlogCategory::latest()->get()
             ])->render();
