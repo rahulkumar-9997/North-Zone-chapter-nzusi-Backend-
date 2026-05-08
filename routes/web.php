@@ -56,6 +56,28 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
 
     Route::resource('member-type', MemberTypeController::class);
     Route::resource('manage-member', ManageMemberController::class);
+    Route::prefix('manage-member')->group(function () {
+        Route::post('store-step1', [ManageMemberController::class, 'storeStep1'])->name('manage-member.store-step1');
+        Route::get('step2/{id}', [ManageMemberController::class, 'step2'])->name('manage-member.step2');
+        
+        Route::post('store-step2/{id}', [ManageMemberController::class, 'storeStep2'])->name('manage-member.store-step2');
+        Route::get('step3/{id}', [ManageMemberController::class, 'step3'])->name('manage-member.step3');
+        Route::post('store-step3/{id}', [ManageMemberController::class, 'storeStep3'])->name('manage-member.store-step3');
+        Route::get('step4/{id}', [ManageMemberController::class, 'step4'])->name('manage-member.step4');
+        Route::post('store-step4/{id}', [ManageMemberController::class, 'storeStep4'])->name('manage-member.store-step4');
+        
+        // Step 5
+        Route::get('step5/{id}', [ManageMemberController::class, 'step5'])->name('manage-member.step5');
+        Route::post('store-step5/{id}', [ManageMemberController::class, 'storeStep5'])->name('manage-member.store-step5');
+        
+        // Step 6
+        Route::get('step6/{id}', [ManageMemberController::class, 'step6'])->name('manage-member.step6');
+        Route::post('complete/{id}', [ManageMemberController::class, 'complete'])->name('manage-member.complete');
+        
+        // Edit routes
+        Route::get('edit-step1/{id}', [ManageMemberController::class, 'editStep1'])->name('manage-member.edit-step1');
+        Route::put('update-step1/{id}', [ManageMemberController::class, 'updateStep1'])->name('manage-member.update-step1');
+    });
     Route::resource('label', LabelController::class);   
     
 });
