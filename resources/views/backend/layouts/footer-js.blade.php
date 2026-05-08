@@ -4,17 +4,13 @@
 <script src="{{asset('backend/assets/js/jquery.slimscroll.min.js')}}"></script>
 <script src="{{asset('backend/assets/js/jquery.dataTables.min.js')}}"></script>
 <script src="{{asset('backend/assets/js/dataTables.bootstrap5.min.js')}}"></script>
-<script src="{{asset('backend/assets/plugins/summernote/summernote-bs4.min.js')}}"></script>
+<!-- <script src="{{asset('backend/assets/plugins/summernote/summernote-bs4.min.js')}}"></script> -->
 <script src="{{asset('backend/assets/plugins/select2/js/select2.min.js')}}"></script>
 <script src="{{asset('backend/assets/js/moment.min.js')}}"></script>
 <script src="{{asset('backend/assets/plugins/flatpickr/flatpickr.js')}}" type="text/javascript"></script>
 <script src="{{asset('backend/assets/js/bootstrap-datetimepicker.min.js')}}"></script>
-<!-- <script src="{{asset('backend/assets/plugins/daterangepicker/daterangepicker.js')}}" type="text/javascript"></script> -->
-<script src="{{asset('backend/assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js')}}"></script>
 <script src="{{asset('backend/assets/js/script.js')}}?v={{ config('app.assets_version') }}"></script>
 <script src="{{asset('backend/assets/plugins/toastr/toastify-js.js')}}"></script>
-<script src="{{asset('backend/assets/js/rocket-loader.min.js')}}" defer></script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js"></script>
 @stack('scripts')
 
 @if(session()->has('success'))

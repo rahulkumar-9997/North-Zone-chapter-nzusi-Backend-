@@ -221,21 +221,21 @@
 <script src="{{ asset('backend/assets/js/pages/blog-category.js ') }}"></script>
 <script src="{{ asset('backend/assets/ckeditor-4/ckeditor.js') }}?v={{ env('ASSET_VERSION', '1.0') }}"></script>
 <script>
+window.csrfToken = "{{ csrf_token() }}";
 window.CKEDITOR_ROUTES = {
     upload: "{{ route('ckeditor.upload') }}",
     imagelist: "{{ route('ckeditor.images') }}",
     delete: "{{ route('ckeditor.delete') }}"
 };
-window.csrfToken = "{{ csrf_token() }}";
 </script>
 <script src="{{ asset('backend/assets/ckeditor-4/ckeditor-r-create-config.js') }}?v={{ env('ASSET_VERSION', '1.0') }}">
 </script>
 <script>
-    document.querySelectorAll('.ckeditorUpdate4').forEach(function(el) {
-        CKEDITOR.replace(el, {
-            removePlugins: 'exportpdf'
-        });
-    });
+    // document.querySelectorAll('.ckeditorUpdate4').forEach(function(el) {
+    //     CKEDITOR.replace(el, {
+    //         removePlugins: 'exportpdf'
+    //     });
+    // });
     $(document).ready(function() {
         $("form").on("submit", function (e) {
             let $form = $(this);

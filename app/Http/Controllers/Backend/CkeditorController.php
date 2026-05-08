@@ -19,75 +19,93 @@ class CkeditorController extends Controller
             'has_token' => $request->has('_token'),
             'method' => $request->method()
         ]);
-        
-        if ($request->hasFile('upload')) {
-
-            try {
-                $imageFile = $request->file('upload');               
-                if (!$imageFile->isValid()) {
-                    throw new \Exception('Invalid file upload. Error: ' . $imageFile->getError());
-                }
-                if (!in_array($imageFile->getMimeType(), ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
-                    throw new \Exception('Invalid file type. Only images are allowed.');
-                }
-                $originalName = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $baseName = ImageHelper::generateFileName($originalName);
-                $fileName = ImageHelper::uploadSingleImageWebpOnly(
-                    $imageFile,
-                    $baseName,
-                    'ckeditor',
-                    null
-                );
-                $url = asset('storage/images/ckeditor/' . $fileName);
-                $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-                if ($CKEditorFuncNum) {
-                    return response(
-                        "<script>
-                        window.parent.CKEDITOR.tools.callFunction({$CKEditorFuncNum}, '{$url}', '');
-                        </script>"
-                    );
-                } else {
-                    return response()->json([
-                        'uploaded' => 1,
-                        'fileName' => $fileName,
-                        'url' => $url
-                    ]);
-                }
-                
-            } catch (\Exception $e) {
-                Log::error('CKEditor upload failed: ' . $e->getMessage());
-                
-                $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-                $errorMessage = 'Upload failed: ' . $e->getMessage();
-                
-                if ($CKEditorFuncNum) {
-                    return response(
-                        "<script>
-                        window.parent.CKEDITOR.tools.callFunction({$CKEditorFuncNum}, '', '{$errorMessage}');
-                        </script>"
-                    );
-                } else {
-                    return response()->json([
-                        'uploaded' => 0,
-                        'error' => ['message' => $errorMessage]
-                    ]);
-                }
-            }
-        }
         $CKEditorFuncNum = $request->input('CKEditorFuncNum');
-        $errorMessage = 'No file uploaded.';
-        
-        if ($CKEditorFuncNum) {
-            return response(
-                "<script>
-                window.parent.CKEDITOR.tools.callFunction({$CKEditorFuncNum}, '', '{$errorMessage}');
-                </script>"
-            );
-        } else {
-            return response()->json([
-                'uploaded' => 0,
-                'error' => ['message' => $errorMessage]
+        try {
+            $request->validate([
+                'upload' => 'required|file|mimes:jpg,jpeg,png,webp,avif,gif|max:5120'
             ]);
+            $imageFile = $request->file('upload');
+            if (!$imageFile->isValid()) {
+                throw new \Exception(
+                    'Invalid file upload. Error: ' . $imageFile->getError()
+                );
+            }
+            $originalName = pathinfo(
+                $imageFile->getClientOriginalName(),
+                PATHINFO_FILENAME
+            );
+            $fileName = ImageHelper::generateFileName($originalName);
+            ImageHelper::uploadSingleImageWebpOnly(
+                $imageFile,
+                $fileName,
+                'ckeditor'
+            );
+            $finalFileName = $fileName . '.webp';
+            $url = asset('storage/images/ckeditor/' . $finalFileName);
+            Log::info('CKEditor upload success', [
+                'file' => $finalFileName,
+                'url' => $url
+            ]);
+            if ($CKEditorFuncNum) {
+                return response(
+                    "<script>
+                        window.parent.CKEDITOR.tools.callFunction(
+                            {$CKEditorFuncNum},
+                            '{$url}',
+                            'Image uploaded successfully'
+                        );
+                    </script>"
+                );
+            }
+            return response()->json([
+                'uploaded' => true,
+                'fileName' => $finalFileName,
+                'url' => $url
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errorMessage = collect($e->errors())
+                ->flatten()
+                ->first();
+            Log::error('CKEditor validation failed: ' . $errorMessage);
+            if ($CKEditorFuncNum) {
+                return response(
+                    "<script>
+                        window.parent.CKEDITOR.tools.callFunction(
+                            {$CKEditorFuncNum},
+                            '',
+                            '{$errorMessage}'
+                        );
+                    </script>"
+                );
+            }
+
+            return response()->json([
+                'uploaded' => false,
+                'error' => [
+                    'message' => $errorMessage
+                ]
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('CKEditor upload failed: ' . $e->getMessage());
+            $errorMessage = 'Upload failed: ' . $e->getMessage();
+            if ($CKEditorFuncNum) {
+                return response(
+                    "<script>
+                        window.parent.CKEDITOR.tools.callFunction(
+                            {$CKEditorFuncNum},
+                            '',
+                            '{$errorMessage}'
+                        );
+                    </script>"
+                );
+            }
+            return response()->json([
+                'uploaded' => false,
+                'error' => [
+                    'message' => $errorMessage
+                ]
+            ], 500);
         }
     }
 
@@ -95,37 +113,41 @@ class CkeditorController extends Controller
     {
         try {
             $imagePath = storage_path('app/public/images/ckeditor/');
-            $images = [];
             if (!File::exists($imagePath)) {
-                return response()->json(['error' => 'Directory not found'], 404);
+                return response()->json([
+                    'images' => [],
+                    'hasMore' => false
+                ]);
             }
-            $files = File::files($imagePath);
-            
-            foreach ($files as $file) {
-                $extension = strtolower($file->getExtension());
-                if (in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                    $images[] = [
-                        'url' => asset('storage/images/ckeditor/' . $file->getFilename()),
-                        'name' => $file->getFilename(),
-                        'size' => $file->getSize(),
-                        'time' => $file->getMTime(),
-                        'type' => $file->getExtension()
-                    ];
-                }
+            $page = (int) $request->get('page', 1);
+            $limit = 50;
+            $files = collect(File::files($imagePath))
+                ->sortByDesc(function ($file) {
+                    return $file->getMTime();
+                })
+                ->values();
+            $total = $files->count();
+            $paginatedFiles = $files
+                ->slice(($page - 1) * $limit, $limit)
+                ->values();
+            $images = [];
+            foreach ($paginatedFiles as $file) {
+                $images[] = [
+                    'url' => asset('storage/images/ckeditor/' . $file->getFilename()),
+                    'name' => $file->getFilename(),
+                ];
             }
-            
-            usort($images, function($a, $b) {
-                return $b['time'] - $a['time'];
-            });
-            
-            return response()->json($images);
-            
+            return response()->json([
+                'images' => $images,
+                'hasMore' => (($page * $limit) < $total)
+            ]);
         } catch (\Exception $e) {
-            Log::error('CKEditor image list failed: ' . $e->getMessage());
-            return response()->json(['error' => 'Failed to load images'], 500);
+            return response()->json([
+                'images' => [],
+                'hasMore' => false
+            ]);
         }
     }
-    
     /**
      * Optional: Delete CKEditor image
      */

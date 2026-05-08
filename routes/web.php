@@ -25,9 +25,9 @@ Route::prefix('admin')->group(function () {
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
 Route::middleware(['auth:web', 'admin'])->group(function () {
-    Route::post('/ckeditor/upload', [CkeditorController::class, 'upload'])->name('ckeditor.upload');
-    Route::get('/ckeditor/images', [CkeditorController::class, 'imageList'])->name('ckeditor.images');
-    Route::delete('/ckeditor/image', [CkeditorController::class, 'deleteImage'])->name('ckeditor.delete');
+    Route::post('ckeditor/upload', [CkeditorController::class, 'upload'])->name('ckeditor.upload');
+    Route::get('ckeditor/images', [CkeditorController::class, 'imageList'])->name('ckeditor.images');
+    Route::delete('ckeditor/image', [CkeditorController::class, 'deleteImage'])->name('ckeditor.delete');
     
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('member-analytics', [DashboardController::class, 'memberAnalytics'])->name('member.analytics');

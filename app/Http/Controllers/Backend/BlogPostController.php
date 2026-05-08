@@ -39,14 +39,14 @@ class BlogPostController extends Controller
         //Log::info('blog', ['all' => $request->all()]); 
         $validated = $request->validate([
             'blog_category'      => 'required|exists:blog_categories,id',
-            'label'      => 'required|exists:labels,id',
+            'label'      => 'nullable|exists:labels,id',
             'title'              => 'required|max:255',
             'meta_title'         => 'nullable|max:255',
             'meta_description'   => 'nullable|max:500',
             'reading_title'      => 'nullable|max:255',
             'main_image_file' => 'nullable|file|mimetypes:image/jpeg,image/png,image/webp,image/avif,image/gif|max:5000',
             'more_image_file'    => 'nullable|array|max:10',
-            'more_image_file.*'  => 'file|mimes:jpg,jpeg,png,webp|max:2048',
+            'more_image_file.*'  => 'nullable|file|mimetypes:image/jpeg,image/png,image/webp,image/avif,image/gif|max:5000',
             'pdf_file'           => 'nullable|mimes:pdf|max:5000',
             'pdf_file_title'     => 'nullable|max:255',
             'short_content'      => 'nullable|string',
@@ -76,7 +76,7 @@ class BlogPostController extends Controller
             }
             $blog = Blog::create([
                 'category_id'       => $request->blog_category,
-                'label_id'       => $request->label,
+                'label_id'       => $request->label ?: null,
                 'title'             => $request->title,
                 'meta_title'        => $request->meta_title,
                 'meta_description'  => $request->meta_description,
@@ -103,8 +103,7 @@ class BlogPostController extends Controller
                     ]);
                 }
             }
-            DB::commit();
-            Cache::tags(['blogs'])->flush();
+            DB::commit();           
             return redirect()->route('blog-post.index')->with('success', 'Blog created successfully');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -125,14 +124,14 @@ class BlogPostController extends Controller
         $blog = Blog::findOrFail($id);
         $validated = $request->validate([
             'blog_category'      => 'required|exists:blog_categories,id',
-            'label'      => 'required|exists:labels,id',
+            'label'      => 'nullable|exists:labels,id',
             'title'              => 'required|max:255',
             'meta_title'         => 'nullable|max:255',
             'meta_description'   => 'nullable|max:500',
             'reading_title'      => 'nullable|max:255',
             'main_image_file'    => 'nullable|file|mimetypes:image/jpeg,image/png,image/webp,image/avif,image/gif|max:5000',
             'more_image_file'    => 'nullable|array|max:10',
-            'more_image_file.*'  => 'file|mimes:jpg,jpeg,png,webp|max:2048',
+            'more_image_file.*'  => 'nullable|file|mimetypes:image/jpeg,image/png,image/webp,image/avif,image/gif|max:5000',
             'pdf_file'           => 'nullable|mimes:pdf|max:5000',
             'pdf_file_title'     => 'nullable|max:255',
             'short_content'      => 'nullable|string',
@@ -163,7 +162,7 @@ class BlogPostController extends Controller
             }
             $blog->update([
                 'category_id'       => $request->blog_category,
-                'label_id'       => $request->label,
+                'label_id'       => $request->label ?: null,
                 'title'             => $request->title,
                 'meta_title'        => $request->meta_title,
                 'meta_description'  => $request->meta_description,
@@ -190,7 +189,6 @@ class BlogPostController extends Controller
                 }
             }
             DB::commit();
-            Cache::tags(['blogs'])->flush();
             return redirect()->route('blog-post.index')->with('success', 'Blog updated successfully');
         } catch (\Exception $e) {
             DB::rollBack();
