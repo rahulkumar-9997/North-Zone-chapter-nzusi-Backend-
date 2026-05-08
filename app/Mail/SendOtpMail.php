@@ -8,7 +8,6 @@ use Illuminate\Queue\SerializesModels;
 class SendOtpMail extends Mailable
 {
     use Queueable, SerializesModels;
-
     public $otp;
 
     public function __construct($otp)
@@ -19,7 +18,7 @@ class SendOtpMail extends Mailable
     public function build()
     {
         return $this->subject('Your Login OTP')
-            ->view('emails.customer-login-otp')
+            ->view('emails.member-login-otp')
             ->with([
                 'otp' => $this->otp
             ]);

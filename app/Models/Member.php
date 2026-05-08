@@ -3,9 +3,10 @@
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 class Member extends Model
 {
-    use HasFactory;
+    use HasFactory, HasApiTokens;
     protected $table = 'members';
     protected $fillable = [
         'membership_no',

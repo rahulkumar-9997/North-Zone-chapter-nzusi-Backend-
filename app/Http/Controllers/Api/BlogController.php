@@ -354,6 +354,5 @@ class BlogController extends Controller
             'recent_post' => $recent_post,
         ]);
     }
-
     
 }
