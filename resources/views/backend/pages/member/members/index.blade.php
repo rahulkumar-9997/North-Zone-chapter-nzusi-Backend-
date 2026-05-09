@@ -1,12 +1,30 @@
 @extends('backend.layouts.master')
 @section('title','Member Lists')
 @push('styles')
+<style>
+    .sort-btn {
+        color: #adb5bd;
+        font-size: 12px;
+        line-height: 1;
+    }
+    .sort-btn:hover {
+        color: #0d6efd;
+    }
+    .sort-btn.text-primary {
+        color: #0d6efd !important;
+    }
+    th {
+        position: relative;
+    }
+</style>
 @endpush
 @section('main-content')
 <div class="content">
     <div class="filter-section">
         <div id="example-2_wrapper" class="filter-box">
-            <div class="d-flex flex-wrap align-items-center bg-white p-2 gap-3">                
+            <div class="d-flex flex-wrap align-items-center bg-white p-2 gap-3">
+                <input type="hidden" id="current_sort_by" value="">
+                <input type="hidden" id="current_sort_order" value="">                
                 <div class="d-flex align-items-center border-end pe-1">
                     <p class="mb-0 me-2 text-dark-grey f-14">Member Type:</p>
                     <select id="member_type" class="form-select form-select-md">
@@ -62,7 +80,7 @@
 
 @endsection
 @push('scripts')
-<script src="{{ asset('backend/assets/js/pages/member-filter.js') }}"></script>
+<script src="{{ asset('backend/assets/js/pages/member-filter.js') }}?v={{ config('app.assets_version') }}"></script>
 <script>
     window.routes = {
         memberIndex: "{{ route('manage-member.index') }}"
@@ -93,4 +111,5 @@
         $(window).resize(updateFooterWidth);
     });
  </script>
+ 
 @endpush

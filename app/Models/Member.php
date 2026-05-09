@@ -18,6 +18,8 @@ class Member extends Model
         'mobile_no',
         'membership_type_id',
         'dob',
+        'usi_member',
+        'usi_number',
         'preferred_address',
         'membership_approved_date',
         'status',
@@ -37,6 +39,7 @@ class Member extends Model
         'password_changed_at' => 'datetime',
         'is_active' => 'boolean',
         'is_verified' => 'boolean',
+        'usi_member' => 'string',
     ];
 
     protected $hidden = [

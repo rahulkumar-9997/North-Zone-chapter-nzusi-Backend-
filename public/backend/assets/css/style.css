@@ -12080,24 +12080,6 @@ table.dataTable {
   border-radius: 8px;
 }
 
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-  border-radius: 50px !important;
-}
-
-::-webkit-scrollbar-track {
-  background: #A6AAAF;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #FE9F43;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #A6AAAF;
-}
-
 .swal2-header .swal2-title {
   font-size: 18px;
 }
@@ -12137,24 +12119,6 @@ table.dataTable {
 }
 .input-group .scanner-set:hover {
   background: #212B36;
-}
-
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-  border-radius: 50px !important;
-}
-
-::-webkit-scrollbar-track {
-  background: #A6AAAF;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #FE9F43;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #A6AAAF;
 }
 
 .swal2-header .swal2-title {
