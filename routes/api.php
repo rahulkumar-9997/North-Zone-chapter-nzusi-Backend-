@@ -26,7 +26,18 @@ Route::prefix('member')->group(function () {
         Route::controller(MemberController::class)->group(function () {
             Route::get('/profile', 'profile');
             Route::post('/update-profile', 'updateProfile');
-            Route::post('/logout', 'logout');
+            Route::get('/profile/address', [MemberController::class, 'getAddress']);
+            Route::put('/profile/address', [MemberController::class, 'updateAddress']);
+            Route::get('present-appointment-designation', [MemberController::class, 'getPresentAppointmentDesignation']);
+            Route::put('present-appointment-designation', [MemberController::class, 'updatePresentAppointmentDesignation']);
+
+            Route::get('academic-qualification', [MemberController::class, 'getAcademicQualification']);
+            Route::put('academic-qualification', [MemberController::class, 'updateAcademicQualification']);
+
+            Route::get('training-in-urology', [MemberController::class, 'getTrainingInUrology']);
+            Route::put('training-in-urology', [MemberController::class, 'updateTrainingInUrology']);
+
+            Route::post('logout', 'logout');
         });        
     });
     
