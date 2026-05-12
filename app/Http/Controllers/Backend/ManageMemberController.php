@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class ManageMemberController extends Controller
 {
@@ -181,6 +182,7 @@ class ManageMemberController extends Controller
                 ]);
             }
             DB::commit();
+            $this->clearMemberCache($member->id);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Member created successfully!',
@@ -278,6 +280,7 @@ class ManageMemberController extends Controller
                 MemberOfficeAddress::where('member_id', $member->id)->delete();
             }
             DB::commit();
+            $this->clearMemberCache($member->id);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Member updated successfully!',
@@ -340,6 +343,7 @@ class ManageMemberController extends Controller
                 ]
             );
             DB::commit();
+            $this->clearMemberCache($member->id);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Present designation saved successfully!',
@@ -435,6 +439,7 @@ class ManageMemberController extends Controller
                 ]);
             }
             DB::commit();
+            $this->clearMemberCache($member->id);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Academic qualifications saved successfully!',
@@ -477,6 +482,7 @@ class ManageMemberController extends Controller
                 ]);
             }
             DB::commit();
+            $this->clearMemberCache($member->id);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Academic qualifications updated successfully!',
@@ -536,7 +542,7 @@ class ManageMemberController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-        DB::beginTransaction();
+        DB::beginTransaction();       
         try {
             MemberUrologyTraining::where('member_id', $member->id)->delete();
             if ($request->has('trainings')) {
@@ -557,6 +563,7 @@ class ManageMemberController extends Controller
             }
             $member->update($updateData);
             DB::commit();
+            $this->clearMemberCache($member->id);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Trainings saved successfully!',
@@ -615,6 +622,7 @@ class ManageMemberController extends Controller
             }
             $member->update($updateData);
             DB::commit();
+            $this->clearMemberCache($member->id);
             return response()->json([
                 'status' => 'success',
                 'message' => 'Trainings updated successfully!',
@@ -681,5 +689,14 @@ class ManageMemberController extends Controller
         ])->findOrFail($id);
         
         return view('backend.pages.member.members.show', compact('member'));
+    }
+
+    private function clearMemberCache($memberId = null)
+    {
+        if ($memberId) {
+            Cache::forget('member_profile_' . $memberId);
+            Cache::forget('member_address_' . $memberId);
+        }
+        Cache::forget('members_list');
     }
 }

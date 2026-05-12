@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\SendOtpMail;
 use App\Models\Member;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
 
 class MemberAuthController extends Controller
 {
@@ -114,7 +115,8 @@ class MemberAuthController extends Controller
                 'message' => 'Validation Error',
                 'errors' => $validator->errors()
             ], 422);
-        }        
+        }       
+        
         $input = trim($request->contact);
         $isEmail = filter_var($input, FILTER_VALIDATE_EMAIL);
         $isMobileNo = preg_match('/^[6-9]\d{9}$/', $input);
@@ -171,28 +173,103 @@ class MemberAuthController extends Controller
                 'message' => 'Invalid or expired OTP'
             ], 401);
         }
+        $member->load([
+            'officeAddress',
+            'residenceAddress',
+            'presentDesignations',
+            'academicQualifications',
+            'trainings',
+            'type'
+        ]);        
         $member->update([
             'last_login_at' => now(),
             'login_attempts' => 0
-        ]); 
-        cache()->forget('otp_' . $member->id);        
+        ]);         
+        cache()->forget('otp_' . $member->id);
         $isProfileIncomplete = empty($member->name) || empty($member->email);
         $member->tokens()->delete();
         $tokenResult = $member->createToken('auth_token');
-        $plainTextToken = $tokenResult->plainTextToken;  
+        $plainTextToken = $tokenResult->plainTextToken;          
         return response()->json([
             'success' => true,
             'message' => 'Login successful',
             'data' => [
-                'member' => $member,
                 'access_token' => $plainTextToken,
                 'token_type' => 'Bearer',
+                'expires_in' => 12 * 60 * 60,
                 'is_profile_complete' => !$isProfileIncomplete,
-                'expires_in' => 12 * 60 * 60
+                'member' => [
+                    'id' => $member->id,
+                    'membership_no' => $member->membership_no,
+                    'name' => $member->name,
+                    'email' => $member->email,
+                    'gender' => $member->gender,
+                    'city_name' => $member->city_name,
+                    'mobile_no' => $member->mobile_no,
+                    'membership_type' => $member->type ? $member->type->name : null,
+                    'dob' => $member->dob ? $member->dob->format('Y-m-d') : null,
+                    'usi_member' => $member->usi_member ?? null,
+                    'usi_number' => $member->usi_number ?? null,
+                    'preferred_address' => $member->preferred_address,
+                    'membership_approved_date' => $member->membership_approved_date ? $member->membership_approved_date->format('Y-m-d') : null,
+                    'status' => $member->status,
+                    'is_active' => $member->is_active,
+                    'is_verified' => $member->is_verified,
+                    'last_login_at' => $member->last_login_at ? $member->last_login_at->format('Y-m-d H:i:s') : null,
+                    'designation_status' => $member->presentDesignations->isNotEmpty() ? 'done' : 'pending',
+                    'academic_status' => $member->academicQualifications->isNotEmpty() ? 'done' : 'pending',
+                    'training_status' => $member->trainings->isNotEmpty() ? 'done' : 'pending',
+
+                    'office_address' => $member->officeAddress ? [
+                        'state' => $member->officeAddress->office_state,
+                        'city' => $member->officeAddress->office_city,
+                        'pin' => $member->officeAddress->office_pin,
+                        'address' => $member->officeAddress->office_address,
+                        'phone' => $member->officeAddress->office_phone,
+                        'email' => $member->officeAddress->office_email,
+                        'website' => $member->officeAddress->office_website,
+                    ] : null,
+                    
+                    'residence_address' => $member->residenceAddress ? [
+                        'state' => $member->residenceAddress->residence_state,
+                        'city' => $member->residenceAddress->residence_city,
+                        'pin' => $member->residenceAddress->residence_pin,
+                        'address' => $member->residenceAddress->residence_address,
+                        'phone' => $member->residenceAddress->residence_phone,
+                        'email' => $member->residenceAddress->residence_email,
+                        'website' => $member->residenceAddress->residence_website,
+                    ] : null,
+
+                    'present_designations' => $member->presentDesignations->map(function($designation) {
+                        return [
+                            'id' => $designation->id,
+                            'designation' => $designation->designation,
+                            'institution' => $designation->institution,
+                            'year_of_joining' => $designation->year_of_joining,
+                        ];
+                    }),
+                    
+                    'academic_qualifications' => $member->academicQualifications->map(function($qualification) {
+                        return [
+                            'id' => $qualification->id,
+                            'degree' => $qualification->degree,
+                            'institution' => $qualification->institution,
+                            'year_of_passing' => $qualification->year_of_passing,
+                        ];
+                    }),
+
+                    'urology_trainings' => $member->trainings->map(function($training) {
+                        return [
+                            'id' => $training->id,
+                            'institution' => $training->institution,
+                            'from_date' => $training->from_date ? Carbon::parse($training->from_date)->format('d M Y') : null,
+                            'to_date' => $training->to_date ? Carbon::parse($training->to_date)->format('d M Y') : null,
+                        ];
+                    }),
+                ]
             ]
         ]);
     }
-
     public function resendOtp(Request $request)
     {
         $validator = Validator::make($request->all(), [

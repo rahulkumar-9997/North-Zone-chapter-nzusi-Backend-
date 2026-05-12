@@ -8,18 +8,17 @@ use App\Models\MemberResidenceAddress;
 use App\Models\MemberAcademicQualification;
 use App\Models\MemberPresentDesignation;
 use App\Models\MemberUrologyTraining;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use App\Helpers\ImageHelper;
+use Carbon\Carbon;
+
 class MemberController extends Controller
 {
    
     public function profile(Request $request)
     {
         try {
-            $user = $request->user();            
+            $user = $request->user(); 
             if (!$user) {
                 return response()->json([
                     'success' => false,
@@ -28,11 +27,14 @@ class MemberController extends Controller
                 ], 404);
             }            
             $user->load([
+                'officeAddress',
+                'residenceAddress',
                 'presentDesignations',
                 'academicQualifications',
-                'trainings'
-            ]);
-            $cacheKey = 'member_profile_' . $user->id;
+                'trainings',
+                'type'
+            ]);            
+            $cacheKey = 'member_profile_' . $user->id;            
             $data = Cache::remember($cacheKey, 3600, function () use ($user) {
                 return [
                     'id' => $user->id,
@@ -42,23 +44,62 @@ class MemberController extends Controller
                     'gender' => $user->gender,
                     'city_name' => $user->city_name,
                     'mobile_no' => $user->mobile_no,
-                    'membership_type_id' => $user->membership_type_id,
+                    'membership_type' => $user->type ? $user->type->name : null,
                     'dob' => $user->dob ? $user->dob->format('Y-m-d') : null,
-                    'usi_member' => $user->usi_member,
-                    'usi_number' => $user->usi_number,
+                    'usi_member' => $user->usi_member ?? null,
+                    'usi_number' => $user->usi_number ?? null,
                     'preferred_address' => $user->preferred_address,
                     'membership_approved_date' => $user->membership_approved_date ? $user->membership_approved_date->format('Y-m-d') : null,
                     'status' => $user->status,
-                    //'user_id' => $user->user_id,
-                    'login_attempts' => $user->login_attempts,
-                    'last_login_at' => $user->last_login_at ? $user->last_login_at->format('Y-m-d H:i:s') : null,
-                    'last_login_ip' => $user->last_login_ip,
                     'is_active' => $user->is_active,
                     'is_verified' => $user->is_verified,
-                    'password_changed_at' => $user->password_changed_at ? $user->password_changed_at->format('Y-m-d H:i:s') : null,
+                    'last_login_at' => $user->last_login_at ? $user->last_login_at->format('Y-m-d H:i:s') : null,
                     'designation_status' => $user->presentDesignations->isNotEmpty() ? 'done' : 'pending',
                     'academic_status' => $user->academicQualifications->isNotEmpty() ? 'done' : 'pending',
                     'training_status' => $user->trainings->isNotEmpty() ? 'done' : 'pending',
+                    'office_address' => $user->officeAddress ? [
+                        'state' => $user->officeAddress->office_state,
+                        'city' => $user->officeAddress->office_city,
+                        'pin' => $user->officeAddress->office_pin,
+                        'address' => $user->officeAddress->office_address,
+                        'phone' => $user->officeAddress->office_phone,
+                        'email' => $user->officeAddress->office_email,
+                        'website' => $user->officeAddress->office_website,
+                    ] : null,
+                    
+                    'residence_address' => $user->residenceAddress ? [
+                        'state' => $user->residenceAddress->residence_state,
+                        'city' => $user->residenceAddress->residence_city,
+                        'pin' => $user->residenceAddress->residence_pin,
+                        'address' => $user->residenceAddress->residence_address,
+                        'phone' => $user->residenceAddress->residence_phone,
+                        'email' => $user->residenceAddress->residence_email,
+                        'website' => $user->residenceAddress->residence_website,
+                    ] : null,
+                    'present_designations' => $user->presentDesignations->map(function($designation) {
+                        return [
+                            'id' => $designation->id,
+                            'designation' => $designation->designation,
+                            'institution' => $designation->institution,
+                            'year_of_joining' => $designation->year_of_joining,
+                        ];
+                    }),
+                    'academic_qualifications' => $user->academicQualifications->map(function($qualification) {
+                        return [
+                            'id' => $qualification->id,
+                            'degree' => $qualification->degree,
+                            'institution' => $qualification->institution,
+                            'year_of_passing' => $qualification->year_of_passing,
+                        ];
+                    }),
+                    'urology_trainings' => $user->trainings->map(function($training) {
+                        return [
+                            'id' => $training->id,
+                            'institution' => $training->institution,
+                            'from_date' => Carbon::parse($training->from_date)->format('d M Y'),
+                            'to_date' => Carbon::parse($training->to_date)->format('d M Y'),
+                        ];
+                    }),
                 ];
             });
             
@@ -71,14 +112,15 @@ class MemberController extends Controller
         } catch (\Exception $e) {
             Log::error('Profile fetch error: ' . $e->getMessage(), [
                 'user_id' => $request->user()?->id
-            ]);            
+            ]);    
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Unable to fetch profile. Please try again later.',
                 'data' => null
             ], 500);
         }
-    }    
+    }
 
     public function updateProfile(Request $request)
     {
