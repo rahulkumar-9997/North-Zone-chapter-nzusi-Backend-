@@ -5,11 +5,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\MemberAuthController;
 use App\Http\Controllers\Api\MemberController;
+use App\Http\Controllers\Api\AbstractSubmissionController;
 
 Route::get('blog-category', [BlogController::class, 'blogCategory']);
 Route::get('blog-category/{slug}', [BlogController::class, 'categoryWiseBlogList']);
 Route::get('blog', [BlogController::class, 'blogList']);
 Route::get('blog/{slug}', [BlogController::class, 'blogDetails']);
+Route::post('abstract-submission', [AbstractSubmissionController::class, 'abstractSubmissionStore'])->middleware('throttle:5,1');
 
 Route::prefix('member')->group(function () {
     /* Public APIs */

@@ -13,6 +13,7 @@ use App\Http\Controllers\Backend\BlogPostController;
 use App\Http\Controllers\Backend\ManageMemberController;
 use App\Http\Controllers\Backend\MemberTypeController;
 use App\Http\Controllers\Backend\LabelController;
+use App\Http\Controllers\Backend\AbstractSubmissionController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);
@@ -79,5 +80,5 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
         /**Member edit route */
     });
     Route::resource('label', LabelController::class);   
-    
+    Route::get('abstract-submission', [AbstractSubmissionController::class, 'index'])->name('abstract-submission.index');
 });

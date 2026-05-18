@@ -98,7 +98,12 @@
                         </li>
                      </ul>
                   </li>
-
+                  <li class="{{ request()->routeIs('abstract-submission.index') ? 'active' : '' }}">
+                     <a href="{{ route('abstract-submission.index') }}">
+                        <i class="ti ti-file-text fs-16 me-2"></i>
+                        <span>Abstract Submission</span>
+                     </a>
+                  </li>
                </ul>
             </li>
          </ul>
