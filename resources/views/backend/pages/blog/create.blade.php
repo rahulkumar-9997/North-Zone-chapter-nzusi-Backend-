@@ -124,7 +124,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label class="form-label">More Images (Max 10)</label>
+                            <label class="form-label">More Images</label>
                             <input 
                                 type="file" 
                                 name="more_image_file[]" 
@@ -132,7 +132,7 @@
                                 class="form-control"
                                 multiple
                             >
-                            <small class="text-muted">You can select up to 10 images</small>
+                            <small class="text-muted">You can select multiple images</small>
                             <div id="image-preview" class="mt-2 d-flex flex-wrap"></div>
                             @error('more_image_file') 
                                 <small class="text-danger">{{ $message }}</small> 
