@@ -38,7 +38,7 @@ class BlogPostController extends Controller
     {
         //Log::info('blog', ['all' => $request->all()]); 
         $validated = $request->validate([
-            'blog_category'      => 'required|exists:blog_categories,id',
+            'blog_category'      => 'nullable|exists:blog_categories,id',
             'label'      => 'nullable|exists:labels,id',
             'title'              => 'required|max:255',
             'meta_title'         => 'nullable|max:255',
@@ -75,7 +75,7 @@ class BlogPostController extends Controller
                 );
             }
             $blog = Blog::create([
-                'category_id'       => $request->blog_category,
+                'category_id'       => $request->blog_category ?: null,
                 'label_id'       => $request->label ?: null,
                 'title'             => $request->title,
                 'meta_title'        => $request->meta_title,
@@ -123,7 +123,7 @@ class BlogPostController extends Controller
     {
         $blog = Blog::findOrFail($id);
         $validated = $request->validate([
-            'blog_category'      => 'required|exists:blog_categories,id',
+            'blog_category'      => 'nullable|exists:blog_categories,id',
             'label'      => 'nullable|exists:labels,id',
             'title'              => 'required|max:255',
             'meta_title'         => 'nullable|max:255',
@@ -161,7 +161,7 @@ class BlogPostController extends Controller
                 );
             }
             $blog->update([
-                'category_id'       => $request->blog_category,
+                'category_id'       => $request->blog_category ?: null,
                 'label_id'       => $request->label ?: null,
                 'title'             => $request->title,
                 'meta_title'        => $request->meta_title,

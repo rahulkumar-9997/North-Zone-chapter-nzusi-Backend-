@@ -27,8 +27,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">
-                                Select Category                                 
-                                <span class="text-danger">*</span>
+                                Select Category   
                                 <a href="javascript:void(0);" class="btn btn-primary btn-md d-inline-flex align-items-center btn-sm"
                                 href="javascript:void(0);" 
                                 data-route="{{ route('blog-category.create') }}"
