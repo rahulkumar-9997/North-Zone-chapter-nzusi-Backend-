@@ -18,6 +18,7 @@ class Blog extends Model
         'image_file',
         'pdf_file_title',
         'pdf_file',
+        'youtube_id_or_link',
         'short_content',
         'long_content',
         'status',

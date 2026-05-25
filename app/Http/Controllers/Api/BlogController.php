@@ -261,6 +261,7 @@ class BlogController extends Controller
                 'view_count',
                 'meta_title',
                 'meta_description',
+                'youtube_id_or_link',
                 'created_at'
             )
             ->first();
@@ -292,6 +293,7 @@ class BlogController extends Controller
             'main_image' => $blog->image_file
                 ? asset('storage/images/blog/' . $blog->image_file)
                 : null,
+            'youtube_id_or_link' => $blog->youtube_id_or_link ?? null,
             'category' => $blog->category ? [
                 'id' => $blog->category->id,
                 'name' => $blog->category->title,

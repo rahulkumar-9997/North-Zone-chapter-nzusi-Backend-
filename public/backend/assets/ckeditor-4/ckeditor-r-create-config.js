@@ -127,18 +127,50 @@ document.querySelectorAll(".ckeditorUpdate4").forEach(function (el) {
         allowedContent: true,
         extraAllowedContent: "*(*);*{*}",
         extraPlugins: "uploadimage, sourcearea, justify, div, bootstrapgrid",
-        filebrowserUploadUrl:
-            window.CKEDITOR_ROUTES.upload + "?_token=" + window.csrfToken,
-        filebrowserImageUploadUrl:
-            window.CKEDITOR_ROUTES.upload + "?_token=" + window.csrfToken,
-        imageUploadUrl:
-            window.CKEDITOR_ROUTES.upload + "?_token=" + window.csrfToken,
+        filebrowserUploadUrl:window.CKEDITOR_ROUTES.upload + "?_token=" + window.csrfToken,
+        filebrowserImageUploadUrl:window.CKEDITOR_ROUTES.upload + "?_token=" + window.csrfToken,
+        imageUploadUrl: window.CKEDITOR_ROUTES.upload + "?_token=" + window.csrfToken,
         filebrowserUploadMethod: "form",
         baseHref: window.location.origin + "/",
         contentsCss: [
             CKEDITOR.basePath + "contents.css",
             "https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css",
         ],
+        resize_enabled: false,
+        image_previewText: " ",
+        removeDialogTabs: "image:advanced",
+        on: {
+            instanceReady: function() {
+                this.dataProcessor.htmlFilter.addRules({
+                    elements: {
+                        img: function(element) {
+                            if (element.attributes.style) {
+                                delete element.attributes.style;
+                            }
+                            if (element.attributes.width) {
+                                delete element.attributes.width;
+                            }
+                            if (element.attributes.height) {
+                                delete element.attributes.height;
+                            }
+                            return element;
+                        }
+                    }
+                });
+                this.on('change', function() {
+                    var data = this.getData();
+                    if (data.indexOf('style="') !== -1 || data.indexOf('width="') !== -1) {
+                        var cleanData = data.replace(/<img([^>]*?)style=["'][^"']*["']([^>]*?)>/gi, function(match, before, after) {
+                            return '<img' + before + after + '>';
+                        }).replace(/width=["'][^"']*["']/gi, '')
+                        .replace(/height=["'][^"']*["']/gi, '');
+                        if (cleanData !== data) {
+                            this.setData(cleanData);
+                        }
+                    }
+                });
+            }
+        }
     });
 });
 

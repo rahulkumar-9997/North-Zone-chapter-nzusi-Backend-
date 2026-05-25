@@ -157,7 +157,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">PDF Title</label>
                             <input type="text" name="pdf_file_title" class="form-control" value="{{ old('pdf_file_title', $blog->pdf_file_title ?? '') }}">
@@ -166,7 +166,7 @@
                             @enderror
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">PDF File</label>
                             <input type="file" name="pdf_file" class="form-control">
@@ -175,6 +175,15 @@
                             @endif
                         </div>
                     </div> 
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label class="form-label">YouTube Video ID</label>
+                            <input type="text" name="youtube_video_id" class="form-control" value="{{ old('youtube_video_id', $blog->youtube_id_or_link ?? '') }}">
+                            @error('youtube_video_id')
+                                <small class="text-danger">{{ $message }}</small>
+                            @enderror
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="form-label">Meta Title 

@@ -20,6 +20,9 @@
                 @if($blog->pdf_file)
                     <br><a href="{{ asset('storage/pdf/blog/'.$blog->pdf_file) }}" target="_blank">View PDF</a>
                 @endif
+                @if($blog->youtube_id_or_link)
+                    <br><a class="text-orange" href="https://www.youtube.com/watch?v={{ $blog->youtube_id_or_link }}" target="_blank">YouTube Video</a>
+                @endif
             </td>
             <td>
                 @if($blog->image_file)
