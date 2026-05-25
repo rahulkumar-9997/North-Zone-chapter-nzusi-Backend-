@@ -281,7 +281,7 @@ class BlogController extends Controller
             'reading_title' => $blog->reading_title,
             'view_count' => $blog->view_count + 1,
             'short_content' => $blog->short_content,
-            'long_content' => $blog->long_content,
+            'long_content' => preg_replace('/ style=("|\')(.*?)("|\')/i', '', $blog->long_content),
             'slug' => $blog->slug,
             'published_at' => $blog->created_at
                 ? Carbon::parse($blog->created_at)->format('d M Y')
