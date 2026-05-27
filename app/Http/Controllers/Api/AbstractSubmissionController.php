@@ -45,6 +45,10 @@ class AbstractSubmissionController extends Controller
                         'file',
                         'max:10240'
                     ],
+                    'nzusi_membership_no' => 'nullable|string|max:255',
+                    'usi_membership_no' => 'nullable|string|max:255',
+                    'conf_reg_no' => 'nullable|string|max:255',
+                    'video_link' => 'nullable|string|max:255',
                 ],
                 [
                     'first_name.required' => 'First name is required.',
@@ -60,6 +64,10 @@ class AbstractSubmissionController extends Controller
                     'corresponding_author.required' => 'Corresponding author is required.',
                     'abstract_body.required' => 'Abstract body is required.',
                     'supporting_file.max' => 'File size should not exceed 10 MB.',
+                    'nzusi_membership_no.max' => 'NZUSI membership number should not exceed 255 characters.',
+                    'usi_membership_no.max' => 'USI membership number should not exceed 255 characters.',
+                    'conf_reg_no.max' => 'Conference registration number should not exceed 255 characters.',
+                    'video_link.max' => 'Video link should not exceed 255 characters.',
                 ]
             );
             if ($validator->fails()) {
@@ -110,6 +118,10 @@ class AbstractSubmissionController extends Controller
                 'supporting_file' => $fileName,
                 'submitted_at' => now(),
                 'status' => 'pending',
+                'nzusi_membership_no' => trim($request->nzusi_membership_no),
+                'usi_membership_no' => trim($request->usi_membership_no),
+                'conf_reg_no' => trim($request->conf_reg_no),
+                'video_link' => trim($request->video_link),
             ]);
             try {
                 $recipients = [

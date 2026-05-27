@@ -23,6 +23,10 @@ class AbstractSubmission extends Model
         'corresponding_author',
         'abstract_body',
         'supporting_file',
+        'nzusi_membership_no',
+        'usi_membership_no',
+        'conf_reg_no',
+        'video_link',
         'status',
         'submitted_at',
     ];

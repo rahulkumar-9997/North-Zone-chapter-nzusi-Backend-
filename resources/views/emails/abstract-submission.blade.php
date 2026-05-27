@@ -67,10 +67,31 @@
         {{ $submission->supporting_file }}
     </p>
     @endif
+    @if($submission->nzusi_membership_no)
     <p>
-        <strong>Status:</strong>
-        {{ ucfirst($submission->status) }}
+        <strong>NZUSI Membership Number:</strong>
+        {{ $submission->nzusi_membership_no }}
     </p>
+    @endif
+    @if($submission->usi_membership_no)
+    <p>
+        <strong>USI Membership Number:</strong>
+        {{ $submission->usi_membership_no }}
+    </p>
+    @endif
+    @if($submission->conf_reg_no)
+    <p>
+        <strong>Conference Registration Number:</strong>
+        {{ $submission->conf_reg_no }}
+    </p>
+    @endif
+    @if($submission->video_link)
+    <p>
+        <strong>Video Link:</strong>
+        {{ $submission->video_link }}
+    </p>
+    @endif
+    
     <p>
         <strong>Submitted At:</strong>
         {{ $submission->submitted_at }}

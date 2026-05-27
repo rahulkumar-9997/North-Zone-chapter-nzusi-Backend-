@@ -22,6 +22,18 @@
             <td>
                 {{ $submission->first_name }}
                 {{ $submission->last_name }}
+                @if ($submission->nzusi_membership_no)
+                   <span class="badge bg-primary">
+                       {{ $submission->nzusi_membership_no }}
+                   </span>
+                @endif
+
+                @if ($submission->usi_membership_no)
+                   <span class="badge bg-secondary">
+                       {{ $submission->usi_membership_no }}
+                   </span>
+                @endif
+
             </td>
             <td>
                 {{ $submission->email }}
