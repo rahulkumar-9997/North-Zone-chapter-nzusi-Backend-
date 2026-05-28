@@ -41,9 +41,9 @@ Route::prefix('member')->group(function () {
             Route::put('training-in-urology', [MemberController::class, 'updateTrainingInUrology']);
 
             Route::post('logout', 'logout');
-            Route::get('member-list', [MemberController::class, 'getMemberList']);
+            
         });        
     });    
-    
+    Route::get('member-list', [MemberController::class, 'getMemberList']);
 });
 

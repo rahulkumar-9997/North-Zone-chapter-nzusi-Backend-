@@ -639,6 +639,16 @@ class ManageMemberController extends Controller
 
     public function importIndex()
     {
+        /*
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('member_academic_qualifications')->truncate();
+        DB::table('member_urology_trainings')->truncate();
+        DB::table('member_office_addresses')->truncate();
+        DB::table('member_present_designations')->truncate();
+        DB::table('member_residence_addresses')->truncate();
+        DB::table('members')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        */
         return view('backend.pages.member.members.import.index');
     }
 

@@ -5,7 +5,6 @@
              <th>Name</th>
              <th>Email</th>
              <th>Phone</th>
-             <th>Institution</th>
              <th>Presentation Type</th>
              <th>Abstract Title</th>
              <!-- <th>Status</th> -->
@@ -41,9 +40,6 @@
              </td>
              <td>
                  {{ $submission->phone }}
-             </td>
-             <td>
-                 {{ $submission->institution }}
              </td>
              <td>
                 @if($submission->presentation_type =='video')
@@ -95,9 +91,13 @@
                  <a href="{{ route('abstract-submission.show', $submission->id) }}" class="btn btn-sm btn-primary">
                      <i class="fa-solid fa-eye"></i>
                  </a>
-                 <a href="{{ route('abstract-submission.destroy', $submission->id) }}" class="btn btn-sm btn-danger">
-                     <i class="fa-solid fa-trash"></i>
-                 </a>
+                 <form action="{{ route('abstract-submission.destroy', $submission->id) }}" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger delete_abstract" data-name="{{ $submission->first_name }} {{ $submission->last_name }}">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </form>
              </td>
          </tr>
          @empty

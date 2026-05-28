@@ -25,6 +25,7 @@
                                 <th>name</th>
                                 <th>email</th>
                                 <th>city_name</th>
+                                <th>address</th>
                                 <th>mobile_no</th>
                                 <th>membership</th>
                             </tr>
@@ -40,6 +41,9 @@
                                 </td>
                                 <td>
                                     New Delhi
+                                </td>
+                                <td>
+                                    Example address
                                 </td>
                                 <td>
                                    9910755660

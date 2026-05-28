@@ -40,7 +40,7 @@ class MembersImport implements
     {
         if (!empty($data['email']) && str_contains($data['email'], ',')) {
             $emails = explode(',', $data['email']);
-            $data['email'] = trim($emails[0]); // take first email
+            $data['email'] = trim($emails[0]); 
         }
         foreach ($data as $key => $value) {
             if (is_string($value)) {
@@ -56,6 +56,7 @@ class MembersImport implements
     {
         $membershipNo = $this->clean($row['membership_no'] ?? null);
         $name         = $this->clean($row['name'] ?? null);
+        $address      = $this->clean($row['address'] ?? null);
         $email        = $this->clean($row['email'] ?? null);
         $mobile       = $this->clean($row['mobile_no'] ?? null);
         $city         = $this->clean($row['city_name'] ?? null);
@@ -93,27 +94,46 @@ class MembersImport implements
             $memberType = $types[$key];
         }
 
-        return Member::updateOrCreate(
-            ['membership_no' => $membershipNo],
-            [
+        if ($membershipNo) {
+            return Member::updateOrCreate(
+                ['membership_no' => $membershipNo],
+                [
+                    'name' => $name,
+                    'email' => $email ?? $membershipNo,
+                    'password' => $password,
+                    'city_name' => $city,
+                    'address' => $address,
+                    'mobile_no' => $mobile,
+                    'membership_type_id' => $memberType?->id,
+                    'status' => 'approved',
+                    'user_id' => $this->userId,
+                    'is_active' => true,
+                    'is_verified' => true,
+                ]
+            );
+        } else {
+            return Member::create([
+                'membership_no' => null,
                 'name' => $name,
-                'email' => $email ?? $membershipNo,
+                'email' => $email,
                 'password' => $password,
                 'city_name' => $city,
+                'address' => $address,
                 'mobile_no' => $mobile,
                 'membership_type_id' => $memberType?->id,
                 'status' => 'approved',
                 'user_id' => $this->userId,
                 'is_active' => true,
                 'is_verified' => true,
-            ]
-        );
+
+            ]);
+        }
     }
 
     public function rules(): array
     {
         return [
-            '*.membership_no' => ['required'],
+            '*.membership_no' => ['nullable'],
             '*.name' => ['required'],
             '*.email' => ['nullable', 'email'],
             '*.mobile_no' => ['nullable'],
@@ -142,12 +162,24 @@ class MembersImport implements
 
     private function clean($value)
     {
-        if ($value === null) return null;
-
-        $value = (string) $value;
+        if ($value === null) {
+            return null;
+        }
+        $value = trim((string) $value);
         $value = preg_replace('/\x{00A0}/u', ' ', $value);
         $value = preg_replace('/\s+/', ' ', $value);
-
+        $lower = strtolower($value);
+        /* Convert invalid excel values to null */
+        if (
+            $lower === 'nan' ||
+            $lower === 'null' ||
+            $lower === 'none' ||
+            $lower === 'n/a' ||
+            $lower === '#n/a' ||
+            $lower === '-'
+        ) {
+            return null;
+        }
         return trim($value);
     }
 }

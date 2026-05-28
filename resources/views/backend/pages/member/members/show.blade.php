@@ -164,6 +164,11 @@
                             <i class="bi bi-building me-2 text-muted"></i>
                             {{ $member->city_name ?? 'Not specified' }}
                         </div>
+                        <div class="info-label">Address</div>
+                        <div class="info-text">
+                            <i class="bi bi-building me-2 text-muted"></i>
+                            {{ $member->address ?? 'Not specified' }}
+                        </div>
 
                         <div class="info-label">Created At</div>
                         <div class="info-text">

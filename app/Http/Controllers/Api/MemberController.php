@@ -616,11 +616,6 @@ class MemberController extends Controller
         try {
             $query = Member::with([
                 'type',
-                'officeAddress',
-                'residenceAddress',
-                'presentDesignations',
-                'academicQualifications',
-                'trainings'
             ]);
             /* Filter by member type */
             if ($request->filled('member_type')) {
@@ -631,7 +626,6 @@ class MemberController extends Controller
             }
             /* Filter by status */
             if ($request->filled('status')) {
-
                 $query->where(
                     'status',
                     $request->status
@@ -682,90 +676,24 @@ class MemberController extends Controller
                 return [
                     'id' => $member->id,
                     'membership_no' => $member->membership_no,
+                    'usi_member' =>$member->usi_member,   
                     'name' => $member->name,
                     'email' => $member->email,
                     'mobile_no' => $member->mobile_no,
                     'gender' => $member->gender,
                     'city_name' => $member->city_name,
-                    'dob' => $member->dob
-                        ? Carbon::parse($member->dob)->format('d M Y')
-                        : null,
+                    'address' => $member->address,
                     'profile_image' => $member->image
                         ? asset('storage/images/member/' . $member->image)
                         : null,
-                    'status' => $member->status,
-                    'is_active' => $member->is_active,
-                    'is_verified' => $member->is_verified,
-                    'membership_approved_date' => $member->membership_approved_date
-                        ? Carbon::parse($member->membership_approved_date)
-                        ->format('d M Y')
-                        : null,
-                    'created_at' => $member->created_at
-                        ? Carbon::parse($member->created_at)
-                        ->format('d M Y')
-                        : null,
+                    'status' => $member->status,                    
                     'membership_type' => $member->type ? [
                         'id' => $member->type->id,
                         'title' => $member->type->title,
-                    ] : null,
-                    'office_address' => $member->officeAddress ? [
-                        'state' => $member->officeAddress->office_state,
-                        'city' => $member->officeAddress->office_city,
-                        'pin' => $member->officeAddress->office_pin,
-                        'address' => $member->officeAddress->office_address,
-                        'phone' => $member->officeAddress->office_phone,
-                        'email' => $member->officeAddress->office_email,
-                        'website' => $member->officeAddress->office_website,
-                    ] : null,
-                    'residence_address' => $member->residenceAddress ? [
-                        'state' => $member->residenceAddress->residence_state,
-                        'city' => $member->residenceAddress->residence_city,
-                        'pin' => $member->residenceAddress->residence_pin,
-                        'address' => $member->residenceAddress->residence_address,
-                        'phone' => $member->residenceAddress->residence_phone,
-                        'email' => $member->residenceAddress->residence_email,
-                        'website' => $member->residenceAddress->residence_website,
-                    ] : null,
-                    'present_designations' => $member->presentDesignations
-                        ->map(function ($designation) {
-                            return [
-                                'id' => $designation->id,
-                                'designation' => $designation->designation,
-                                'institution' => $designation->institution,
-                                'year_of_joining' => $designation->year_of_joining,
-                            ];
-                        }),
-
-                    'academic_qualifications' => $member->academicQualifications
-                        ->map(function ($qualification) {
-                            return [
-                                'id' => $qualification->id,
-                                'degree' => $qualification->degree,
-                                'institution' => $qualification->institution,
-                                'year_of_passing' => $qualification->year_of_passing,
-                            ];
-                        }),
-
-                    'urology_trainings' => $member->trainings
-                        ->map(function ($training) {
-                            return [
-                                'id' => $training->id,
-                                'institution' => $training->institution,
-                                'from_date' => $training->from_date
-                                    ? Carbon::parse($training->from_date)
-                                    ->format('d M Y')
-                                    : null,
-                                'to_date' => $training->to_date
-                                    ? Carbon::parse($training->to_date)
-                                    ->format('d M Y')
-                                    : null,
-
-                            ];
-                        }),
+                    ] : null,                   
 
                 ];
-            });
-
+            });            
             return response()->json([
                 'success' => true,
                 'message' => 'Members list fetched successfully.',

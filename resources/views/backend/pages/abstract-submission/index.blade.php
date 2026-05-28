@@ -4,23 +4,52 @@
 @endpush
 @section('main-content')
 <div class="content">
-    <div class="filter-section">
+    <div class="filter-section mb-3">
         <div id="example-2_wrapper" class="filter-box">
-            <div class="d-flex flex-wrap align-items-center bg-white p-2 gap-3">
-                <div class="d-flex align-items-center border-end pe-1">
-                    <p class="mb-0 me-2 text-dark-grey f-14">Presentation Type:</p>
-                    <select id="member_type" class="form-select form-select-md">
-                        <option value="">Select Presentation Type</option>
-                        <option value="video">Video Presentation (BV)</option>
-                        <option value="podium">Podium / Best Paper (BP)</option>
-                        <option value="poster">Moderated Poster (BPos)</option>
-                        <option value="eposter">Unmoderated e-Poster (UPos)</option>
-                    </select>
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa fa-filter text-primary"></i>
+                        <h5 class="mb-0 fw-semibold">
+                            Filter Abstract Submissions
+                        </h5>
+                    </div>
                 </div>
-                <button id="reset-button" class="btn btn-danger" style="display:none;">
-                    <i class="fa fa-refresh"></i>
-                    Reset Filters
-                </button>
+                <div class="card-body p-2">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-lg-4 col-md-6">
+                            <label class="form-label fw-semibold">
+                                Presentation Type
+                            </label>
+                            <select id="member_type" class="form-select form-select-md">
+                                <option value="">
+                                    All Presentation Types
+                                </option>
+                                <option value="video">
+                                    Video Presentation (BV)
+                                </option>
+                                <option value="podium">
+                                    Podium / Best Paper (BP)
+                                </option>
+                                <option value="poster">
+                                    Moderated Poster (BPos)
+                                </option>
+                                <option value="eposter">
+                                    Unmoderated e-Poster (UPos)
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-lg-2 col-md-4">
+                            <button
+                                id="reset-button"
+                                class="btn btn-danger w-100"
+                                style="display:none;">
+                                <i class="fa fa-refresh me-1"></i>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -42,6 +71,27 @@
 @push('scripts')
 <script>
     $(document).ready(function() {
+        $('.delete_abstract').click(function(event) {
+            var form = $(this).closest("form");
+            var name = $(this).data("name");
+            event.preventDefault();
+            Swal.fire({
+                title: `Are you sure you want to delete this ${name}?`,
+                text: "If you delete this, it will be gone forever.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "Cancel",
+                dangerMode: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    $(document).ready(function() {
         function fetchAbstractSubmissions(page = 1) {
             let presentation_type = $('#member_type').val();
             let url = $('.abstract-submission-list-table-render').data('url');
@@ -55,7 +105,7 @@
                 },
                 success: function(response) {
                     $('.abstract-submission-list-table-render').html(response);
-                     $("#loader").hide();
+                    $("#loader").hide();
                     toggleResetButton();
                 },
                 error: function() {
@@ -82,6 +132,7 @@
             $('#member_type').val('');
             fetchAbstractSubmissions();
         });
+
         function toggleResetButton() {
             let presentation_type = $('#member_type').val();
             if (presentation_type !== '') {

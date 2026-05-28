@@ -89,30 +89,51 @@
                         </td>
                         <td>
                             <div class="d-flex flex-column">
-                                <small class="text-muted mb-1">
-                                    <i class="fa fa-envelope me-1"></i> {{ $member->email }}
-                                </small>
-                                <small>
-                                    <i class="fa fa-phone me-1"></i> {{ $member->mobile_no ?? 'Not provided' }}
-                                </small>
+                                @php
+                                    $isInvalidEmail =
+                                        empty($member->email) ||
+                                        !filter_var($member->email, FILTER_VALIDATE_EMAIL);
+                                @endphp
+                                @if(!$isInvalidEmail)
+                                    <small class="text-muted mb-1">
+                                        <i class="fa fa-envelope me-1 text-primary"></i>
+                                        {{ $member->email }}
+                                    </small>
+                                @else
+                                    <small class="text-warning fw-semibold mb-1">
+                                        <i class="fa fa-exclamation-circle me-1"></i>
+                                        Update Email Required (Login Disabled).
+                                    </small>
+                                @endif
+                                @if($member->mobile_no)
+                                    <small class="text-muted">
+                                        <i class="fa fa-phone me-1 text-success"></i>
+                                        {{ $member->mobile_no }}
+                                    </small>
+                                @else
+                                    <small class="text-danger">
+                                        <i class="fa fa-phone me-1"></i>
+                                        Mobile not provided .
+                                    </small>
+                                @endif
                             </div>
                         </td>
                         <td>
-                            <span class="badge bg-info bg-opacity-10 text-info px-3 py-2">
+                            <span class="badge bg-info bg-opacity-10 text-info">
                                 {{ $member->type->title ?? 'N/A' }}
                             </span>
                         </td>
                         <td>
                             @if($member->status == 'approved')
-                            <span class="badge bg-success px-3 py-2">
+                            <span class="badge bg-success">
                                 <i class="fa fa-thumbs-up me-1"></i> Approved
                             </span>
                             @elseif($member->status == 'pending')
-                            <span class="badge bg-warning px-3 py-2">
+                            <span class="badge bg-warning">
                                 <i class="fa fa-hourglass-half me-1"></i> Pending
                             </span>
                             @else
-                            <span class="badge bg-danger px-3 py-2">
+                            <span class="badge bg-danger">
                                 <i class="fa fa-times-circle me-1"></i> Rejected
                             </span>
                             @endif
