@@ -81,4 +81,6 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
     });
     Route::resource('label', LabelController::class);   
     Route::get('abstract-submission', [AbstractSubmissionController::class, 'index'])->name('abstract-submission.index');
+    Route::get('abstract-submission/{id}', [AbstractSubmissionController::class, 'show'])->name('abstract-submission.show');
+    Route::delete('abstract-submission/{id}', [AbstractSubmissionController::class, 'destroy'])->name('abstract-submission.destroy');
 });

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Member;
@@ -14,18 +16,18 @@ use Carbon\Carbon;
 
 class MemberController extends Controller
 {
-   
+
     public function profile(Request $request)
     {
         try {
-            $user = $request->user(); 
+            $user = $request->user();
             if (!$user) {
                 return response()->json([
                     'success' => false,
                     'message' => 'User not found.',
                     'data' => null
                 ], 404);
-            }            
+            }
             $user->load([
                 'officeAddress',
                 'residenceAddress',
@@ -33,8 +35,8 @@ class MemberController extends Controller
                 'academicQualifications',
                 'trainings',
                 'type'
-            ]);            
-            $cacheKey = 'member_profile_' . $user->id;            
+            ]);
+            $cacheKey = 'member_profile_' . $user->id;
             $data = Cache::remember($cacheKey, 3600, function () use ($user) {
                 return [
                     'id' => $user->id,
@@ -66,7 +68,7 @@ class MemberController extends Controller
                         'email' => $user->officeAddress->office_email,
                         'website' => $user->officeAddress->office_website,
                     ] : null,
-                    
+
                     'residence_address' => $user->residenceAddress ? [
                         'state' => $user->residenceAddress->residence_state,
                         'city' => $user->residenceAddress->residence_city,
@@ -76,7 +78,7 @@ class MemberController extends Controller
                         'email' => $user->residenceAddress->residence_email,
                         'website' => $user->residenceAddress->residence_website,
                     ] : null,
-                    'present_designations' => $user->presentDesignations->map(function($designation) {
+                    'present_designations' => $user->presentDesignations->map(function ($designation) {
                         return [
                             'id' => $designation->id,
                             'designation' => $designation->designation,
@@ -84,7 +86,7 @@ class MemberController extends Controller
                             'year_of_joining' => $designation->year_of_joining,
                         ];
                     }),
-                    'academic_qualifications' => $user->academicQualifications->map(function($qualification) {
+                    'academic_qualifications' => $user->academicQualifications->map(function ($qualification) {
                         return [
                             'id' => $qualification->id,
                             'degree' => $qualification->degree,
@@ -92,7 +94,7 @@ class MemberController extends Controller
                             'year_of_passing' => $qualification->year_of_passing,
                         ];
                     }),
-                    'urology_trainings' => $user->trainings->map(function($training) {
+                    'urology_trainings' => $user->trainings->map(function ($training) {
                         return [
                             'id' => $training->id,
                             'institution' => $training->institution,
@@ -102,18 +104,17 @@ class MemberController extends Controller
                     }),
                 ];
             });
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Profile data fetched successfully.',
                 'data' => $data
             ], 200);
-            
         } catch (\Exception $e) {
             Log::error('Profile fetch error: ' . $e->getMessage(), [
                 'user_id' => $request->user()?->id
-            ]);    
-            
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Unable to fetch profile. Please try again later.',
@@ -168,14 +169,12 @@ class MemberController extends Controller
                     'is_verified' => $user->is_verified,
                 ]
             ], 200);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
                 'errors' => $e->errors()
             ], 422);
-
         } catch (\Exception $e) {
             Log::error('Profile update error: ' . $e->getMessage(), [
                 'user_id' => $request->user()?->id
@@ -191,10 +190,10 @@ class MemberController extends Controller
     public function getAddress(Request $request)
     {
         try {
-            $user = $request->user();            
-            $cacheKey = 'member_address_' . $user->id;            
+            $user = $request->user();
+            $cacheKey = 'member_address_' . $user->id;
             $data = Cache::remember($cacheKey, 3600, function () use ($user) {
-                $user->load(['officeAddress', 'residenceAddress']);                
+                $user->load(['officeAddress', 'residenceAddress']);
                 return [
                     'preferred_address' => $user->preferred_address,
                     'office_address' => $user->officeAddress ? [
@@ -217,15 +216,14 @@ class MemberController extends Controller
                     ] : null,
                 ];
             });
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Address fetched successfully.',
                 'data' => $data
             ], 200);
-            
         } catch (\Exception $e) {
-            Log::error('Get address error: ' . $e->getMessage());            
+            Log::error('Get address error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Unable to fetch address.',
@@ -237,16 +235,16 @@ class MemberController extends Controller
     public function updateAddress(Request $request)
     {
         try {
-            $user = $request->user();            
+            $user = $request->user();
             $rules = [
-                'preferred_address' => 'required|in:office,residence',                
+                'preferred_address' => 'required|in:office,residence',
                 'office_state' => 'required_if:preferred_address,office|nullable|string|max:255',
                 'office_city' => 'required_if:preferred_address,office|nullable|string|max:255',
                 'office_pin' => 'nullable|string|max:6',
                 'office_address' => 'nullable|string|max:255',
                 'office_phone' => 'nullable|string|max:20',
                 'office_email' => 'nullable|email',
-                'office_website' => 'nullable|url',                
+                'office_website' => 'nullable|url',
                 'residence_state' => 'required_if:preferred_address,residence|nullable|string|max:255',
                 'residence_city' => 'required_if:preferred_address,residence|nullable|string|max:255',
                 'residence_pin' => 'nullable|string|max:6',
@@ -254,14 +252,14 @@ class MemberController extends Controller
                 'residence_phone' => 'nullable|string|max:20',
                 'residence_email' => 'nullable|email',
                 'residence_website' => 'nullable|url',
-            ];            
+            ];
             $messages = [
                 'preferred_address.required' => 'Preferred address is required.',
                 'office_state.required_if' => 'Office state is required.',
                 'office_city.required_if' => 'Office city is required.',
                 'residence_state.required_if' => 'Residence state is required.',
                 'residence_city.required_if' => 'Residence city is required.',
-            ];            
+            ];
             $request->validate($rules, $messages);
             $user->update([
                 'preferred_address' => $request->preferred_address
@@ -303,17 +301,15 @@ class MemberController extends Controller
                 'success' => true,
                 'message' => 'Address updated successfully.',
             ], 200);
-            
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
                 'errors' => $e->errors()
             ], 422);
-            
         } catch (\Exception $e) {
             Log::error('Update address error: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Unable to update address.',
@@ -326,7 +322,7 @@ class MemberController extends Controller
     {
         try {
             $user = $request->user();
-            $designation = $user->presentDesignations()->first();            
+            $designation = $user->presentDesignations()->first();
             return response()->json([
                 'success' => true,
                 'message' => 'Designation fetched successfully.',
@@ -410,7 +406,7 @@ class MemberController extends Controller
     {
         try {
             $user = $request->user();
-            $qualifications = $user->academicQualifications;            
+            $qualifications = $user->academicQualifications;
             return response()->json([
                 'success' => true,
                 'message' => 'Academic Qualifications fetched successfully.',
@@ -484,14 +480,12 @@ class MemberController extends Controller
                 //     ];
                 // })
             ], 200);
-
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed.',
                 'errors' => $e->errors(),
             ], 422);
-
         } catch (\Exception $e) {
             Log::error('Academic qualification update error: ' . $e->getMessage(), [
                 'user_id' => $request->user()?->id
@@ -508,7 +502,7 @@ class MemberController extends Controller
     {
         try {
             $user = $request->user();
-            $trainings = $user->trainings;            
+            $trainings = $user->trainings;
             return response()->json([
                 'success' => true,
                 'message' => 'Trainings fetched successfully.',
@@ -589,7 +583,7 @@ class MemberController extends Controller
             ], 500);
         }
     }
-    
+
     public function logout(Request $request)
     {
         try {
@@ -616,7 +610,190 @@ class MemberController extends Controller
             ], 500);
         }
     }
-    
+
+    public function getMemberList(Request $request)
+    {
+        try {
+            $query = Member::with([
+                'type',
+                'officeAddress',
+                'residenceAddress',
+                'presentDesignations',
+                'academicQualifications',
+                'trainings'
+            ]);
+            /* Filter by member type */
+            if ($request->filled('member_type')) {
+                $query->where(
+                    'membership_type_id',
+                    $request->member_type
+                );
+            }
+            /* Filter by status */
+            if ($request->filled('status')) {
+
+                $query->where(
+                    'status',
+                    $request->status
+                );
+            }
+            /* Search */
+            if ($request->filled('search')) {
+                $search = trim($request->search);
+                $query->where(function ($q) use ($search) {
+                    $q->where('membership_no', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('mobile_no', 'like', "%{$search}%");
+                });
+            }
+            /* Sorting */
+            $sortBy = $request->input('sort_by', 'id');
+            $sortOrder = $request->input('sort_order', 'desc');
+            if (!in_array($sortOrder, ['asc', 'desc'])) {
+                $sortOrder = 'desc';
+            }
+            $query->getQuery()->orders = null;
+            switch ($sortBy) 
+            {
+                case 'name':
+                    $query->orderByRaw(
+                        "LOWER(name) {$sortOrder}"
+                    );
+                    break;
+                case 'membership_no':
+                    $query->orderByRaw(
+                        "LENGTH(membership_no), membership_no {$sortOrder}"
+                    );
+                    break;
+                case 'id':
+                default:
+                    $query->orderBy(
+                        'id',
+                        $sortOrder
+                    );
+                    break;
+            }
+            if ($sortBy !== 'id') {
+                $query->orderBy('id', 'desc');
+            }
+            $members = $query->paginate(30);
+            $memberData = $members->getCollection()->map(function ($member) {
+                return [
+                    'id' => $member->id,
+                    'membership_no' => $member->membership_no,
+                    'name' => $member->name,
+                    'email' => $member->email,
+                    'mobile_no' => $member->mobile_no,
+                    'gender' => $member->gender,
+                    'city_name' => $member->city_name,
+                    'dob' => $member->dob
+                        ? Carbon::parse($member->dob)->format('d M Y')
+                        : null,
+                    'profile_image' => $member->image
+                        ? asset('storage/images/member/' . $member->image)
+                        : null,
+                    'status' => $member->status,
+                    'is_active' => $member->is_active,
+                    'is_verified' => $member->is_verified,
+                    'membership_approved_date' => $member->membership_approved_date
+                        ? Carbon::parse($member->membership_approved_date)
+                        ->format('d M Y')
+                        : null,
+                    'created_at' => $member->created_at
+                        ? Carbon::parse($member->created_at)
+                        ->format('d M Y')
+                        : null,
+                    'membership_type' => $member->type ? [
+                        'id' => $member->type->id,
+                        'title' => $member->type->title,
+                    ] : null,
+                    'office_address' => $member->officeAddress ? [
+                        'state' => $member->officeAddress->office_state,
+                        'city' => $member->officeAddress->office_city,
+                        'pin' => $member->officeAddress->office_pin,
+                        'address' => $member->officeAddress->office_address,
+                        'phone' => $member->officeAddress->office_phone,
+                        'email' => $member->officeAddress->office_email,
+                        'website' => $member->officeAddress->office_website,
+                    ] : null,
+                    'residence_address' => $member->residenceAddress ? [
+                        'state' => $member->residenceAddress->residence_state,
+                        'city' => $member->residenceAddress->residence_city,
+                        'pin' => $member->residenceAddress->residence_pin,
+                        'address' => $member->residenceAddress->residence_address,
+                        'phone' => $member->residenceAddress->residence_phone,
+                        'email' => $member->residenceAddress->residence_email,
+                        'website' => $member->residenceAddress->residence_website,
+                    ] : null,
+                    'present_designations' => $member->presentDesignations
+                        ->map(function ($designation) {
+                            return [
+                                'id' => $designation->id,
+                                'designation' => $designation->designation,
+                                'institution' => $designation->institution,
+                                'year_of_joining' => $designation->year_of_joining,
+                            ];
+                        }),
+
+                    'academic_qualifications' => $member->academicQualifications
+                        ->map(function ($qualification) {
+                            return [
+                                'id' => $qualification->id,
+                                'degree' => $qualification->degree,
+                                'institution' => $qualification->institution,
+                                'year_of_passing' => $qualification->year_of_passing,
+                            ];
+                        }),
+
+                    'urology_trainings' => $member->trainings
+                        ->map(function ($training) {
+                            return [
+                                'id' => $training->id,
+                                'institution' => $training->institution,
+                                'from_date' => $training->from_date
+                                    ? Carbon::parse($training->from_date)
+                                    ->format('d M Y')
+                                    : null,
+                                'to_date' => $training->to_date
+                                    ? Carbon::parse($training->to_date)
+                                    ->format('d M Y')
+                                    : null,
+
+                            ];
+                        }),
+
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Members list fetched successfully.',
+                'data' => $memberData,
+                'pagination' => [
+                    'current_page' => $members->currentPage(),
+                    'last_page' => $members->lastPage(),
+                    'per_page' => $members->perPage(),
+                    'total' => $members->total(),
+                    'from' => $members->firstItem(),
+                    'to' => $members->lastItem(),
+                    'next_page_url' => $members->nextPageUrl(),
+                    'prev_page_url' => $members->previousPageUrl(),
+                ]
+
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error(
+                'Members list fetch error: ' . $e->getMessage()
+            );
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to fetch members list.',
+                'data' => null
+            ], 500);
+        }
+    }
+
     public function logoutAll(Request $request)
     {
         $request->user()->tokens()->delete();

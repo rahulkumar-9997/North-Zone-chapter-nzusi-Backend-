@@ -35,13 +35,15 @@ Route::prefix('member')->group(function () {
 
             Route::get('academic-qualification', [MemberController::class, 'getAcademicQualification']);
             Route::put('academic-qualification', [MemberController::class, 'updateAcademicQualification']);
+           
 
             Route::get('training-in-urology', [MemberController::class, 'getTrainingInUrology']);
             Route::put('training-in-urology', [MemberController::class, 'updateTrainingInUrology']);
 
             Route::post('logout', 'logout');
+            Route::get('member-list', [MemberController::class, 'getMemberList']);
         });        
-    });
+    });    
     
 });
 
