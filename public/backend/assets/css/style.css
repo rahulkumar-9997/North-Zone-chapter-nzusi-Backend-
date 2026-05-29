@@ -2624,10 +2624,10 @@ button:focus {
 }
 
 .badge {
-  padding: 0.35rem 0.45rem;
-  text-transform: capitalize;
+  /* padding: 0.35rem 0.45rem; */
+  /* text-transform: capitalize; */
   font-weight: 500;
-  letter-spacing: 0.5px;
+  /* letter-spacing: 0.5px; */
   border-radius: 5px;
 }
 .badge.badge-xs {

@@ -25,7 +25,7 @@ class AbstractSubmissionController extends Controller
                 [
                     'first_name' => 'required|string|max:255',
                     'last_name' => 'nullable|string|max:255',
-                    'email' => 'nullable|email:rfc,dns|max:255',
+                    'email' => 'nullable|email|max:255',
                     'phone' => [
                         'nullable',
                         'regex:/^[0-9+\-\s()]+$/',
@@ -43,7 +43,8 @@ class AbstractSubmissionController extends Controller
                     'supporting_file' => [
                         'nullable',
                         'file',
-                        'max:51200',
+                        'mimes:pdf',
+                        'max:51200',// 50MB
                     ],
                     'nzusi_membership_no' => 'nullable|string|max:255',
                     'usi_membership_no' => 'nullable|string|max:255',
@@ -100,7 +101,30 @@ class AbstractSubmissionController extends Controller
                     'app/public/images/abstract-submission/' . $fileName
                 );
             }
+            /* Generate Abstract ID */
+            $firstLetter = strtoupper(substr(trim($request->first_name), 0, 1));
+            $presentationLetter = strtoupper(
+                substr(trim($request->presentation_type), 0, 1)
+            );
+            $topicLetter = strtoupper(
+                substr(trim($request->topic_category), 0, 1)
+            );
+            $titleLetter = strtoupper(
+                substr(trim($request->abstract_title), 0, 1)
+            );
+            $randomString = strtoupper(
+                Str::random(3)
+            );
+            $abstractId =
+                'NZUSI-' .
+                date('Y') . '-' .
+                $firstLetter .
+                $presentationLetter .
+                $topicLetter .
+                $titleLetter .
+                $randomString;
             $submission = AbstractSubmission::create([
+                'abstract_id' =>$abstractId,
                 'post_user' => Auth::id(),
                 'first_name' => trim($request->first_name),
                 'last_name' => trim($request->last_name),
@@ -128,10 +152,17 @@ class AbstractSubmissionController extends Controller
                     'rahulkumarmaurya464@gmail.com',
                 ];
                 foreach ($recipients as $email) {
+                    /*
                     Mail::to($email)->send(
                         new AbstractSubmissionMail(
                             $submission,
                             $absoluteFilePath
+                        )
+                    );
+                    */
+                    Mail::to($email)->queue(
+                        new AbstractSubmissionMail(
+                            $submission,
                         )
                     );
                 }

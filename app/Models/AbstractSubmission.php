@@ -8,6 +8,7 @@ class AbstractSubmission extends Model
     use HasFactory;
     protected $table = 'abstract_submissions';
     protected $fillable = [
+        'abstract_id',
         'post_user',
         'first_name',
         'last_name',

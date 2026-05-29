@@ -616,21 +616,7 @@ class MemberController extends Controller
         try {
             $query = Member::with([
                 'type',
-            ]);
-            /* Filter by member type */
-            if ($request->filled('member_type')) {
-                $query->where(
-                    'membership_type_id',
-                    $request->member_type
-                );
-            }
-            /* Filter by status */
-            if ($request->filled('status')) {
-                $query->where(
-                    'status',
-                    $request->status
-                );
-            }
+            ]);            
             /* Search */
             if ($request->filled('search')) {
                 $search = trim($request->search);
@@ -640,37 +626,8 @@ class MemberController extends Controller
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('mobile_no', 'like', "%{$search}%");
                 });
-            }
-            /* Sorting */
-            $sortBy = $request->input('sort_by', 'id');
-            $sortOrder = $request->input('sort_order', 'desc');
-            if (!in_array($sortOrder, ['asc', 'desc'])) {
-                $sortOrder = 'desc';
-            }
-            $query->getQuery()->orders = null;
-            switch ($sortBy) 
-            {
-                case 'name':
-                    $query->orderByRaw(
-                        "LOWER(name) {$sortOrder}"
-                    );
-                    break;
-                case 'membership_no':
-                    $query->orderByRaw(
-                        "LENGTH(membership_no), membership_no {$sortOrder}"
-                    );
-                    break;
-                case 'id':
-                default:
-                    $query->orderBy(
-                        'id',
-                        $sortOrder
-                    );
-                    break;
-            }
-            if ($sortBy !== 'id') {
-                $query->orderBy('id', 'desc');
-            }
+            }            
+            $query->orderBy('id', 'desc');
             $members = $query->paginate(30);
             $memberData = $members->getCollection()->map(function ($member) {
                 return [

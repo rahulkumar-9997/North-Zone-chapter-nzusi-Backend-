@@ -20,6 +20,15 @@ class AbstractSubmissionController extends Controller
                 $request->presentation_type
             );
         }
+
+        if ($request->filled('topic_category')) {
+            $query->where(
+                'topic_category',
+                $request->topic_category
+            );
+        }
+
+        
         $abstractSubmissions = $query
             ->latest()
             ->paginate(30);

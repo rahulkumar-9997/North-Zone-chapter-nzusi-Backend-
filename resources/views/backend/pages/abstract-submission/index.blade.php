@@ -39,6 +39,49 @@
                                 </option>
                             </select>
                         </div>
+                        <div class="col-lg-4 col-md-6">
+                            <label class="form-label fw-semibold">
+                                Topic / Category
+                            </label>
+                            <select id="topic_category" class="form-select form-select-md">
+                                <option value="">
+                                    All Topic / Category 
+                                </option>
+                                <option value="Endourology & Stone Disease">
+                                    Endourology & Stone Disease
+                                </option>
+                                <option value="Uro-oncology">
+                                    Uro-oncology
+                                </option>
+                                <option value="Reconstructive Urology">
+                                    Reconstructive Urology
+                                </option>
+                                <option value="Female Urology & Incontinence">
+                                    Female Urology & Incontinence
+                                </option>
+                                <option value="Andrology & Sexual Medicine">
+                                    Andrology & Sexual Medicine
+                                </option>
+                                <option value="Paediatric Urology">
+                                    Paediatric Urology
+                                </option>
+                                <option value="Renal Transplantation">
+                                    Renal Transplantation
+                                </option>
+                                <option value="Laparoscopy & Robotics">
+                                    Laparoscopy & Robotics
+                                </option>
+                                <option value="Trauma & Emergency Urology">
+                                    Trauma & Emergency Urology
+                                </option>
+                                <option value="Infections & Inflammation">
+                                    Infections & Inflammation
+                                </option>
+                                <option value="Other">
+                                    Other
+                                </option>
+                            </select>
+                        </div>
                         <div class="col-lg-2 col-md-4">
                             <button
                                 id="reset-button"
@@ -94,6 +137,7 @@
     $(document).ready(function() {
         function fetchAbstractSubmissions(page = 1) {
             let presentation_type = $('#member_type').val();
+            let topic_category = $('#topic_category').val();
             let url = $('.abstract-submission-list-table-render').data('url');
             $("#loader").show();
             $.ajax({
@@ -101,6 +145,7 @@
                 type: "GET",
                 data: {
                     presentation_type: presentation_type,
+                    topic_category: topic_category,
                     page: page
                 },
                 success: function(response) {
@@ -114,9 +159,10 @@
                 }
             });
         }
-        $('#member_type').on('change', function() {
+        $('#member_type, #topic_category').on('change', function () {
             fetchAbstractSubmissions();
         });
+
         $(document).on(
             'click',
             '.pagination a',
@@ -130,12 +176,17 @@
         );
         $('#reset-button').on('click', function() {
             $('#member_type').val('');
+            $('#topic_category').val('');
             fetchAbstractSubmissions();
         });
 
-        function toggleResetButton() {
+         function toggleResetButton() {
             let presentation_type = $('#member_type').val();
-            if (presentation_type !== '') {
+            let topic_category = $('#topic_category').val();
+            if (
+                presentation_type !== '' ||
+                topic_category !== ''
+            ) {
                 $("#reset-button").show();
             } else {
                 $("#reset-button").hide();

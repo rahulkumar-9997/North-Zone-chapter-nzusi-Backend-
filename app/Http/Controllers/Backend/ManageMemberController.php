@@ -154,6 +154,7 @@ class ManageMemberController extends Controller
                 'dob' => $request->dob,
                 'preferred_address' => $request->preferred_address,
                 'status' => $request->status,
+                'is_active' => 1,
                 'user_id' => Auth::id(),
                 'password' => Hash::make(Str::random(8)),
             ]);

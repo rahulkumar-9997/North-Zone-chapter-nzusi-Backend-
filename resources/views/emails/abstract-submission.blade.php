@@ -35,7 +35,6 @@
         <strong>City:</strong>
         {{ $submission->city ?: 'N/A' }}
     </p>
-    <hr>
     <p>
         <strong>Presentation Type:</strong>
         {{ $submission->presentation_type }}
@@ -57,16 +56,10 @@
         {{ $submission->corresponding_author }}
     </p>
     <p>
-        <strong>Abstract Body:</strong><br><br>
-
+        <strong>Abstract Body:</strong><br>
         {!! nl2br(e($submission->abstract_body)) !!}
     </p>
-    @if(!empty($submission->supporting_file))
-    <p>
-        <strong>Attached Supporting File:</strong>
-        {{ $submission->supporting_file }}
-    </p>
-    @endif
+    
     @if($submission->nzusi_membership_no)
     <p>
         <strong>NZUSI Membership Number:</strong>
@@ -83,6 +76,15 @@
     <p>
         <strong>Conference Registration Number:</strong>
         {{ $submission->conf_reg_no }}
+    </p>
+    @endif
+    @if(!empty($submission->supporting_file))
+    <p>
+        <strong>Supporting File:</strong><br>
+        <a href="{{ asset('storage/images/abstract-submission/' . $submission->supporting_file) }}"
+        target="_blank">
+            View / Download PDF
+        </a>
     </p>
     @endif
     @if($submission->video_link)
