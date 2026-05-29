@@ -51,7 +51,7 @@
                     </div>
                     <input type="hidden" name="post_user" value="{{ auth()->id() }}">
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('manage-member.step1', $member->id) }}" class="btn btn-secondary">
+                        <a href="{{ route('manage-member.edit', $member->id) }}" class="btn btn-secondary">
                             <i class="fa fa-arrow-left"></i> Previous
                         </a>
                         <div>

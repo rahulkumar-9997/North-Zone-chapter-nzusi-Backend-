@@ -43,7 +43,7 @@ class AbstractSubmissionController extends Controller
                     'supporting_file' => [
                         'nullable',
                         'file',
-                        'max:10240'
+                        'max:51200',
                     ],
                     'nzusi_membership_no' => 'nullable|string|max:255',
                     'usi_membership_no' => 'nullable|string|max:255',
@@ -63,7 +63,7 @@ class AbstractSubmissionController extends Controller
                     'authors.required' => 'Authors field is required.',
                     'corresponding_author.required' => 'Corresponding author is required.',
                     'abstract_body.required' => 'Abstract body is required.',
-                    'supporting_file.max' => 'File size should not exceed 10 MB.',
+                    'supporting_file.max' => 'File size should not exceed 50 MB.',
                     'nzusi_membership_no.max' => 'NZUSI membership number should not exceed 255 characters.',
                     'usi_membership_no.max' => 'USI membership number should not exceed 255 characters.',
                     'conf_reg_no.max' => 'Conference registration number should not exceed 255 characters.',
