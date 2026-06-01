@@ -120,7 +120,7 @@ class CkeditorController extends Controller
                 ]);
             }
             $page = (int) $request->get('page', 1);
-            $limit = 50;
+            $limit = 30;
             $files = collect(File::files($imagePath))
                 ->sortByDesc(function ($file) {
                     return $file->getMTime();
