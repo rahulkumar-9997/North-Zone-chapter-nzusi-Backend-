@@ -371,8 +371,6 @@ CKEDITOR.on("dialogDefinition", function (ev) {
         dialogDefinition.width = 900;
         dialogDefinition.height = 600;
         dialogDefinition.resizable = CKEDITOR.DIALOG_RESIZE_BOTH;
-
-        // Replace the gallery tab content with a button that opens modal
         dialogDefinition.addContents({
             id: "gallery",
             label: "📷 Image Gallery",
@@ -424,12 +422,10 @@ CKEDITOR.on("dialogDefinition", function (ev) {
             setTimeout(function () {
                 var openBtn = document.getElementById("open-gallery-modal-btn");
                 if (openBtn) {
-                    // Remove any existing event listeners
                     var newBtn = openBtn.cloneNode(true);
                     openBtn.parentNode.replaceChild(newBtn, openBtn);
 
                     newBtn.onclick = function () {
-                        // Store reference to current dialog
                         currentEditorInstance = CKEDITOR.dialog.getCurrent();
                         const modal = document.getElementById(
                             "ckeditor-gallery-modal",
@@ -567,8 +563,6 @@ function loadGalleryInModal(reset = false) {
             if (currentPage === 1 && reset) {
                 galleryGrid.innerHTML = "";
             }
-
-            // Add images to grid
             data.images.forEach((image) => {
                 const imageItem = document.createElement("div");
                 imageItem.className = "gallery-image-item";
@@ -592,8 +586,6 @@ function loadGalleryInModal(reset = false) {
                 galleryGrid.appendChild(imageItem);
                 totalImagesLoaded++;
             });
-
-            // Update status
             if (statusDiv) {
                 if (hasMoreImages) {
                     statusDiv.innerHTML = `📸 Loaded ${totalImagesLoaded} images. Scroll for more...`;
@@ -601,10 +593,7 @@ function loadGalleryInModal(reset = false) {
                     statusDiv.innerHTML = `✨ Loaded ${totalImagesLoaded} images. That's all!`;
                 }
             }
-
             currentPage++;
-
-            // Re-attach scroll listener after loading new images
             setTimeout(() => {
                 initModalGalleryScroll();
             }, 100);
@@ -635,10 +624,7 @@ function initModalGalleryScroll() {
         console.log("Scroll container not found");
         return;
     }
-
     console.log("Initializing scroll listener");
-
-    // Remove existing listener to avoid duplicates
     scrollContainer.removeEventListener("scroll", handleScroll);
     scrollContainer.addEventListener("scroll", handleScroll);
 }
@@ -679,15 +665,10 @@ function handleScroll() {
 // FIXED: Function to insert image directly into CKEditor
 function insertImageToEditor(imageUrl) {
     console.log("Inserting image:", imageUrl);
-
-    // Find the CKEditor dialog instance
     var dialog = CKEDITOR.dialog.getCurrent();
 
     if (dialog) {
-        // Set the URL in the image dialog
         dialog.setValueOf("info", "txtUrl", imageUrl);
-
-        // Trigger the preview update
         var preview = dialog.getContentElement("info", "htmlPreview");
         if (preview && preview.getElement) {
             var previewElement = preview.getElement();
@@ -699,11 +680,7 @@ function insertImageToEditor(imageUrl) {
                 );
             }
         }
-
-        // Switch back to the Info tab
         dialog.selectPage("info");
-
-        // Close the modal
         const modal = document.getElementById("ckeditor-gallery-modal");
         if (modal) {
             modal.style.display = "none";
@@ -724,8 +701,6 @@ function insertImageToEditor(imageUrl) {
                         imageUrl +
                         '" alt="Image" style="max-width:100%; height:auto;" />';
                     editor.insertHtml(imgHtml);
-
-                    // Close the modal
                     const modal = document.getElementById(
                         "ckeditor-gallery-modal",
                     );
@@ -744,8 +719,6 @@ function insertImageToEditor(imageUrl) {
         alert(
             "Please open the image dialog first (click on the image button) or click in the editor area before selecting an image.",
         );
-
-        // Close modal if no dialog
         const modal = document.getElementById("ckeditor-gallery-modal");
         if (modal) {
             modal.style.display = "none";
@@ -788,8 +761,6 @@ function deleteGalleryImageFromModal(imageName, button) {
                 imageItem.remove();
                 totalImagesLoaded--;
                 console.log(result.message || "Image deleted successfully");
-
-                // Reload gallery to update pagination
                 setTimeout(() => {
                     currentPage = 1;
                     loadGalleryInModal(true);
@@ -804,7 +775,6 @@ function deleteGalleryImageFromModal(imageName, button) {
 
 // FIXED: Upload function that handles both JSON and HTML responses
 function triggerUploadFromModal() {
-    // Trigger the file upload dialog
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/jpeg,image/jpg,image/png,image/webp,image/gif";
@@ -826,10 +796,7 @@ function uploadImageFromModal(file) {
     const formData = new FormData();
     formData.append("upload", file);
     formData.append("_token", window.csrfToken);
-
     const uploadUrl = window.CKEDITOR_ROUTES.upload;
-
-    // Show loading indicator
     const uploadBtn = document.getElementById("uploadBtnInModal");
     if (!uploadBtn) return;
 
