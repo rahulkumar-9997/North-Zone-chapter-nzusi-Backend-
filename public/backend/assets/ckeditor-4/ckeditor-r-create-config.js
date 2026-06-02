@@ -122,11 +122,7 @@ window.CKEDITOR_ROUTES = window.CKEDITOR_ROUTES || {
     imagelist: "/ckeditor/images",
     delete: "/ckeditor/delete",
 };
-
-// Store reference to current editor instance
 let currentEditorInstance = null;
-
-// Add modal styles with HIGH z-index to appear above CKEditor dialog
 const modalStyles = `
     <style>
         .ckeditor-modal {
@@ -265,7 +261,7 @@ if (!document.getElementById("ckeditor-gallery-modal")) {
                     <span class="ckeditor-modal-close">&times;</span>
                 </div>
                 <button class="upload-btn-in-modal" id="uploadBtnInModal">
-                    📤 Upload New Image
+                    Upload New Image
                 </button>
                 <div id="simple-image-gallery">
                     <div id="gallery-scroll-container">
@@ -373,7 +369,7 @@ CKEDITOR.on("dialogDefinition", function (ev) {
         dialogDefinition.resizable = CKEDITOR.DIALOG_RESIZE_BOTH;
         dialogDefinition.addContents({
             id: "gallery",
-            label: "📷 Image Gallery",
+            label: "Image Gallery",
             elements: [
                 {
                     type: "html",
@@ -391,7 +387,7 @@ CKEDITOR.on("dialogDefinition", function (ev) {
                                     cursor: pointer;
                                     font-size: 16px;
                                 ">
-                                📸 Open Image Gallery
+                                Open Image Gallery
                             </button>
                             <p style="margin-top: 15px; color: #666; font-size: 12px;">
                                 Click the button to open the full image gallery in a modal window.
@@ -472,7 +468,7 @@ function loadGalleryInModal(reset = false) {
         console.log("No more images to load");
         const statusDiv = document.getElementById("pagination-status");
         if (statusDiv) {
-            statusDiv.innerHTML = "✨ No more images to load";
+            statusDiv.innerHTML = "No more images to load";
         }
         return;
     }
@@ -550,7 +546,7 @@ function loadGalleryInModal(reset = false) {
                 if (currentPage === 1) {
                     galleryGrid.innerHTML = `
                     <div style="grid-column:1/-1; text-align:center; padding:30px; color:#666;">
-                        📭 No images found. Click the "Upload New Image" button to add images.
+                        No images found. Click the "Upload New Image" button to add images.
                     </div>
                 `;
                     if (statusDiv) statusDiv.innerHTML = "";
@@ -607,13 +603,13 @@ function loadGalleryInModal(reset = false) {
             if (galleryGrid && currentPage === 1 && reset) {
                 galleryGrid.innerHTML = `
                 <div style="grid-column:1/-1; text-align:center; padding:20px; color:red;">
-                    ❌ Error loading images: ${error.message}<br>
+                    Error loading images: ${error.message}<br>
                     Please check if the image list endpoint is configured correctly.
                 </div>
             `;
             }
             if (statusDiv) {
-                statusDiv.innerHTML = "❌ Error loading images";
+                statusDiv.innerHTML = "Error loading images";
             }
         });
 }
@@ -636,7 +632,7 @@ function handleScroll() {
     const scrollPosition =
         scrollContainer.scrollTop + scrollContainer.clientHeight;
     const scrollHeight = scrollContainer.scrollHeight;
-    const threshold = 100; // Load when 100px from bottom
+    const threshold = 100;
 
     if (scrollHeight - scrollPosition <= threshold) {
         console.log("Near bottom, loading more...", {
@@ -654,9 +650,9 @@ function handleScroll() {
         } else if (!hasMoreImages) {
             console.log("No more images to load");
             const statusDiv = document.getElementById("pagination-status");
-            if (statusDiv && statusDiv.innerHTML !== "🏁 End of gallery") {
+            if (statusDiv && statusDiv.innerHTML !== "End of gallery") {
                 statusDiv.innerHTML =
-                    "🏁 You have reached the end of the gallery";
+                    "You have reached the end of the gallery";
             }
         }
     }
@@ -821,7 +817,6 @@ function uploadImageFromModal(file) {
                 responseData = await response.json();
             } else {
                 const text = await response.text();
-                // Try to extract URL from HTML response
                 const urlMatch = text.match(
                     /window\.parent\.CKEDITOR\.tools\.callFunction\([^,]+,\s*['"]([^'"]+)['"]/,
                 );
@@ -842,9 +837,7 @@ function uploadImageFromModal(file) {
                     currentPage = 1;
                     hasMoreImages = true;
                     await loadGalleryInModal(true);
-                    alert("✅ Image uploaded successfully!");
-
-                    // Ask if user wants to insert the image
+                    alert("Image uploaded successfully!");
                     if (
                         confirm(
                             "Do you want to insert this uploaded image into the editor?",
@@ -867,7 +860,7 @@ function uploadImageFromModal(file) {
             uploadBtn.disabled = false;
             console.error("Upload error:", error);
             alert(
-                "❌ Upload failed: " +
+                "Upload failed: " +
                     error.message +
                     "\nPlease try again or contact support.",
             );
@@ -894,8 +887,6 @@ function escapeHtml(str) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#39;");
 }
-
-// Add spinner CSS
 const spinnerStyles = `
     <style>
         .spinner {

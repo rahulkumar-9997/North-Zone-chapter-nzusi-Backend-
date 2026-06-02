@@ -18,12 +18,23 @@ use Illuminate\Support\Facades\Cache;
 
 class BlogPostController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $blogCategories = BlogCategory::orderBy('id', 'desc')->get();
-        $blogs = Blog::with(['category', 'user', 'images', 'label'])
-        ->latest()
-        ->paginate(10);
+       
+        $blogs = Blog::with(['category', 'user', 'images', 'label']);
+
+        if ($request->filled('category_id')) {
+            $blogs->where('category_id', $request->category_id);
+        }
+
+        $blogs = $blogs->latest()->paginate(10);
+        if ($request->ajax()) {
+            return view(
+                'backend.pages.blog.partials.blog-list',
+                compact('blogs')
+            )->render();
+        }
         return view('backend.pages.blog.index', compact('blogCategories', 'blogs'));
     }
 
