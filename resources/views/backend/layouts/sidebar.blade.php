@@ -25,58 +25,46 @@
                         <i class="ti ti-layout-grid fs-16 me-2"></i>
                         <span>Dashboard</span>
                      </a>
-                  </li>
-                  <li class="{{ request()->routeIs('label.*') ? 'active' : '' }}">
-                     <a href="{{ route('label.index') }}">
-                        <i class="ti ti-brand-beats fs-16 me-2"></i>
-                        <span>Label</span>
+                  </li> 
+                  <li class="{{ request()->routeIs('menus.*') ? 'active' : '' }}">
+                     <a href="{{ route('menus.index') }}">
+                        <i class="ti ti-layout-grid fs-16 me-2"></i>
+                        <span>Manage Menu</span>
                      </a>
-                  </li>
-
-                  {{-- Manage Pages --}}
-                  <!-- <li class="submenu {{ request()->routeIs('pages.*') ? 'open active' : '' }}">
+                  </li> 
+                  
+                  <li class="submenu {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'open active' : '' }}">
                      <a href="javascript:void(0);">
-                        <i class="ti ti-brand-apple-arcade fs-16 me-2"></i>
-                        <span>Manage Pages</span>
+                        <i class="ti ti-brand-blogger fs-16 me-2"></i>
+                        <span>Manage User</span>
                         <span class="menu-arrow"></span>
                      </a>
-                     <ul style="{{ request()->routeIs('pages.*') ? 'display:block;' : '' }}">
-                        <li class="{{ request()->routeIs('pages.index') ? 'active' : '' }}">
-                           <a href="{{ route('pages.index') }}">All Pages</a>
+                     <ul style="{{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'display:block;' : '' }}">                        
+                        <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
+                           <a href="{{ route('users.index') }}">User</a>
                         </li>
-                        <li class="{{ request()->routeIs('pages.create') ? 'active' : '' }}">
-                           <a href="{{ route('pages.create') }}">Create Page</a>
+                        <li class="{{ request()->routeIs('roles.*') ? 'active' : '' }}">
+                           <a href="{{ route('roles.index') }}">Role</a>
                         </li>
+                        
                      </ul>
-                  </li> -->
+                  </li>
 
-                  {{-- Manage Menus --}}
-                  <!-- <li class="submenu {{ request()->routeIs('menus.*') ? 'open active' : '' }}">
-                     <a href="javascript:void(0);">
-                        <i class="ti ti-layout-grid-add fs-16 me-2"></i>
-                        <span>Manage Menus</span>
-                        <span class="menu-arrow"></span>
-                     </a>
-                     <ul style="{{ request()->routeIs('menus.*') ? 'display:block;' : '' }}">
-                        <li class="{{ request()->routeIs('menus.index') ? 'active' : '' }}">
-                           <a href="{{ route('menus.index') }}">All Menus</a>
-                        </li>
-                        <li class="{{ request()->routeIs('menus.create') ? 'active' : '' }}">
-                           <a href="{{ route('menus.create') }}">Create Menu</a>
-                        </li>
-                     </ul>
-                  </li> -->
-
-                  {{-- Manage Blog --}}
-                  <li class="submenu {{ request()->routeIs('blog-category.*') || request()->routeIs('blog-post.*') ? 'open active' : '' }}">
+                  <li class="submenu {{ request()->routeIs('blog-category.*') || request()->routeIs('blog-post.*') || request()->routeIs('blog-subcategory.*') || request()->routeIs('label.*') ? 'open active' : '' }}">
                      <a href="javascript:void(0);">
                         <i class="ti ti-brand-blogger fs-16 me-2"></i>
                         <span>Manage Blog</span>
                         <span class="menu-arrow"></span>
                      </a>
-                     <ul style="{{ request()->routeIs('blog-category.*') || request()->routeIs('blog-post.*') ? 'display:block;' : '' }}">
+                     <ul style="{{ request()->routeIs('blog-category.*') || request()->routeIs('blog-post.*') || request()->routeIs('blog-subcategory.*') || request()->routeIs('label.*') ? 'display:block;' : '' }}">                        
+                        <li class="{{ request()->routeIs('label.*') ? 'active' : '' }}">
+                           <a href="{{ route('label.index') }}">Label</a>
+                        </li>
                         <li class="{{ request()->routeIs('blog-category.*') ? 'active' : '' }}">
                            <a href="{{ route('blog-category.index') }}">Category</a>
+                        </li>
+                        <li class="{{ request()->routeIs('blog-subcategory.*') ? 'active' : '' }}">
+                           <a href="{{ route('blog-subcategory.index') }}">Subcategory</a>
                         </li>
                         <li class="{{ request()->routeIs('blog-post.*') ? 'active' : '' }}">
                            <a href="{{ route('blog-post.index') }}">Blog Post</a>

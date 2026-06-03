@@ -1,22 +1,22 @@
 @extends('backend.layouts.master')
-@section('title','Menu List')
+@section('title','Role List')
 @push('styles')
 @endpush
 @section('main-content')
 <div class="content">
     <div class="card">
         <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-            <h4 class="card-title">Menu List</h4>
-            <a href="{{ route('menus.create') }}"
-            data-title="Create Menu"
+            <h4 class="card-title">Role List</h4>
+            <a href="{{ route('roles.create') }}"
+            data-title="Create Role"
             class="btn btn-primary">
-                <i data-feather="plus" class="me-2"></i> Add New Menu
+                <i data-feather="plus" class="me-2"></i> Add New Role
             </a>           
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">                
                 <div class="user-list-table-render">
-                    @include('backend.pages.menu.partials.menu-list', ['menus' => $menus ??[]])
+                    @include('backend.pages.roles.partials.role-list', ['roles' => $roles ??[]])
                 </div>                
             </div>
         </div>

@@ -41,6 +41,9 @@
                         {{ $blog->label->title ?? '-' }}
                     </span>
                 @endif
+                @if($blog->subcategory)
+                    <br><small class="badge bg-orange">Subcategory: {{ $blog->subcategory->title ?? 'N/A' }}</small>
+                @endif
             </td>
             <td>
                 @if($blog->status)

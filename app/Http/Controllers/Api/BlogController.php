@@ -14,7 +14,11 @@ class BlogController extends Controller
     public function blogCategory()
     {
         $blogCategories = Cache::remember('api_blog_category_list', now()->addHours(24), function () {
-        return BlogCategory::select(
+        return BlogCategory::with(['subcategories' => function ($query) {
+                $query->where('status', 1);
+                $query->select('id', 'blog_category_id', 'title', 'slug');
+            }])
+            ->select(
                 'id',
                 'title',
                 'slug'
@@ -27,6 +31,13 @@ class BlogController extends Controller
                     'id' => $category->id,
                     'title' => $category->title,
                     'slug' => $category->slug,
+                    'subcategories' => $category->subcategories->map(function ($subcategory) {
+                        return [
+                            'id' => $subcategory->id,
+                            'title' => $subcategory->title,
+                            'slug' => $subcategory->slug,
+                        ];
+                    })->toArray(),
                 ];
             });
         });
@@ -51,12 +62,14 @@ class BlogController extends Controller
         $blogs = Blog::with([
                 'user:id,name',
                 'images:id,blog_id,title,image_file',
-                'label:id,title,slug'
+                'label:id,title,slug',
+                'subcategory:id,blog_category_id,title,slug'
             ])
             ->where('category_id', $blog_category->id)
             ->select(
                 'id',
                 'category_id',
+                'blog_subcategory_id',
                 'post_user',
                 'label_id',
                 'title',
@@ -93,6 +106,11 @@ class BlogController extends Controller
                     ? asset('storage/images/blog/' . $blog->image_file)
                     : null,
                
+                'subcategory' => $blog->subcategory ? [
+                    'id' => $blog->subcategory->id,
+                    'title' => $blog->subcategory->title,
+                    'slug' => $blog->subcategory->slug,
+                ] : null,
                 'user' => $blog->user ? [
                     'id' => $blog->user->id,
                     'name' => $blog->user->name,
@@ -147,6 +165,7 @@ class BlogController extends Controller
         $page = request()->input('page', 1);
         $blogs = Blog::with([
             'category:id,title,slug',
+            'subcategory:id,blog_category_id,title,slug',
             'user:id,name',
             'images:id,blog_id,title,image_file',
             'label:id,title,slug'
@@ -154,6 +173,7 @@ class BlogController extends Controller
             ->select(
                 'id',
                 'category_id',
+                'blog_subcategory_id',
                 'post_user',
                 'label_id',
                 'title',
@@ -193,7 +213,12 @@ class BlogController extends Controller
                     'id' => $blog->category->id,
                     'name' => $blog->category->title,
                 ] : null,
-               
+                'subcategory' => $blog->subcategory ? [
+                    'id' => $blog->subcategory->id,
+                    'title' => $blog->subcategory->title,
+                    'slug' => $blog->subcategory->slug,
+                ] : null,
+
                 'user' => $blog->user ? [
                     'id' => $blog->user->id,
                     'name' => $blog->user->name,
@@ -242,6 +267,7 @@ class BlogController extends Controller
     {
         $blog = Blog::with([
                 'category:id,title,slug',
+                'subcategory:id,blog_category_id,title,slug',
                 'user:id,name',
                 'images:id,blog_id,title,image_file',
                 'label:id,title,slug'
@@ -250,12 +276,15 @@ class BlogController extends Controller
             ->select(
                 'id',
                 'category_id',
+                'blog_subcategory_id',
                 'post_user',
                 'label_id',
                 'title',
                 'slug',
                 'reading_title',
                 'image_file',
+                'pdf_file_title',
+                'pdf_file',
                 'short_content',
                 'long_content',
                 'view_count',
@@ -283,6 +312,8 @@ class BlogController extends Controller
             'short_content' => $blog->short_content,
             'long_content' => preg_replace('/ style=("|\')(.*?)("|\')/i', '', $blog->long_content),
             'slug' => $blog->slug,
+            'pdf_file_title' => $blog->pdf_file_title,
+            'pdf_file' => $blog->pdf_file ? asset('storage/pdf/blog/' . $blog->pdf_file) : null,
             'published_at' => $blog->created_at
                 ? Carbon::parse($blog->created_at)->format('d M Y')
                 : null,
@@ -298,6 +329,11 @@ class BlogController extends Controller
                 'id' => $blog->category->id,
                 'name' => $blog->category->title,
                 'slug' => $blog->category->slug,
+            ] : null,
+            'subcategory' => $blog->subcategory ? [
+                'id' => $blog->subcategory->id,
+                'title' => $blog->subcategory->title,
+                'slug' => $blog->subcategory->slug,
             ] : null,
             'user' => $blog->user ? [
                 'id' => $blog->user->id,

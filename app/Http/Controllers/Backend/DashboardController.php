@@ -5,9 +5,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\BlogSubcategory;
 use App\Models\MemberType;
 use App\Models\Member;
 use App\Models\Label;
+use App\Models\AbstractSubmission;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +24,8 @@ class DashboardController extends Controller
             'label' => Label::count(),
             'blog' => Blog::count(),
             'BlogCategory' => BlogCategory::count(),
+            'BlogSubcategory' => BlogSubcategory::count(),
+            'AbstractSubmission' => AbstractSubmission::count(),
             'MemberType' => MemberType::count(),
             'member_total' => $memberCounts->sum(),
             'member_approved' => $memberCounts['approved'] ?? 0,

@@ -15,7 +15,11 @@ class BlogCategoryController extends Controller
 {
     public function index()
     {
-        $blogCategories = BlogCategory::orderBy('id', 'desc')->get();
+        $blogCategories = BlogCategory::with(['subcategories' => function ($query) {
+                $query->where('status', 1);
+            }])
+            ->orderBy('id', 'desc')
+            ->get();
         return view('backend.pages.blog.category.index', compact('blogCategories'));
     }
 

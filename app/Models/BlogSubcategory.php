@@ -1,20 +1,25 @@
 <?php
+
 namespace App\Models;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-class BlogCategory extends Model
+class BlogSubcategory extends Model
 {
-    protected $table = 'blog_categories';
+    use HasFactory;
+    protected $table = 'blog_subcategories';
     protected $fillable = [
+        'blog_category_id',
         'title',
         'slug',
         'short_content',
-        'status',
         'image',
+        'status',
     ];
-    public function blogs()
+
+    public function category()
     {
-        return $this->hasMany(Blog::class, 'category_id');
+        return $this->belongsTo(BlogCategory::class, 'blog_category_id');
     }
 
     protected static function boot()
@@ -45,10 +50,5 @@ class BlogCategory extends Model
         }
 
         return $slug;
-    }
-
-    public function subcategories()
-    {
-        return $this->hasMany(BlogSubcategory::class, 'blog_category_id');
     }
 }

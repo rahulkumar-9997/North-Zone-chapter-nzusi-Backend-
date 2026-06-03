@@ -6,6 +6,7 @@
 <script src="{{asset('backend/assets/js/dataTables.bootstrap5.min.js')}}"></script>
 <!-- <script src="{{asset('backend/assets/plugins/summernote/summernote-bs4.min.js')}}"></script> -->
 <script src="{{asset('backend/assets/plugins/select2/js/select2.min.js')}}"></script>
+<script src="{{asset('backend/assets/js/custom-select2.js')}}" type="text/javascript"></script>
 <script src="{{asset('backend/assets/js/moment.min.js')}}"></script>
 <script src="{{asset('backend/assets/plugins/flatpickr/flatpickr.js')}}" type="text/javascript"></script>
 <script src="{{asset('backend/assets/js/bootstrap-datetimepicker.min.js')}}"></script>

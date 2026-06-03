@@ -6,14 +6,18 @@ use App\Http\Controllers\Backend\ForgotPasswordController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\CkeditorController;
 use App\Http\Controllers\Backend\CacheController;
-use App\Http\Controllers\Backend\PageController;
-use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\BlogCategoryController;
+use App\Http\Controllers\Backend\BlogSubcategoryController;
 use App\Http\Controllers\Backend\BlogPostController;
 use App\Http\Controllers\Backend\ManageMemberController;
 use App\Http\Controllers\Backend\MemberTypeController;
 use App\Http\Controllers\Backend\LabelController;
 use App\Http\Controllers\Backend\AbstractSubmissionController;
+use App\Http\Controllers\Backend\MenuController;
+
+use App\Http\Controllers\Backend\UserController;
+use App\Http\Controllers\Backend\RoleController;
+use App\Http\Controllers\Backend\PermissionController;
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);
@@ -34,18 +38,11 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
     Route::get('member-analytics', [DashboardController::class, 'memberAnalytics'])->name('member.analytics');
     Route::get('/get-daily-visitors', [DashboardController::class, 'getDailyVisitors'])->name('get-daily-visitors');
     Route::get('/clear-cache', [CacheController::class, 'clearCache'])->name('clear-cache');
-    Route::resource('pages', PageController::class);
-    Route::resource('menus', MenuController::class);
-    Route::get('menu/items/{menu}', [MenuController::class, 'displayMenuItem'])->name('menus.items');
-    Route::post('menu/{menu}/item', [MenuController::class, 'storeItem'])->name('menu.item.store');
     
-    Route::get('menu/{menu}/item/{item}/edit', [MenuController::class, 'editItem'])
-    ->name('menu.item.edit');
-    Route::put('menu/{menu}/item/{item}', [MenuController::class, 'updateItem'])->name('menu.item.update');
-    Route::delete('menu/{menu}/item/{item}', [MenuController::class, 'destroyItem'])->name('menu.item.destroy');
-    Route::post('menus/{menu}/items/order', [MenuController::class, 'orderItems'])->name('menus.items.order');
-
     Route::resource('blog-category', BlogCategoryController::class);
+    Route::resource('blog-subcategory', BlogSubcategoryController::class);
+    Route::get('blog-subcategories/{categoryId}', [BlogPostController::class, 'getSubcategories'])
+    ->name('blog.subcategories');
     Route::resource('blog-post', BlogPostController::class);
     Route::delete('/blog-more-image/{id}', [BlogPostController::class, 'deleteImage'])
     ->name('blog.image.delete');
@@ -83,4 +80,19 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
     Route::get('abstract-submission', [AbstractSubmissionController::class, 'index'])->name('abstract-submission.index');
     Route::get('abstract-submission/{id}', [AbstractSubmissionController::class, 'show'])->name('abstract-submission.show');
     Route::delete('abstract-submission/{id}', [AbstractSubmissionController::class, 'destroy'])->name('abstract-submission.destroy');
+
+    // ========== USER MANAGEMENT ROUTES ==========
+    Route::resource('users', UserController::class);
+    Route::get('users/{user}/roles', [UserController::class, 'roles'])->name('users.roles');
+    Route::put('users/{user}/roles', [UserController::class, 'updateRoles'])->name('users.update-roles');
+    
+    // ========== ROLE MANAGEMENT ROUTES ==========
+    Route::resource('roles', RoleController::class);
+    Route::get('roles/{role}/menus', [RoleController::class, 'menus'])->name('roles.menus');
+    Route::put('roles/{role}/menus', [RoleController::class, 'updateMenus'])->name('roles.update-menus');
+    
+    // ========== MENU MANAGEMENT ROUTES ==========
+    Route::resource('menus', MenuController::class);
+    Route::post('menus/{menu}/order', [MenuController::class, 'updateOrder'])->name('menus.update-order');
+    Route::post('menus/toggle-status/{id}', [MenuController::class, 'toggleStatus'])->name('menus.toggle-status');
 });

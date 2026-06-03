@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('menus', function (Blueprint $table) {
+        Schema::create('role_menu', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique()->nullable();
-            $table->string('location')->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('menu_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-            $table->index('location');
-            $table->index('is_active');
+            
+            $table->unique(['role_id', 'menu_id']);
         });
     }
 
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('role_menu');
     }
 };

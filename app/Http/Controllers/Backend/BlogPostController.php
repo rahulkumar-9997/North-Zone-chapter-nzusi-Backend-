@@ -11,6 +11,7 @@ use App\Helpers\ImageHelper;
 use App\Models\BlogCategory;
 use App\Models\Blog;
 use App\Models\BlogMoreImage;
+use App\Models\BlogSubcategory;
 use App\Models\Label;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -21,11 +22,14 @@ class BlogPostController extends Controller
     public function index(Request $request)
     {
         $blogCategories = BlogCategory::orderBy('id', 'desc')->get();
-       
-        $blogs = Blog::with(['category', 'user', 'images', 'label']);
-
+        $blogSubcategories = BlogSubcategory::orderBy('id', 'desc')->get();
+        $blogs = Blog::with(['category', 'user', 'images', 'label', 'subcategory']);
         if ($request->filled('category_id')) {
             $blogs->where('category_id', $request->category_id);
+        }
+
+        if ($request->filled('blog_subcategory')) {
+            $blogs->where('blog_subcategory_id', $request->blog_subcategory);
         }
 
         $blogs = $blogs->latest()->paginate(10);
@@ -35,12 +39,12 @@ class BlogPostController extends Controller
                 compact('blogs')
             )->render();
         }
-        return view('backend.pages.blog.index', compact('blogCategories', 'blogs'));
+        return view('backend.pages.blog.index', compact('blogCategories', 'blogSubcategories', 'blogs'));
     }
 
     public function create()
     {
-        $blogCategories = BlogCategory::orderBy('id', 'desc')->get();
+        $blogCategories = BlogCategory::orderBy('id', 'desc')->get();        
         $labels = Label::where('status', 1)->orderBy('id', 'desc')->get();
         return view('backend.pages.blog.create', compact('blogCategories', 'labels'));
     }
@@ -50,6 +54,7 @@ class BlogPostController extends Controller
         //Log::info('blog', ['all' => $request->all()]); 
         $validated = $request->validate([
             'blog_category'      => 'nullable|exists:blog_categories,id',
+            'blog_subcategory'   => 'nullable|exists:blog_subcategories,id',
             'label'      => 'nullable|exists:labels,id',
             'title'              => 'required|max:255',
             'meta_title'         => 'nullable|max:255',
@@ -88,6 +93,7 @@ class BlogPostController extends Controller
             }
             $blog = Blog::create([
                 'category_id'       => $request->blog_category ?: null,
+                'blog_subcategory_id' => $request->blog_subcategory ?: null,
                 'label_id'       => $request->label ?: null,
                 'title'             => $request->title,
                 'meta_title'        => $request->meta_title,
@@ -126,7 +132,7 @@ class BlogPostController extends Controller
 
     public function edit($id)
     {
-        $blog = Blog::with('images')->findOrFail($id);
+        $blog = Blog::with('images', 'subcategory')->findOrFail($id);
         $blogCategories = BlogCategory::orderBy('id', 'desc')->get();
         $labels = Label::where('status', 1)->orderBy('id', 'desc')->get();
         return view('backend.pages.blog.create', compact('blog', 'blogCategories', 'labels'));
@@ -137,6 +143,7 @@ class BlogPostController extends Controller
         $blog = Blog::findOrFail($id);
         $validated = $request->validate([
             'blog_category'      => 'nullable|exists:blog_categories,id',
+            'blog_subcategory'   => 'nullable|exists:blog_subcategories,id',
             'label'      => 'nullable|exists:labels,id',
             'title'              => 'required|max:255',
             'meta_title'         => 'nullable|max:255',
@@ -176,6 +183,7 @@ class BlogPostController extends Controller
             }
             $blog->update([
                 'category_id'       => $request->blog_category ?: null,
+                'blog_subcategory_id' => $request->blog_subcategory ?: null,
                 'label_id'       => $request->label ?: null,
                 'title'             => $request->title,
                 'meta_title'        => $request->meta_title,
@@ -263,5 +271,18 @@ class BlogPostController extends Controller
             DB::rollback();           
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function getSubcategories($categoryId)
+    {
+        $subcategories = BlogSubcategory::where('blog_category_id', $categoryId)
+            ->where('status', 1)
+            ->orderBy('title')
+            ->get(['id', 'title']);
+
+        return response()->json([
+            'status' => true,
+            'data' => $subcategories
+        ]);
     }
 }

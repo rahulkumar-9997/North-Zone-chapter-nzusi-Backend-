@@ -9,6 +9,7 @@ class Blog extends Model
     protected $table = 'blogs';
     protected $fillable = [
         'category_id',
+        'blog_subcategory_id',
         'label_id',
         'title',
         'meta_title',
@@ -60,14 +61,22 @@ class Blog extends Model
     {
         return $this->belongsTo(BlogCategory::class, 'category_id');
     }
+
+    public function subcategory()
+    {
+        return $this->belongsTo(BlogSubcategory::class, 'blog_subcategory_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'post_user');
     }
+
     public function images()
     {
         return $this->hasMany(BlogMoreImage::class, 'blog_id');
     }
+
     public function label()
     {
         return $this->belongsTo(Label::class);

@@ -61,7 +61,7 @@ class ImageHelper{
         foreach ($sizes as $key => [$width, $height]) {
             $manager->read($imagePath)
                 ->cover($width, $height)
-                ->toWebp(85)
+                ->toWebp(90)
                 ->save($directories[$key] . $fileName);
         }
         $manager->read($imagePath)

@@ -1,21 +1,40 @@
 <?php
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Menu extends Model
 {
     protected $table = 'menus';
-    protected $fillable = ['name', 'slug', 'location', 'is_active'];
-
-    public function items(): HasMany
+    protected $fillable = ['name', 'slug', 'icon', 'route', 'url', 'parent_id', 'order', 'status', 'target'];
+    
+    protected $casts = [
+        'status' => 'boolean',
+    ];
+    
+    /**
+     * Parent menu
+     */
+    public function parent(): BelongsTo
     {
-        return $this->hasMany(MenuItems::class)->whereNull('parent_id')->orderBy('order');
+        return $this->belongsTo(Menu::class, 'parent_id');
     }
-
-    public function allItems(): HasMany
+    
+    /**
+     * Child menus
+     */
+    public function children(): HasMany
     {
-        return $this->hasMany(MenuItems::class)->orderBy('order');
+        return $this->hasMany(Menu::class, 'parent_id')->orderBy('order');
+    }
+    
+    /**
+     * Roles that have this menu
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'role_menu', 'menu_id', 'role_id');
     }
 }

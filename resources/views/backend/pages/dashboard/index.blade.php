@@ -33,127 +33,175 @@
     <div class="row">
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
             <div class="card bg-orange sale-widget flex-fill">
-                <div class="card-body d-flex align-items-center">
-                    <span class="sale-icon bg-white text-primary">
-                        <i class="ti ti-file-text fs-4"></i>
-                    </span>
-                    <div class="ms-2">
-                        <p class="text-white mb-1">Blogs</p>
-                        <div class="d-inline-flex align-items-center flex-wrap gap-2">
-                            <h4 class="text-white">{{ $data['blog'] }}</h4>
+                <a href="{{ route('blog-post.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-primary">
+                            <i class="ti ti-file-text fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Blogs</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['blog'] }}</h4>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-secondary sale-widget flex-fill">
-                <div class="card-body d-flex align-items-center">
-                    <span class="sale-icon bg-white text-primary">
-                        <i class="ti ti-tag fs-4"></i>
-                    </span>
-                    <div class="ms-2">
-                        <p class="text-white mb-1">Total Label</p>
-                        <div class="d-inline-flex align-items-center flex-wrap gap-2">
-                            <h4 class="text-white">{{ $data['label'] }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-purple sale-widget flex-fill">
-                <div class="card-body d-flex align-items-center">
-                    <span class="sale-icon bg-white text-primary">
-                        <i class="ti ti-list fs-4"></i>
-                    </span>
-                    <div class="ms-2">
-                        <p class="text-white mb-1">Total Blogs Category</p>
-                        <div class="d-inline-flex align-items-center flex-wrap gap-2">
-                            <h4 class="text-white">{{ $data['BlogCategory'] }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-indigo sale-widget flex-fill">
-                <div class="card-body d-flex align-items-center">
-                    <span class="sale-icon bg-white text-primary">
-                        <i class="ti ti-users fs-4"></i>
-                    </span>
-                    <div class="ms-2">
-                        <p class="text-white mb-1">Total Member Type</p>
-                        <div class="d-inline-flex align-items-center flex-wrap gap-2">
-                            <h4 class="text-white">{{ $data['MemberType'] }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-pink sale-widget flex-fill">
-                <div class="card-body d-flex align-items-center">
-                    <span class="sale-icon bg-white text-secondary">
-                         <i class="ti ti-user fs-4"></i>
-                    </span>
-                    <div class="ms-2">
-                        <p class="text-white mb-1">Total Member</p>
-                        <div class="d-inline-flex align-items-center flex-wrap gap-2">
-                            <h4 class="text-white">{{ $data['member_total'] }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12 d-flex">
-            <div class="card bg-cyan sale-widget flex-fill">
-                <div class="card-body d-flex align-items-center">
-                    <span class="sale-icon bg-white text-teal">
-                        <i class="ti ti-clock fs-4"></i>
-                    </span>
-                    <div class="ms-2">
-                        <p class="text-white mb-1">Total Pending Member</p>
-                        <div class="d-inline-flex align-items-center flex-wrap gap-2">
-                            <h4 class="text-white">{{ $data['member_pending'] }}</h4>
-
-                        </div>
-                    </div>
-                </div>
+                </a>
             </div>
         </div>
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
             <div class="card bg-info sale-widget flex-fill">
-                <div class="card-body d-flex align-items-center">
-                    <span class="sale-icon bg-white text-teal">
-                         <i class="ti ti-check fs-4"></i>
-                    </span>
-                    <div class="ms-2">
-                        <p class="text-white mb-1">Total Approved Member</p>
-                        <div class="d-inline-flex align-items-center flex-wrap gap-2">
-                            <h4 class="text-white">{{ $data['member_approved'] }}</h4>
-
+                <a href="{{ route('manage-member.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-teal">
+                             <i class="ti ti-check fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Approved Member</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['member_approved'] }}</h4>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
-        </div>   
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-cyan sale-widget flex-fill">
+                <a href="{{ route('manage-member.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-teal">
+                            <i class="ti ti-clock fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Pending Member</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['member_pending'] }}</h4>
+                            </div>
+                        </div>
+                </div>
+                </a>
+            </div>
+        </div>
         <div class="col-xl-3 col-sm-6 col-12 d-flex">
             <div class="card bg-dark sale-widget flex-fill">
-                <div class="card-body d-flex align-items-center">
-                    <span class="sale-icon bg-white text-teal">
-                         <i class="ti ti-x fs-4"></i>
-                    </span>
-                    <div class="ms-2">
-                        <p class="text-white mb-1">Total Rejected Member</p>
-                        <div class="d-inline-flex align-items-center flex-wrap gap-2">
-                            <h4 class="text-white">{{ $data['member_rejected'] }}</h4>
-
+                <a href="{{ route('manage-member.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-teal">
+                             <i class="ti ti-x fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Rejected Member</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['member_rejected'] }}</h4>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
-        </div>           
+        </div> 
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-pink sale-widget flex-fill">
+                <a href="{{ route('manage-member.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-secondary">
+                             <i class="ti ti-user fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Member</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['member_total'] }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-success sale-widget flex-fill">
+                <a href="{{ route('abstract-submission.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-teal">
+                             <i class="ti ti-load-balancer fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Abstract Submissions</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['AbstractSubmission'] }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>   
+        <!-- <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-secondary sale-widget flex-fill">
+                <a href="{{ route('label.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-primary">
+                            <i class="ti ti-tag fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Label</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['label'] }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div> -->
+        <!-- <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-purple sale-widget flex-fill">
+                <a href="{{ route('blog-category.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-primary">
+                            <i class="ti ti-list fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Blogs Category</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['BlogCategory'] }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div> -->
+        <!-- <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-warning sale-widget flex-fill">
+                <a href="{{ route('blog-category.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-primary">
+                            <i class="ti ti-list-details fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Blogs Subcategory</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['BlogSubcategory'] }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div> -->
+        <!-- <div class="col-xl-3 col-sm-6 col-12 d-flex">
+            <div class="card bg-indigo sale-widget flex-fill">
+                <a href="{{ route('member-type.index') }}">
+                    <div class="card-body d-flex align-items-center">
+                        <span class="sale-icon bg-white text-primary">
+                            <i class="ti ti-users fs-4"></i>
+                        </span>
+                        <div class="ms-2">
+                            <p class="text-white mb-1">Total Member Type</p>
+                            <div class="d-inline-flex align-items-center flex-wrap gap-2">
+                                <h4 class="text-white">{{ $data['MemberType'] }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div> -->
+                 
     </div> 
     @php
         $currentYear = date('Y');

@@ -16,6 +16,15 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="d-flex align-items-center border-end pe-1">
+                    <p class="mb-0 me-2 text-dark-grey f-14">Subcategory:</p>
+                    <select id="blog_subcategory" name="subcategory" class="form-select form-select blog_subcategory">
+                        <option value="">Select Subcategory</option>
+                        @foreach($blogSubcategories as $subcategory)
+                        <option value="{{ $subcategory->id }}">{{ $subcategory->title }}</option>
+                        @endforeach
+                    </select>
+                </div>
                 <button id="reset-button" class="btn btn-danger" style="display:none;">
                     <i class="fa fa-refresh"></i>
                     Reset Filters
@@ -74,38 +83,45 @@
             });
         });
 
-        $("#blog_category").on("change", updateFilters);
-            let typingTimer;
-            $("#blog_key").on("keyup", function() {
-                clearTimeout(typingTimer);
-                typingTimer = setTimeout(function() {
-                    updateFilters();
-                }, 400);
-            });
-            $("#reset-button").on("click", function() {
-                $("#blog_category").val("");
-                $("#blog_key").val("");
-                $(this).hide();
-                fetchBlogs();
-            });
+        $("#blog_category").on("change", function () {
+            updateFilters();
+        });
 
-            $(document).on("click", ".pagination a", function(e) {
-                e.preventDefault();
-                let page = $(this).attr("href").split("page=")[1];
-                let categoryId = $("#blog_category").val();
-                let search = $("#blog_key").val();
-                fetchBlogs(categoryId, search, page);
+        $("#blog_subcategory").on("change", function () {
+            updateFilters();
+        });
 
-            });
+        $("#reset-button").on("click", function() {
+            $("#blog_category").val("");
+            $("#blog_subcategory").val("");
+            $(this).hide();
+            fetchBlogs();
+        });
 
-        function fetchBlogs(categoryId = "", search = "", page = 1) {
+        $(document).on("click", ".pagination a", function(e) {
+            e.preventDefault();
+            let page = $(this).attr("href").split("page=")[1];
+            let categoryId = $("#blog_category").val();
+            let blog_subcategory = $("#blog_subcategory").val();
+            fetchBlogs(
+                categoryId,
+                blog_subcategory,
+                page
+            );
+        });
+
+        function fetchBlogs(
+            categoryId = "",
+            blog_subcategory = "",
+            page = 1
+        ) {
             $("#loader").show();
             $.ajax({
                 url: "{{ route('blog-post.index') }}",
                 type: "GET",
                 data: {
                     category_id: categoryId,
-                    search: search,
+                    blog_subcategory: blog_subcategory,
                     page: page
                 },
                 success: function(data) {
@@ -113,7 +129,7 @@
                     $("#loader").hide();
                     if (
                         categoryId !== "" ||
-                        search !== ""
+                        blog_subcategory !== ""
                     ) {
                         $("#reset-button").show();
                     } else {
@@ -133,10 +149,14 @@
             });
         }
 
-        function updateFilters() {
-            const categoryId = $("#blog_category").val();
-            const search = $("#blog_key").val();
-            fetchBlogs(categoryId, search);
+        function updateFilters()
+        {
+            let categoryId = $("#blog_category").val();
+            let blog_subcategory = $("#blog_subcategory").val();
+            fetchBlogs(
+                categoryId,
+                blog_subcategory
+            );
         }
     });
 </script>
