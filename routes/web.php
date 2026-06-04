@@ -29,7 +29,8 @@ Route::prefix('admin')->group(function () {
     Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
     Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 });
-Route::middleware(['auth:web', 'admin'])->group(function () {
+// Route::middleware(['auth:web', 'admin'])->group(function () {
+Route::middleware(['auth:web', 'permission'])->group(function () {
     Route::post('ckeditor/upload', [CkeditorController::class, 'upload'])->name('ckeditor.upload');
     Route::get('ckeditor/images', [CkeditorController::class, 'imageList'])->name('ckeditor.images');
     Route::delete('ckeditor/image', [CkeditorController::class, 'deleteImage'])->name('ckeditor.delete');
@@ -93,6 +94,8 @@ Route::middleware(['auth:web', 'admin'])->group(function () {
     
     // ========== MENU MANAGEMENT ROUTES ==========
     Route::resource('menus', MenuController::class);
-    Route::post('menus/{menu}/order', [MenuController::class, 'updateOrder'])->name('menus.update-order');
-    Route::post('menus/toggle-status/{id}', [MenuController::class, 'toggleStatus'])->name('menus.toggle-status');
+    Route::post('menus/{menu}/order',[MenuController::class, 'updateOrder'])->name('menus.update-order');
+
+    Route::post('menus/{menu}/toggle-status',[MenuController::class, 'toggleStatus'])->name('menus.toggle-status');
+    Route::post('menus/{menu}/sidebar-status',[MenuController::class, 'toggleSidebarStatus'])->name('menus.toggle-sidebar-status');
 });

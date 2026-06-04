@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Backend;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Menu;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class MenuController extends Controller
@@ -13,13 +15,15 @@ class MenuController extends Controller
      */
     public function index()
     {
-        $menus = Menu::with(['children', 'parent'])
+        $menus = Menu::query()
+            ->with(['children' => function($q) {
+                $q->active()->orderBy('order');
+            }, 'roles'])
+            ->parent()
             ->orderBy('order')
-            ->get();
+            ->paginate(50);
         
-        $parentMenus = Menu::whereNull('parent_id')->orderBy('order')->get();
-        
-        return view('backend.pages.menu.index', compact('menus', 'parentMenus'));
+        return view('backend.pages.menu.index', compact('menus'));
     }
 
     /**
@@ -36,32 +40,41 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:menus,slug',
-            'icon' => 'nullable|string|max:100',
-            'route' => 'nullable|string|max:255',
-            'url' => 'nullable|string|max:255',
-            'parent_id' => 'nullable|exists:menus,id',
-            'order' => 'nullable|integer',
-            'target' => 'nullable|in:_self,_blank',
-            'status' => 'nullable|boolean'
+        $validated = $request->validate([
+            'name'      => ['required', 'string', 'max:255'],
+            'slug'      => ['required', 'string', 'max:255', 'unique:menus,slug'],
+            'icon'      => ['nullable', 'string', 'max:100'],
+            'route'     => ['nullable', 'string', 'max:255'],
+            'url'       => ['nullable', 'string', 'max:255'],
+            'parent_id' => ['nullable', 'exists:menus,id'],
+            'order'     => ['nullable', 'integer', 'min:0'],
+            'target'    => ['nullable', 'in:_self,_blank'],
+            'status'    => ['nullable', 'boolean'],
         ]);
-
-        Menu::create([
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'icon' => $request->icon,
-            'route' => $request->route,
-            'url' => $request->url,
-            'parent_id' => $request->parent_id,
-            'order' => $request->order ?? 0,
-            'target' => $request->target ?? '_self',
-            'status' => $request->status ?? true
-        ]);
-
-        return redirect()->route('menus.index')
-            ->with('success', 'Menu created successfully.');
+        DB::beginTransaction();
+        try {
+            Menu::create([
+                'name'      => trim($validated['name']),
+                'slug'      => trim($validated['slug']),
+                'icon'      => $validated['icon'] ?? null,
+                'route'     => $validated['route'] ?? null,
+                'url'       => $validated['url'] ?? null,
+                'parent_id' => $validated['parent_id'] ?? null,
+                'order'     => $validated['order'] ?? 0,
+                'target'    => $validated['target'] ?? '_self',
+                'status'    => $request->boolean('status'),
+            ]);
+            DB::commit();
+            return redirect()->route('menus.index')->with('success', 'Menu created successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Menu Creation Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+            return back()->withInput()->with('error', 'Something went wrong while creating the menu.');
+        }
     }
 
     /**
@@ -82,32 +95,45 @@ class MenuController extends Controller
      */
     public function update(Request $request, Menu $menu)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:menus,slug,' . $menu->id,
-            'icon' => 'nullable|string|max:100',
-            'route' => 'nullable|string|max:255',
-            'url' => 'nullable|string|max:255',
-            'parent_id' => 'nullable|exists:menus,id',
-            'order' => 'nullable|integer',
-            'target' => 'nullable|in:_self,_blank',
-            'status' => 'nullable|boolean'
+        $validated = $request->validate([
+            'name'      => ['required', 'string', 'max:255'],
+            'slug'      => ['required', 'string', 'max:255', 'unique:menus,slug,' . $menu->id],
+            'icon'      => ['nullable', 'string', 'max:100'],
+            'route'     => ['nullable', 'string', 'max:255'],
+            'url'       => ['nullable', 'string', 'max:255'],
+            'parent_id' => [
+                'nullable',
+                'exists:menus,id',
+                'not_in:' . $menu->id
+            ],
+            'order'     => ['nullable', 'integer', 'min:0'],
+            'target'    => ['nullable', 'in:_self,_blank'],
+            'status'    => ['nullable', 'boolean'],
         ]);
-
-        $menu->update([
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'icon' => $request->icon,
-            'route' => $request->route,
-            'url' => $request->url,
-            'parent_id' => $request->parent_id,
-            'order' => $request->order ?? 0,
-            'target' => $request->target ?? '_self',
-            'status' => $request->status ?? true
-        ]);
-
-        return redirect()->route('menus.index')
-            ->with('success', 'Menu updated successfully.');
+        DB::beginTransaction();
+        try {
+            $menu->update([
+                'name'      => trim($validated['name']),
+                'slug'      => trim($validated['slug']),
+                'icon'      => $validated['icon'] ?? null,
+                'route'     => $validated['route'] ?? null,
+                'url'       => $validated['url'] ?? null,
+                'parent_id' => $validated['parent_id'] ?? null,
+                'order'     => $validated['order'] ?? 0,
+                'target'    => $validated['target'] ?? '_self',
+                'status'    => $request->boolean('status'),
+            ]);
+            DB::commit();
+            return redirect()->route('menus.index')->with('success', 'Menu updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Menu Update Error', [
+                'message' => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile(),
+            ]);
+            return back()->withInput()->with('error', 'Something went wrong while updating the menu.');
+        }
     }
 
     /**
@@ -115,17 +141,12 @@ class MenuController extends Controller
      */
     public function destroy(Menu $menu)
     {
-        // Check if menu has children
         if ($menu->children()->count() > 0) {
             return back()->with('error', 'Cannot delete menu with child menus. Delete child menus first.');
         }
-
-        // Remove role associations
         $menu->roles()->detach();
         $menu->delete();
-
-        return redirect()->route('menus.index')
-            ->with('success', 'Menu deleted successfully.');
+        return redirect()->route('menus.index')->with('success', 'Menu deleted successfully.');
     }
 
     /**
@@ -134,26 +155,128 @@ class MenuController extends Controller
     public function updateOrder(Request $request, Menu $menu)
     {
         $request->validate([
-            'order' => 'required|integer'
+            'direction' => 'required|in:up,down'
         ]);
-
-        $menu->update(['order' => $request->order]);
-
-        return response()->json(['success' => true]);
+        DB::beginTransaction();
+        try {
+            if ($request->direction == 'up') {
+                $swapMenu = Menu::where('parent_id', $menu->parent_id)
+                    ->where('order', '<', $menu->order)
+                    ->orderBy('order', 'desc')
+                    ->first();
+            } else {
+                $swapMenu = Menu::where('parent_id', $menu->parent_id)
+                    ->where('order', '>', $menu->order)
+                    ->orderBy('order', 'asc')
+                    ->first();
+            }
+            if ($swapMenu) {
+                $currentOrder = $menu->order;
+                $menu->update([
+                    'order' => $swapMenu->order
+                ]);
+                $swapMenu->update([
+                    'order' => $currentOrder
+                ]);
+            }
+            DB::commit();
+            $menus = Menu::query()
+                ->with([
+                    'children' => function ($q) {
+                        $q->orderBy('order');
+                    },
+                    'roles',
+                    'parent'
+                ])
+                ->whereNull('parent_id')
+                ->orderBy('order')
+                ->paginate(50);
+            $html = view(
+                'backend.pages.menu.partials.menu-list',
+                compact('menus')
+            )->render();
+            return response()->json([
+                'status' => true,
+                'message' => 'Menu order updated successfully.',
+                'menuContent' => $html
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Toggle menu status.
      */
-    public function toggleStatus($id)
+    public function toggleStatus(Menu $menu)
     {
-        $menu = Menu::findOrFail($id);
-        $menu->status = !$menu->status;
-        $menu->save();
+        try {
+            $menu->update([
+                'status' => !$menu->status
+            ]);
+            $menus = Menu::query()
+                ->with([
+                    'children' => function ($q) {
+                        $q->orderBy('order');
+                    },
+                    'roles',
+                    'parent'
+                ])
+                ->whereNull('parent_id')
+                ->orderBy('order')
+                ->paginate(50);
+            $html = view(
+                'backend.pages.menu.partials.menu-list',
+                compact('menus')
+            )->render();
+            return response()->json([
+                'status' => true,
+                'message' => 'Menu status updated successfully.',
+                'menuContent' => $html
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 
-        return response()->json([
-            'success' => true,
-            'status' => $menu->status
-        ]);
+    public function toggleSidebarStatus(Menu $menu)
+    {
+        try {
+            $menu->update([
+                'sidebar_status' => !$menu->sidebar_status
+            ]);
+            $menus = Menu::query()
+                ->with([
+                    'children' => function ($q) {
+                        $q->orderBy('order');
+                    },
+                    'roles',
+                    'parent'
+                ])
+                ->whereNull('parent_id')
+                ->orderBy('order')
+                ->paginate(50);
+            $html = view(
+                'backend.pages.menu.partials.menu-list',
+                compact('menus')
+            )->render();
+            return response()->json([
+                'status' => true,
+                'message' => 'Menu sidebar status updated successfully.',
+                'menuContent' => $html
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

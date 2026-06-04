@@ -1,4 +1,6 @@
-<!-- Sidebar -->
+@php
+   $menus = App\Models\Menu::getUserMenus(auth()->id());
+@endphp
 <div class="sidebar" id="sidebar">
    <!-- Logo -->
    <div class="sidebar-logo active">
@@ -15,83 +17,62 @@
          <i data-feather="chevrons-left" class="feather-16"></i>
       </a>
    </div>
+   <div class="user-info text-center p-1 border-bottom">
+      <strong>{{ auth()->user()->name }}</strong>
+      <div class="mt-1">
+         {!! auth()->user()->getRoleBadgesAttribute() !!}
+      </div>
+   </div>
    <div class="sidebar-inner slimscroll">
       <div id="sidebar-menu" class="sidebar-menu">
          <ul>
             <li class="submenu-open">
                <ul>
-                  <li class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                     <a href="{{ route('dashboard') }}">
-                        <i class="ti ti-layout-grid fs-16 me-2"></i>
-                        <span>Dashboard</span>
-                     </a>
-                  </li> 
-                  <li class="{{ request()->routeIs('menus.*') ? 'active' : '' }}">
-                     <a href="{{ route('menus.index') }}">
-                        <i class="ti ti-layout-grid fs-16 me-2"></i>
-                        <span>Manage Menu</span>
-                     </a>
-                  </li> 
-                  
-                  <li class="submenu {{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'open active' : '' }}">
-                     <a href="javascript:void(0);">
-                        <i class="ti ti-brand-blogger fs-16 me-2"></i>
-                        <span>Manage User</span>
-                        <span class="menu-arrow"></span>
-                     </a>
-                     <ul style="{{ request()->routeIs('users.*') || request()->routeIs('roles.*') ? 'display:block;' : '' }}">                        
-                        <li class="{{ request()->routeIs('users.*') ? 'active' : '' }}">
-                           <a href="{{ route('users.index') }}">User</a>
-                        </li>
-                        <li class="{{ request()->routeIs('roles.*') ? 'active' : '' }}">
-                           <a href="{{ route('roles.index') }}">Role</a>
-                        </li>
-                        
-                     </ul>
-                  </li>
-
-                  <li class="submenu {{ request()->routeIs('blog-category.*') || request()->routeIs('blog-post.*') || request()->routeIs('blog-subcategory.*') || request()->routeIs('label.*') ? 'open active' : '' }}">
-                     <a href="javascript:void(0);">
-                        <i class="ti ti-brand-blogger fs-16 me-2"></i>
-                        <span>Manage Blog</span>
-                        <span class="menu-arrow"></span>
-                     </a>
-                     <ul style="{{ request()->routeIs('blog-category.*') || request()->routeIs('blog-post.*') || request()->routeIs('blog-subcategory.*') || request()->routeIs('label.*') ? 'display:block;' : '' }}">                        
-                        <li class="{{ request()->routeIs('label.*') ? 'active' : '' }}">
-                           <a href="{{ route('label.index') }}">Label</a>
-                        </li>
-                        <li class="{{ request()->routeIs('blog-category.*') ? 'active' : '' }}">
-                           <a href="{{ route('blog-category.index') }}">Category</a>
-                        </li>
-                        <li class="{{ request()->routeIs('blog-subcategory.*') ? 'active' : '' }}">
-                           <a href="{{ route('blog-subcategory.index') }}">Subcategory</a>
-                        </li>
-                        <li class="{{ request()->routeIs('blog-post.*') ? 'active' : '' }}">
-                           <a href="{{ route('blog-post.index') }}">Blog Post</a>
-                        </li>
-                     </ul>
-                  </li>
-                  <li class="submenu {{ request()->routeIs('manage-member.*') || request()->routeIs('member-type.*') ? 'open active' : '' }}">
-                     <a href="javascript:void(0);">
-                        <i class="ti ti-user fs-16 me-2"></i>
-                        <span>Manage Member</span>
-                        <span class="menu-arrow"></span>
-                     </a>
-                     <ul style="{{ request()->routeIs('manage-member.*') || request()->routeIs('member-type.*') ? 'display:block;' : '' }}">
-                        <li class="{{ request()->routeIs('member-type.*') ? 'active' : '' }}">
-                           <a href="{{ route('member-type.index') }}">Member Type</a>
-                        </li>
-                        <li class="{{ request()->routeIs('manage-member.*') ? 'active' : '' }}">
-                           <a href="{{ route('manage-member.index') }}">Member</a>
-                        </li>
-                     </ul>
-                  </li>
-                  <li class="{{ request()->routeIs('abstract-submission.index') ? 'active' : '' }}">
-                     <a href="{{ route('abstract-submission.index') }}">
-                        <i class="ti ti-file-text fs-16 me-2"></i>
-                        <span>Abstract Submission</span>
-                     </a>
-                  </li>
+                  @forelse($menus as $menu)
+                      @if($menu->children->isEmpty())
+                          {{-- Single menu item --}}
+                          <li class="{{ request()->routeIs($menu->route) ? 'active' : '' }}">
+                              <a href="{{ $menu->route ? route($menu->route) : ($menu->url ?? '#') }}" target="{{ $menu->target }}">
+                                  <i class="{{ $menu->icon }} fs-16 me-2"></i>
+                                  <span>{{ $menu->name }}</span>
+                              </a>
+                          </li>
+                      @else
+                          {{-- Parent menu with children --}}
+                          @php
+                              $isActive = false;
+                              foreach($menu->children as $child) {
+                                  if(request()->routeIs($child->route)) {
+                                      $isActive = true;
+                                      break;
+                                  }
+                              }
+                          @endphp
+                          
+                          <li class="submenu {{ $isActive ? 'open active' : '' }}">
+                              <a href="javascript:void(0);">
+                                  <i class="{{ $menu->icon }} fs-16 me-2"></i>
+                                  <span>{{ $menu->name }}</span>
+                                  <span class="menu-arrow"></span>
+                              </a>
+                              <ul style="{{ $isActive ? 'display:block;' : '' }}">
+                                  @foreach($menu->children as $child)
+                                      <li class="{{ request()->routeIs($child->route) ? 'active' : '' }}">
+                                          <a href="{{ $child->route ? route($child->route) : ($child->url ?? '#') }}" target="{{ $child->target }}">
+                                              <!-- <i class="{{ $child->icon ?? 'ti ti-circle' }} fs-14 me-2"></i> -->
+                                              {{ $child->name }}
+                                          </a>
+                                      </li>
+                                  @endforeach
+                              </ul>
+                          </li>
+                      @endif
+                  @empty
+                      <li class="text-center text-muted p-3">
+                          <i class="ti ti-alert-circle"></i><br>
+                          No menus assigned to your roles
+                      </li>
+                  @endforelse
                </ul>
             </li>
          </ul>

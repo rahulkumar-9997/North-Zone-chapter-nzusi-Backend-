@@ -41,8 +41,7 @@ class LoginController extends Controller
             $user->login_attempts = 0;
             $user->save();
             $request->session()->regenerate();
-            return redirect()->intended('dashboard')
-            ->with('success', 'Welcome back, ' . $user->name . '!');
+            return redirect()->route('dashboard')->with('success', 'You have been logged in successfully.');
         }
         $user = User::where($field, $loginInput)->first();
         if ($user) {

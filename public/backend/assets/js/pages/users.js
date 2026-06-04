@@ -17,8 +17,8 @@ $(document).ready(function () {
             contentType: false,
             success: function (response) {
                 submitButton.prop('disabled', false).html('Save User');
-                if (response.status =='success') {
-                    $('.user-list-table-render').html(response.userContent);
+                if(response.status === 'success')
+                {
                     Toastify({
                         text: response.message,
                         duration: 3000,
@@ -26,8 +26,9 @@ $(document).ready(function () {
                         position: "right",
                         className: "bg-success"
                     }).showToast();
-                    form[0].reset();
-                    $('#commanModel').modal('hide');
+                    setTimeout(function(){
+                        window.location.href = response.redirect;
+                    },1000);
                 }
             },
             error: function (xhr) {

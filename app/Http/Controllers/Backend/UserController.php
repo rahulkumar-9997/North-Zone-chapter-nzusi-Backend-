@@ -9,12 +9,31 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use App\Helpers\ImageHelper;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('roles')->latest()->paginate(10);
+        /** @var User $authUser */
+        $authUser = Auth::user();
+        if ($authUser->is_admin == 1) {
+            $users = User::with('roles')
+                ->latest()
+                ->paginate(10);
+
+        } elseif ($authUser->hasRole('webadmin')) {
+            $users = User::with('roles')
+                ->where('is_admin', '!=', 1)
+                ->latest()
+                ->paginate(10);
+
+        } else {
+            $users = User::with('roles')
+                ->where('id', $authUser->id)
+                ->paginate(10);
+        }
+
         return view('backend.pages.users.index', compact('users'));
     }
     
@@ -26,13 +45,13 @@ class UserController extends Controller
     
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name'      => 'required|string|max:255',
             'email'     => 'required|email|unique:users,email',
             'phone'     => 'nullable|string|max:20',
             'gender'    => 'nullable|in:male,female,other',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password'  => 'required|min:8|confirmed',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
             'roles'     => 'required|array|min:1',
             'roles.*'   => 'exists:roles,id'
         ]);
@@ -40,7 +59,9 @@ class UserController extends Controller
         try {
             $imageName = null;
             if ($request->hasFile('profile_picture')) {
-                $fileName = ImageHelper::generateFileName($request->name);
+                $fileName = ImageHelper::generateFileName(
+                    $request->name
+                );
                 $imageName = ImageHelper::uploadSingleImageWebpOnly(
                     $request->file('profile_picture'),
                     $fileName,
@@ -49,24 +70,20 @@ class UserController extends Controller
                 );
             }
             $user = User::create([
-                'name'     => $request->name,
-                'email'    => $request->email,
-                'password' => Hash::make($request->password),
-                'status'   => $request->has('status') ? 1 : 0,
+                'name' => $validated['name'],
+                'email' => $validated['email'],
                 'phone_number' => $request->phone,
                 'gender' => $request->gender,
-                'date_of_birth' => $request->date_of_birth,
-                'is_active' => $request->has('status') ? 1 : 0,
-                'is_admin' => 0,
-                'profile_picture' => $imageName,
+                'password' => Hash::make($request->password),
+                'status' => $request->has('status'),
+                'is_active' => $request->has('status'),
+                'profile_img' => $imageName
             ]);
-            if($request->roles) {
-                $user->roles()->attach($request->roles);
-            }
+            $user->roles()->sync($request->roles);
             DB::commit();
             return response()->json([
-                'status'   => 'success',
-                'message'  => 'User created successfully.',
+                'status' => 'success',
+                'message' => 'User created successfully',
                 'redirect' => route('users.index')
             ]);
         } catch (\Exception $e) {
@@ -74,7 +91,7 @@ class UserController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
-            ], 500);
+            ],500);
         }
     }
     
@@ -82,46 +99,103 @@ class UserController extends Controller
     {
         $roles = Role::where('is_active', true)->get();
         $userRoles = $user->roles->pluck('id')->toArray();
-        return view('backend.pages.users.edit', compact('user', 'roles', 'userRoles'));
+        return view('backend.pages.users.create', compact('user', 'roles', 'userRoles'));
     }
     
     public function update(Request $request, User $user)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
-
+            'phone' => 'nullable|string|max:20',
+            'gender' => 'nullable|in:male,female,other',
+            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'password' => 'nullable|min:8|confirmed',
             'roles' => 'required|array|min:1',
             'roles.*' => 'exists:roles,id'
         ]);
-        
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'status' => $request->status ?? true
-        ]);
-        
-        if ($request->filled('password')) {
-            $user->update(['password' => Hash::make($request->password)]);
+        DB::beginTransaction();
+        try {
+            $imageName = $user->profile_picture;
+            if ($request->hasFile('profile_picture')) {
+                if ($user->profile_picture &&
+                    File::exists(public_path($user->profile_picture))) {
+                    File::delete(
+                        public_path($user->profile_picture)
+                    );
+                }
+                $fileName = ImageHelper::generateFileName(
+                    $request->name
+                );
+                $imageName = ImageHelper::uploadSingleImageWebpOnly(
+                    $request->file('profile_picture'),
+                    $fileName,
+                    'users-profile',
+                    $imageName
+                );
+            }
+            $data = [
+                'name' => $request->name,
+                'email' => $request->email,
+                'phone_number' => $request->phone,
+                'gender' => $request->gender,
+                'status' => $request->has('status'),
+                'is_active' => $request->has('status'),
+                'profile_img' => $imageName
+            ];
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make(
+                    $request->password
+                );
+            }
+            $user->update($data);
+            $user->roles()->sync($request->roles);
+            DB::commit();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'User updated successfully',
+                'redirect' => route('users.index')
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ],500);
         }
-        
-        // Sync multiple roles (remove old and assign new)
-        $user->roles()->sync($request->roles);
-        
-        return redirect()->route('users.index')
-            ->with('success', 'User updated with ' . count($request->roles) . ' roles successfully.');
     }
     
     public function destroy(User $user)
     {
-        if ($user->id === auth()->id()) {
-            return back()->with('error', 'You cannot delete your own account.');
+        if(!$user) {
+            return redirect()->back()->with('error', 'User not found.');
         }
-        
-        $user->roles()->detach(); // Remove all role associations first
-        $user->delete();
-        
-        return redirect()->route('users.index')
-            ->with('success', 'User deleted successfully.');
+        if ($user->is_admin==1) {
+            return redirect()->back()->with('error', 'You cannot delete an admin user.');
+        }
+        if ($user->id === Auth::id()) {
+            return redirect()->back()->with('error', 'You cannot delete your own account.');
+        }
+
+        DB::beginTransaction();
+        try {
+            if (!empty($user->profile_img)) {
+                $imagePath = public_path(
+                    'storage/images/users-profile/' . $user->profile_img
+                );
+
+                if (File::exists($imagePath)) {
+                    File::delete($imagePath);
+                }
+            }
+            $user->roles()->detach();
+            $user->delete();
+            DB::commit();
+            return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

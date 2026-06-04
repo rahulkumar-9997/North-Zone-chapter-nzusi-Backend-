@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\Menu;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class RoleController extends Controller
 {    
@@ -20,7 +22,17 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('backend.pages.roles.create');
+        $user = auth()->user();
+        $menusQuery = Menu::with('children')
+            ->whereNull('parent_id')
+            ->where('status', true);
+        if (!isset($user->is_admin) || $user->is_admin != 1) {
+            $hiddenMenus = ['manage-menu', 'menus', 'roles', 'users'];
+            $menusQuery->whereNotIn('slug', $hiddenMenus);
+        }        
+        $menus = $menusQuery->orderBy('order')->get();
+        
+        return view('backend.pages.roles.create', compact('menus'));
     }
 
     /**
@@ -28,22 +40,33 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
-            'slug' => 'nullable|string|max:255|unique:roles,slug',
-            'description' => 'nullable|string',
-            'is_active' => 'nullable|boolean'
+        $validated = $request->validate([
+            'name'      => 'required|string|max:255|unique:roles,name',
+            'slug'      => 'nullable|string|max:255|unique:roles,slug',
+            'is_active' => 'nullable|boolean',
+            'menus' => 'array',
+            'menus.*' => 'exists:menus,id'
         ]);
+        DB::beginTransaction();
+        try {
+            $role = Role::create([
+                'name' => $validated['name'],
+                'slug' => !empty($validated['slug'])
+                    ? Str::slug($validated['slug'])
+                    : Str::slug($validated['name']),
+                'is_active' => $request->has('is_active')
+            ]);
 
-        $role = Role::create([
-            'name' => $request->name,
-            'slug' => $request->slug ?? Str::slug($request->name),
-            'description' => $request->description,
-            'is_active' => $request->is_active ?? true
-        ]);
-
-        return redirect()->route('roles.index')
-            ->with('success', 'Role created successfully.');
+            if ($request->has('menus')) {
+                $role->menus()->sync($request->menus);
+            }
+            DB::commit();
+            return redirect()->route('roles.index')->with('success','Role created successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return back()->withInput()->with('error','Failed to create role.');
+        }
     }
 
     /**
@@ -51,30 +74,49 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        return view('backend.roles.edit', compact('role'));
+        $user = auth()->user();
+        $menusQuery = Menu::with('children')
+            ->whereNull('parent_id')
+            ->where('status', true);
+        
+        if (!isset($user->is_admin) || $user->is_admin != 1) {
+            $hiddenMenus = ['manage-menu', 'menus', 'roles', 'users'];
+            $menusQuery->whereNotIn('slug', $hiddenMenus);
+        }        
+        $menus = $menusQuery->orderBy('order')->get();
+        $roleMenus = $role->menus->pluck('id')->toArray();
+        
+        return view('backend.pages.roles.create', compact('role', 'menus', 'roleMenus'));
     }
-
     /**
      * Update the specified role.
      */
     public function update(Request $request, Role $role)
     {
-        $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
-            'slug' => 'nullable|string|max:255|unique:roles,slug,' . $role->id,
-            'description' => 'nullable|string',
-            'is_active' => 'nullable|boolean'
+        $validated = $request->validate([
+            'name'      => 'required|string|max:255|unique:roles,name,' . $role->id,
+            'slug'      => 'nullable|string|max:255|unique:roles,slug,' . $role->id,
+            'is_active' => 'nullable|boolean',
+            'menus' => 'array',
+            'menus.*' => 'exists:menus,id'
         ]);
-
-        $role->update([
-            'name' => $request->name,
-            'slug' => $request->slug ?? Str::slug($request->name),
-            'description' => $request->description,
-            'is_active' => $request->is_active ?? true
-        ]);
-
-        return redirect()->route('roles.index')
-            ->with('success', 'Role updated successfully.');
+        DB::beginTransaction();
+        try {
+            $role->update([
+                'name' => $validated['name'],
+                'slug' => !empty($validated['slug'])
+                    ? Str::slug($validated['slug'])
+                    : Str::slug($validated['name']),
+                'is_active' => $request->has('is_active')
+            ]);
+            $role->menus()->sync($request->menus ?? []);
+            DB::commit();
+            return redirect()->route('roles.index')->with('success','Role updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return back()->withInput()->with('error','Failed to update role.');
+        }
     }
 
     /**
@@ -82,43 +124,25 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        // Prevent deletion of roles that have users
-        if ($role->users()->count() > 0) {
-            return back()->with('error', 'Cannot delete role with assigned users.');
+        DB::beginTransaction();
+        try {
+            if ($role->users()->count()) {
+                return back()->with(
+                    'error',
+                    'Cannot delete role assigned to users.'
+                );
+            }
+            $role->menus()->detach();
+            $role->delete();
+            DB::commit();
+            return redirect()->route('roles.index')->with('success','Role deleted successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage());
+            return back()->with(
+                'error',
+                'Failed to delete role.'
+            );
         }
-
-        // Remove menu associations
-        $role->menus()->detach();
-        $role->delete();
-
-        return redirect()->route('roles.index')
-            ->with('success', 'Role deleted successfully.');
-    }
-
-    /**
-     * Display role menus management page.
-     */
-    public function menus(Role $role)
-    {
-        $menus = Menu::with('children')->whereNull('parent_id')->orderBy('order')->get();
-        $roleMenus = $role->menus->pluck('id')->toArray();
-        
-        return view('backend.roles.menus', compact('role', 'menus', 'roleMenus'));
-    }
-
-    /**
-     * Update role menus.
-     */
-    public function updateMenus(Request $request, Role $role)
-    {
-        $request->validate([
-            'menus' => 'array',
-            'menus.*' => 'exists:menus,id'
-        ]);
-
-        $role->menus()->sync($request->menus ?? []);
-
-        return redirect()->route('roles.menus', $role)
-            ->with('success', 'Role menus updated successfully.');
-    }
+    }    
 }

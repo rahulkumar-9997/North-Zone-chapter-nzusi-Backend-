@@ -21,8 +21,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">Menu Name <span class="text-danger">*</span></label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                value="{{ old('name') }}" placeholder="e.g., Dashboard, Users" required>
+                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" placeholder="e.g., Dashboard, Users">
                             @error('name')
                             <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -32,8 +31,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">Slug <span class="text-danger">*</span></label>
-                            <input type="text" name="slug" class="form-control @error('slug') is-invalid @enderror"
-                                value="{{ old('slug') }}" placeholder="e.g., dashboard, users" required>
+                            <input type="text" name="slug" class="form-control @error('slug') is-invalid @enderror" value="{{ old('slug') }}" placeholder="e.g., dashboard, users" >
                             @error('slug')
                             <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -43,8 +41,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">Icon Class</label>
-                            <input type="text" name="icon" class="form-control @error('icon') is-invalid @enderror"
-                                value="{{ old('icon') }}" placeholder="e.g., ti ti-home, fas fa-user">
+                            <input type="text" name="icon" class="form-control @error('icon') is-invalid @enderror" value="{{ old('icon') }}" placeholder="e.g., ti ti-home, fas fa-user">
                             <small class="text-muted">Use Font Awesome or Tabler Icons classes</small>
                             @error('icon')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -55,7 +52,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">Parent Menu</label>
-                            <select name="parent_id" class="form-control @error('parent_id') is-invalid @enderror">
+                            <select name="parent_id" class="form-control select @error('parent_id') is-invalid @enderror">
                                 <option value="">Main Menu (No Parent)</option>
                                 @foreach($parents as $parent)
                                 <option value="{{ $parent->id }}" {{ old('parent_id') == $parent->id ? 'selected' : '' }}>
@@ -72,8 +69,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">Route Name</label>
-                            <input type="text" name="route" class="form-control @error('route') is-invalid @enderror"
-                                value="{{ old('route') }}" placeholder="e.g., dashboard, users.index">
+                            <input type="text" name="route" class="form-control @error('route') is-invalid @enderror" value="{{ old('route') }}" placeholder="e.g., dashboard, users.index">
                             <small class="text-muted">Route name for Laravel named routes</small>
                             @error('route')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -84,8 +80,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">URL (External Link)</label>
-                            <input type="text" name="url" class="form-control @error('url') is-invalid @enderror"
-                                value="{{ old('url') }}" placeholder="https://example.com">
+                            <input type="text" name="url" class="form-control @error('url') is-invalid @enderror" value="{{ old('url') }}" placeholder="https://example.com">
                             <small class="text-muted">Use for external links</small>
                             @error('url')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -96,8 +91,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label class="form-label">Order</label>
-                            <input type="number" name="order" class="form-control @error('order') is-invalid @enderror"
-                                value="{{ old('order', 0) }}">
+                            <input type="number" name="order" class="form-control @error('order') is-invalid @enderror" value="{{ old('order', 0) }}">
                             @error('order')
                             <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -108,8 +102,8 @@
                         <div class="mb-3">
                             <label class="form-label">Target</label>
                             <select name="target" class="form-control @error('target') is-invalid @enderror">
-                                <option value="_self">Same Window (_self)</option>
-                                <option value="_blank">New Window (_blank)</option>
+                                <option value="_self" {{ old('target') == '_self' ? 'selected' : '' }}>Same Window (_self)</option>
+                                <option value="_blank" {{ old('target') == '_blank' ? 'selected' : '' }}>New Window (_blank)</option>
                             </select>
                             @error('target')
                             <span class="invalid-feedback">{{ $message }}</span>
@@ -121,7 +115,13 @@
                         <div class="mb-3">
                             <label class="form-label">Status</label>
                             <div class="custom-control custom-switch">
-                                <input type="checkbox" name="status" class="custom-control-input" id="status" value="1" checked>
+                                <input type="hidden" name="status" value="0">
+                                <input type="checkbox"
+                                    name="status"
+                                    value="1"
+                                    class="custom-control-input"
+                                    id="status"
+                                    {{ old('status',1) ? 'checked' : '' }}>
                                 <label class="custom-control-label" for="status">Active</label>
                             </div>
                         </div>

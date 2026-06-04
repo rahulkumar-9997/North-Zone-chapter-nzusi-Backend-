@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Menu extends Model
 {
     protected $table = 'menus';
-    protected $fillable = ['name', 'slug', 'icon', 'route', 'url', 'parent_id', 'order', 'status', 'target'];
+    protected $fillable = ['name', 'slug', 'icon', 'route', 'url', 'parent_id', 'order', 'status', 'target', 'sidebar_status'];
     
     protected $casts = [
         'status' => 'boolean',
+        'sidebar_status' => 'boolean',
     ];
     
     /**
@@ -36,5 +37,70 @@ class Menu extends Model
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, 'role_menu', 'menu_id', 'role_id');
+    }
+    
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
+
+    public function scopeParent($query)
+    {
+        return $query->whereNull('parent_id');
+    }
+
+    public function childrenRecursive()
+    {
+        return $this->children()->with('childrenRecursive');
+    }
+
+    /**
+     * Get menus for a specific user based on their roles
+     */
+    public static function getUserMenus($userId = null)
+    {
+        $userId = $userId ?? auth()->id();
+        if (!$userId) {
+            return collect();
+        }
+        $user = User::with('roles.menus')->find($userId);
+        if (!$user) {
+            return collect();
+        }
+        if ($user->is_admin == 1 || $user->hasRole('admin')) {
+            return self::with([
+                'children' => function ($query) {
+                    $query->where('status', true)
+                        ->where('sidebar_status', true)
+                        ->orderBy('order');
+                }
+            ])
+            ->whereNull('parent_id')
+            ->where('status', true)
+            ->where('sidebar_status', true)
+            ->orderBy('order')
+            ->get();
+        }
+        $menuIds = $user->roles
+            ->flatMap(fn ($role) => $role->menus->pluck('id'))
+            ->unique();
+
+        if ($menuIds->isEmpty()) {
+            return collect();
+        }
+        return self::with([
+            'children' => function ($query) use ($menuIds) {
+                $query->whereIn('id', $menuIds)
+                    ->where('status', true)
+                    ->where('sidebar_status', true)
+                    ->orderBy('order');
+            }
+        ])
+        ->whereIn('id', $menuIds)
+        ->whereNull('parent_id')
+        ->where('status', true)
+        ->where('sidebar_status', true)
+        ->orderBy('order')
+        ->get();
     }
 }
