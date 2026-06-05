@@ -17,7 +17,204 @@ use App\Http\Controllers\Backend\MenuController;
 
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RoleController;
-use App\Http\Controllers\Backend\PermissionController;
+Route::get('/test-analytics', function () {
+    $data = \Spatie\Analytics\Facades\Analytics::get(
+        \Spatie\Analytics\Period::days(7),
+        ['sessions', 'screenPageViews', 'activeUsers']
+    );
+    return response()->json($data);
+});
+/*
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
+use Google\Client;
+Route::get('/test-analytics', function () {
+    $data = \Spatie\Analytics\Facades\Analytics::get(
+        \Spatie\Analytics\Period::days(7),
+        ['sessions', 'screenPageViews', 'activeUsers']
+    );
+    return response()->json($data);
+});
+Route::get('/direct-test', function () {
+
+    putenv('GOOGLE_APPLICATION_CREDENTIALS=' . storage_path('app/analytics/service-account-credentials.json'));
+
+    $client = new \Google\Client();
+    $client->useApplicationDefaultCredentials();
+    $client->setScopes(['https://www.googleapis.com/auth/analytics.readonly']);
+
+    $http = $client->authorize();
+
+    try {
+        $res = $http->post(
+            'https://analyticsdata.googleapis.com/v1beta/properties/539589973:runReport',
+            ['json' => [
+                'dateRanges' => [['startDate' => '7daysAgo', 'endDate' => 'today']],
+                'metrics'    => [['name' => 'activeUsers']],
+            ]]
+        );
+        return response()->json(json_decode($res->getBody(), true));
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
+Route::get('/fix-ga4', function () {
+
+    putenv('GOOGLE_APPLICATION_CREDENTIALS=' . storage_path('app/analytics/service-account-credentials.json'));
+
+    $client = new \Google\Client();
+    $client->useApplicationDefaultCredentials();
+    $client->setScopes([
+        'https://www.googleapis.com/auth/analytics.manage.users',
+        'https://www.googleapis.com/auth/analytics.readonly',
+        'https://www.googleapis.com/auth/analytics.edit',
+    ]);
+
+    $http = $client->authorize();
+
+    // Step 1 - Account summaries dekho
+    try {
+        $res = $http->get('https://analyticsadmin.googleapis.com/v1beta/accountSummaries');
+        $summaries = json_decode($res->getBody(), true);
+    } catch (\Exception $e) {
+        $summaries = ['error' => $e->getMessage()];
+    }
+
+    // Step 2 - Properties list karo
+    try {
+        $res2 = $http->get('https://analyticsadmin.googleapis.com/v1beta/properties?filter=ancestor:accounts/52770125');
+        $properties = json_decode($res2->getBody(), true);
+    } catch (\Exception $e) {
+        $properties = ['error' => $e->getMessage()];
+    }
+
+    // Step 3 - Direct grant try karo
+    try {
+        $res3 = $http->post(
+            'https://analyticsadmin.googleapis.com/v1beta/properties/539589973/accessBindings',
+            ['json' => [
+                'user'  => 'nzusi-932@nzusi-498210.iam.gserviceaccount.com',
+                'roles' => ['predefinedRoles/viewer'],
+            ]]
+        );
+        $grant = json_decode($res3->getBody(), true);
+    } catch (\Exception $e) {
+        $grant = ['error' => $e->getMessage()];
+    }
+
+    return response()->json([
+        'summaries'  => $summaries,
+        'properties' => $properties,
+        'grant'      => $grant,
+    ]);
+});
+Route::get('/find-property', function () {
+
+    $jsonPath = storage_path('app/analytics/service-account-credentials.json');
+    $serviceAccount = json_decode(file_get_contents($jsonPath), true);
+
+    $now = time();
+    $header  = rtrim(strtr(base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT'])), '+/', '-_'), '=');
+    $payload = rtrim(strtr(base64_encode(json_encode([
+        'iss'   => $serviceAccount['client_email'],
+        'scope' => 'https://www.googleapis.com/auth/analytics.manage.users',
+        'aud'   => 'https://oauth2.googleapis.com/token',
+        'exp'   => $now + 3600,
+        'iat'   => $now,
+    ])), '+/', '-_'), '=');
+
+    $unsignedJwt = $header . '.' . $payload;
+    openssl_sign($unsignedJwt, $signature, $serviceAccount['private_key'], 'SHA256');
+    $signedJwt = $unsignedJwt . '.' . rtrim(strtr(base64_encode($signature), '+/', '-_'), '=');
+
+    $tokenRes = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+        'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        'assertion'  => $signedJwt,
+    ]);
+
+    $token = $tokenRes->json('access_token');
+
+    // Account 52770125 ke andar saari properties list karo
+    $result = Http::withToken($token)
+        ->get('https://analyticsadmin.googleapis.com/v1beta/properties', [
+            'filter' => 'ancestor:accounts/52770125',
+        ]);
+
+    return response()->json([
+        'token'      => 'OK',
+        'status'     => $result->status(),
+        'properties' => $result->json(),
+    ]);
+});
+Route::get('/check-property', function () {
+
+    $jsonPath = storage_path('app/analytics/service-account-credentials.json');
+    $serviceAccount = json_decode(file_get_contents($jsonPath), true);
+
+    $now = time();
+    $header  = rtrim(strtr(base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT'])), '+/', '-_'), '=');
+    $payload = rtrim(strtr(base64_encode(json_encode([
+        'iss'   => $serviceAccount['client_email'],
+        'scope' => 'https://www.googleapis.com/auth/analytics.readonly',
+        'aud'   => 'https://oauth2.googleapis.com/token',
+        'exp'   => $now + 3600,
+        'iat'   => $now,
+    ])), '+/', '-_'), '=');
+
+    $unsignedJwt = $header . '.' . $payload;
+    openssl_sign($unsignedJwt, $signature, $serviceAccount['private_key'], 'SHA256');
+    $signedJwt = $unsignedJwt . '.' . rtrim(strtr(base64_encode($signature), '+/', '-_'), '=');
+
+    $tokenResponse = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+        'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        'assertion'  => $signedJwt,
+    ]);
+
+    $token = $tokenResponse->json('access_token');
+
+    // List all accounts service account can see
+    $accounts = Http::withToken($token)
+        ->get('https://analyticsadmin.googleapis.com/v1beta/accountSummaries');
+
+    return response()->json($accounts->json());
+});
+Route::get('/check-access', function () {
+
+    $jsonPath = storage_path('app/analytics/service-account-credentials.json');
+    $serviceAccount = json_decode(file_get_contents($jsonPath), true);
+
+    $now = time();
+    $header  = rtrim(strtr(base64_encode(json_encode(['alg' => 'RS256', 'typ' => 'JWT'])), '+/', '-_'), '=');
+    $payload = rtrim(strtr(base64_encode(json_encode([
+        'iss'   => $serviceAccount['client_email'],
+        'scope' => 'https://www.googleapis.com/auth/analytics.manage.users https://www.googleapis.com/auth/analytics.readonly',
+        'aud'   => 'https://oauth2.googleapis.com/token',
+        'exp'   => $now + 3600,
+        'iat'   => $now,
+    ])), '+/', '-_'), '=');
+
+    $unsignedJwt = $header . '.' . $payload;
+    openssl_sign($unsignedJwt, $signature, $serviceAccount['private_key'], 'SHA256');
+    $signedJwt = $unsignedJwt . '.' . rtrim(strtr(base64_encode($signature), '+/', '-_'), '=');
+
+    $tokenRes = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+        'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+        'assertion'  => $signedJwt,
+    ]);
+
+    $token = $tokenRes->json('access_token');
+
+    // Check access bindings on property
+    $result = Http::withToken($token)
+        ->get('https://analyticsadmin.googleapis.com/v1beta/properties/539589973/accessBindings');
+
+    return response()->json([
+        'token'    => $token ? 'OK' : 'FAILED',
+        'status'   => $result->status(),
+        'response' => $result->json(),
+    ]);
+});
+*/
 
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);

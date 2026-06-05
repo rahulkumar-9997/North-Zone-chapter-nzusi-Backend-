@@ -45,11 +45,7 @@
                     <div class="col-md-4">
                         <div class="mb-3">
                             <label>Phone</label>
-                            <input type="text"
-                                name="phone"
-                                id="phone"
-                                class="form-control"
-                                value="{{ old('phone',$user->phone_number ?? '') }}">
+                            <input type="text" name="phone" id="phone" class="form-control" value="{{ old('phone',$user->phone_number ?? '') }}">
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -108,9 +104,9 @@
                                 name="profile_picture"
                                 id="profile_picture"
                                 class="form-control">
-                            @if(isset($user) && $user->profile_picture)
+                            @if(isset($user) && $user->profile_img)
                             <img
-                                src="{{ asset($user->profile_picture) }}"
+                                src="{{ asset('storage/images/users-profile/' . $user->profile_img) }}"
                                 width="80"
                                 class="mt-2 border rounded">
                             @endif

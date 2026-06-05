@@ -24,67 +24,77 @@
             <a href="{{ route('clear-cache') }}" class="btn btn-dark btn-md d-inline-flex align-items-center">
                <i class="ti ti-device-laptop me-1"></i>Clear Cache
             </a>
-         </li>
-         <li class="nav-item dropdown nav-item-box">
-            <a href="javascript:void(0);" class="dropdown-toggle nav-link" data-bs-toggle="dropdown">
-               <i class="ti ti-bell"></i>
-            </a>
-            <!-- <div class="dropdown-menu notifications">
-               <div class="topnav-dropdown-header">
-                  <h5 class="notification-title">Notifications</h5>
-                  <a href="javascript:void(0)" class="clear-noti">Mark all as read</a>
-               </div>
-               <div class="noti-content">
-                  <ul class="notification-list">
-                     <li class="notification-message">
-                        <a href="activities.html">
-                           <div class="media d-flex">
-                              <span class="avatar flex-shrink-0">
-                                 <img alt="Img" src="{{asset('backend/assets/img/profiles/avatar-13.jpg')}}">
-                              </span>
-                              <div class="flex-grow-1">
-                                 <p class="noti-details"><span class="noti-title">James Kirwin</span> confirmed his order. Order No: #78901.Estimated delivery: 2 days</p>
-                                 <p class="noti-time">4 mins ago</p>
-                              </div>
-                           </div>
-                        </a>
-                     </li>
-                     
-                  </ul>
-               </div>
-               <div class="topnav-dropdown-footer d-flex align-items-center gap-3">
-                  <a href="#" class="btn btn-secondary btn-md w-100">Cancel</a>
-                  <a href="activities.html" class="btn btn-primary btn-md w-100">View all</a>
-               </div>
-            </div> -->
-         </li>
+         </li>         
+         @php
+            $user = auth()->user();
+            $colors = [
+               '#0d6efd',
+               '#198754',
+               '#dc3545',
+               '#fd7e14',
+               '#6f42c1',
+               '#20c997',
+               '#6610f2'
+            ];
+            $bgColor = $user
+               ? $colors[$user->id % count($colors)]
+               : '#0d6efd';
+         @endphp
          <li class="nav-item dropdown has-arrow main-drop profile-nav">
             <a href="javascript:void(0);" class="nav-link userset" data-bs-toggle="dropdown">
                <span class="user-info p-0">
-                  <span class="user-letter">
-                     <img src="{{asset('backend/assets/img/profiles/avator1.jpg')}}" alt="Img" class="img-fluid">
-                  </span>
+                     <span class="user-letter">
+                        @if($user && !empty($user->profile_img))
+                           <img
+                                 src="{{ asset('storage/images/users-profile/' . $user->profile_img) }}"
+                                 alt="{{ $user->name }}"
+                                 class="img-fluid rounded-circle"
+                                 style="width:40px;height:40px;object-fit:cover;"
+                           >
+                        @else
+                           <div
+                                 class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                                 style="width:40px;height:40px;background:{{ $bgColor }};"
+                           >
+                                 {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                           </div>
+                        @endif
+                     </span>
                </span>
             </a>
             <div class="dropdown-menu menu-drop-user">
                <div class="profileset d-flex align-items-center">
-                  <span class="user-img me-2">
-                     @if(Auth::user()->profile_img)
-                        <img src="{{ asset('profile-images/'.Auth::user()->profile_img) }}" alt="">
-                     @else
-                        <img src="{{asset('backend/assets/img/profiles/avator1.jpg')}}" alt="Img">
-                     @endif
-                     
-                  </span>
-                  <div>
-                     <h6 class="fw-medium">{{auth()->user()->name ?? ''}}</h6>
-                     <p>{{auth()->user()->user_id ?? ''}}</p>
-                  </div>
+                     <span class="user-img me-2">
+                        @if($user && !empty($user->profile_img))
+                           <img
+                                 src="{{ asset('storage/images/users-profile/' . $user->profile_img) }}"
+                                 alt="{{ $user->name }}"
+                                 width="40"
+                                 height="40"
+                                 class="rounded-circle"
+                                 style="object-fit:cover;"
+                           >
+                        @else
+                           <div
+                                 class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold"
+                                 style="width:40px;height:40px;background:{{ $bgColor }};font-size:18px;"
+                           >
+                                 {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                           </div>
+                        @endif
+                     </span>
+                     <div>
+                        <h6 class="fw-medium">{{ $user->name ?? '' }}</h6>
+                        <p>{{ $user->user_id ?? '' }}</p>
+                     </div>
                </div>
-               <a class="dropdown-item" href="{{ route('dashboard') }}"><i class="ti ti-user-circle me-2"></i>MyProfile</a>
-               
+               <a class="dropdown-item" href="{{ route('dashboard') }}">
+                     <i class="ti ti-user-circle me-2"></i> My Profile
+               </a>
                <hr class="my-2">
-               <a class="dropdown-item logout pb-0" href="{{ route('logout')}}"><i class="ti ti-logout me-2"></i>Logout</a>
+               <a class="dropdown-item logout pb-0" href="{{ route('logout') }}">
+                     <i class="ti ti-logout me-2"></i> Logout
+               </a>
             </div>
          </li>
       </ul>

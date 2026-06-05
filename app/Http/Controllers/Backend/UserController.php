@@ -22,7 +22,7 @@ class UserController extends Controller
                 ->latest()
                 ->paginate(10);
 
-        } elseif ($authUser->hasRole('webadmin')) {
+        } elseif ($authUser->hasAnyRole(['webadmin', 'admin'])) {
             $users = User::with('roles')
                 ->where('is_admin', '!=', 1)
                 ->latest()

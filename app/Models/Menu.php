@@ -67,7 +67,7 @@ class Menu extends Model
         if (!$user) {
             return collect();
         }
-        if ($user->is_admin == 1 || $user->hasRole('admin')) {
+        if ($user->is_admin == 1) {
             return self::with([
                 'children' => function ($query) {
                     $query->where('status', true)

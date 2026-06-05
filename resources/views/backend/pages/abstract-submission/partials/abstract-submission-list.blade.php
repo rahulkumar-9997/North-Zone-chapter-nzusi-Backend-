@@ -7,7 +7,7 @@
                 <th width="180">Contact</th>
                 <th width="180">Presentation</th>
                 <th width="180">Category</th>
-                <th>Abstract Title</th>
+                <th width="180">Abstract Title</th>
                 <th width="120">File</th>
                 <th width="120">Date</th>
                 <th width="120" class="text-center">Actions</th>
@@ -146,18 +146,24 @@
                             title="View">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        <form action="{{ route('abstract-submission.destroy', $submission->id) }}"
-                            method="POST"
-                            class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                class="btn btn-sm btn-danger delete_abstract"
-                                data-name="{{ $submission->first_name }} {{ $submission->last_name }}"
-                                title="Delete">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
-                        </form>
+                        @php
+                            $user = auth()->user();
+                        @endphp
+
+                        @if($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))
+                            <form action="{{ route('abstract-submission.destroy', $submission->id) }}"
+                                method="POST"
+                                class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="btn btn-sm btn-danger delete_abstract"
+                                    data-name="{{ $submission->first_name }} {{ $submission->last_name }}"
+                                    title="Delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </td>
             </tr>

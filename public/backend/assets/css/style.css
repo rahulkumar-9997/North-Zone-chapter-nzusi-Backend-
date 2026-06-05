@@ -15168,6 +15168,9 @@ svg.feather {
 .header .user-img {
   display: inline-block;
   position: relative;
+  height: 49px;
+  width: 49px;
+  border-radius: 50%;
 }
 .header .user-img img {
   width: 38px;
@@ -15748,10 +15751,11 @@ hr {
   -webkit-justify-content: center;
   -ms-flex-pack: center;
   color: #ffffff;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   font-weight: 600;
+  
   font-size: 15px;
 }
 @media (max-width: 1199.96px) {
@@ -15941,12 +15945,13 @@ hr {
 .user-menu.nav > li.profile-nav .profileset {
   background: #F9FAFB;
   border-radius: 5px;
-  padding: 16px;
+  padding: 2px;
   margin-bottom: 8px;
 }
 .user-menu.nav > li.profile-nav .profileset img {
-  width: 40px;
-  height: 40px;
+  /* height: 49px;
+  width: 49px; */
+  width: 100%;
   flex-shrink: 0;
 }
 .user-menu.nav > li.profile-nav .dropdown-item {
@@ -37011,9 +37016,6 @@ span.unlimited-text {
   margin-right: 5px;
 }
 
-#phone, #phone2, #phone3 {
-  padding-left: 50px;
-}
 
 .total-employees {
   background-color: #FAFBFE;

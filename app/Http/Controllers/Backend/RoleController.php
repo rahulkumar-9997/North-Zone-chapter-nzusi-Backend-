@@ -8,6 +8,7 @@ use App\Models\Menu;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {    
@@ -22,7 +23,8 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $user = auth()->user();
+        /** @var User $user */
+        $user = Auth::user();
         $menusQuery = Menu::with('children')
             ->whereNull('parent_id')
             ->where('status', true);
@@ -74,7 +76,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $menusQuery = Menu::with('children')
             ->whereNull('parent_id')
             ->where('status', true);

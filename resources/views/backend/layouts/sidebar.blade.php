@@ -29,13 +29,26 @@
             <li class="submenu-open">
                <ul>
                   @forelse($menus as $menu)
+                        @php
+                            $menuUrl = '#';
+
+                            if (!empty($menu->route) && Route::has($menu->route)) {
+                                $routeObj = Route::getRoutes()->getByName($menu->route);
+
+                                if ($routeObj && count($routeObj->parameterNames()) === 0) {
+                                    $menuUrl = route($menu->route);
+                                }
+                            } elseif (!empty($menu->url)) {
+                                $menuUrl = $menu->url;
+                            }
+                        @endphp
                       @if($menu->children->isEmpty())
-                          {{-- Single menu item --}}
+                          
                           <li class="{{ request()->routeIs($menu->route) ? 'active' : '' }}">
-                              <a href="{{ $menu->route ? route($menu->route) : ($menu->url ?? '#') }}" target="{{ $menu->target }}">
-                                  <i class="{{ $menu->icon }} fs-16 me-2"></i>
-                                  <span>{{ $menu->name }}</span>
-                              </a>
+                                <a href="{{ $menuUrl }}" target="{{ $menu->target ?? '_self' }}">
+                                    <i class="{{ $menu->icon }} fs-16 me-2"></i>
+                                    <span>{{ $menu->name }}</span>
+                                </a>
                           </li>
                       @else
                           {{-- Parent menu with children --}}
@@ -57,12 +70,24 @@
                               </a>
                               <ul style="{{ $isActive ? 'display:block;' : '' }}">
                                   @foreach($menu->children as $child)
-                                      <li class="{{ request()->routeIs($child->route) ? 'active' : '' }}">
-                                          <a href="{{ $child->route ? route($child->route) : ($child->url ?? '#') }}" target="{{ $child->target }}">
-                                              <!-- <i class="{{ $child->icon ?? 'ti ti-circle' }} fs-14 me-2"></i> -->
-                                              {{ $child->name }}
-                                          </a>
-                                      </li>
+                                        @php
+                                            $childUrl = '#';
+
+                                            if (!empty($child->route) && Route::has($child->route)) {
+                                                $routeObj = Route::getRoutes()->getByName($child->route);
+
+                                                if ($routeObj && count($routeObj->parameterNames()) === 0) {
+                                                    $childUrl = route($child->route);
+                                                }
+                                            } elseif (!empty($child->url)) {
+                                                $childUrl = $child->url;
+                                            }
+                                        @endphp
+                                      <li class="{{ !empty($child->route) && request()->routeIs($child->route) ? 'active' : '' }}">
+                                        <a href="{{ $childUrl }}" target="{{ $child->target ?? '_self' }}">
+                                            {{ $child->name }}
+                                        </a>
+                                    </li>
                                   @endforeach
                               </ul>
                           </li>
