@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\LoginController;
 use App\Http\Controllers\Backend\ForgotPasswordController;
 use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\GoogleAnalyticsController;
 use App\Http\Controllers\Backend\CkeditorController;
 use App\Http\Controllers\Backend\CacheController;
 use App\Http\Controllers\Backend\BlogCategoryController;
@@ -234,6 +235,10 @@ Route::middleware(['auth:web', 'permission'])->group(function () {
     
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('member-analytics', [DashboardController::class, 'memberAnalytics'])->name('member.analytics');
+
+    Route::get('analytics/data', [GoogleAnalyticsController::class, 'data'])->name('analytics.data');
+    Route::get('analytics/chart', [GoogleAnalyticsController::class, 'chart'])->name('analytics.chart');
+
     Route::get('/get-daily-visitors', [DashboardController::class, 'getDailyVisitors'])->name('get-daily-visitors');
     Route::get('/clear-cache', [CacheController::class, 'clearCache'])->name('clear-cache');
     

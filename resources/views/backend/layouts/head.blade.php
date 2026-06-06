@@ -14,8 +14,9 @@
 <link rel="stylesheet" href="{{asset('backend/assets/css/animate.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/select2/css/select2.min.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/flatpickr/flatpickr.css')}}">
-<link rel="stylesheet" href="{{asset('backend/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.css')}}">
-<link rel="stylesheet" href="{{asset('backend/assets/plugins/daterangepicker/daterangepicker.css')}}">
+<link rel="stylesheet" href="{{asset('backend/assets/js/daterangepicker/daterangepicker.css')}}">
+<!-- <link rel="stylesheet" href="{{asset('backend/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.css')}}"> -->
+<!-- <link rel="stylesheet" href="{{asset('backend/assets/plugins/daterangepicker/daterangepicker.css')}}"> -->
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/tabler-icons/tabler-icons.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/fontawesome/css/fontawesome.min.css')}}">
 <link rel="stylesheet" href="{{asset('backend/assets/plugins/fontawesome/css/all.min.css')}}">
