@@ -18,13 +18,6 @@ use App\Http\Controllers\Backend\MenuController;
 
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RoleController;
-Route::get('/test-analytics', function () {
-    $data = \Spatie\Analytics\Facades\Analytics::get(
-        \Spatie\Analytics\Period::days(7),
-        ['sessions', 'screenPageViews', 'activeUsers']
-    );
-    return response()->json($data);
-});
 /*
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
@@ -236,8 +229,14 @@ Route::middleware(['auth:web', 'permission'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('member-analytics', [DashboardController::class, 'memberAnalytics'])->name('member.analytics');
 
-    Route::get('analytics/data', [GoogleAnalyticsController::class, 'data'])->name('analytics.data');
-    Route::get('analytics/chart', [GoogleAnalyticsController::class, 'chart'])->name('analytics.chart');
+   
+    Route::get('ga/summary', [GoogleAnalyticsController::class, 'summary'])->name('admin.ga.summary');
+    Route::get('ga/trend', [GoogleAnalyticsController::class, 'trend'])->name('admin.ga.trend');
+    Route::get('ga/sources', [GoogleAnalyticsController::class, 'sources'])->name('admin.ga.sources');
+    Route::get('ga/engagement', [GoogleAnalyticsController::class, 'engagement'])->name('admin.ga.engagement');
+    Route::get('ga/devices', [GoogleAnalyticsController::class, 'devices'])->name('admin.ga.devices');
+    Route::get('ga/top-pages', [GoogleAnalyticsController::class, 'topPages'])->name('admin.ga.top-pages');
+    Route::get('ga/referrers', [GoogleAnalyticsController::class, 'referrers'])->name('admin.ga.referrers');
 
     Route::get('/get-daily-visitors', [DashboardController::class, 'getDailyVisitors'])->name('get-daily-visitors');
     Route::get('/clear-cache', [CacheController::class, 'clearCache'])->name('clear-cache');

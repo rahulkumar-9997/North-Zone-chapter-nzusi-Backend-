@@ -168,7 +168,134 @@
                 </div>
             </div>
         </div>        
-    </div>  
+    </div> 
+    {{-- GA Section Header --}}
+    <div class="ga-section-divider">
+        <i class="ti ti-brand-google" style="color:#4285F4;font-size:15px;"></i>
+        Google Analytics
+        <span class="ga-period-badge">
+            <i class="ti ti-calendar" style="font-size:11px;"></i>
+            <span id="gaPeriodLabel">Last 30 Days</span>
+        </span>
+    </div>
+
+    {{-- SECTION 1: Summary KPI — AJAX injects full HTML here --}}
+    <div class="ga-card-wrap mb-3" id="wrap-summary">
+        <div class="ga-loading-bar"></div>
+        <div id="ga-summary">
+            <div class="ga-placeholder"><span class="spinner-border"></span> Loading summary…</div>
+        </div>
+    </div>
+
+    {{-- SECTION 2: Traffic Trend Chart --}}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card ga-card-wrap" id="wrap-trend">
+                <div class="ga-loading-bar"></div>
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="ti ti-chart-line me-2" style="color:#667eea;"></i>
+                        Traffic Trend <small class="text-muted fw-normal ms-1" style="font-size:11px;">(GA4)</small>
+                    </h5>
+                </div>
+                <div class="card-body" id="ga-trend">
+                    <div class="ga-placeholder"><span class="spinner-border"></span> Loading chart…</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- SECTION 3A: Sources / 3B: Engagement / 3C: Devices --}}
+    <div class="row g-3 mb-3">
+        <div class="col-xl-4 col-md-6 col-12">
+            <div class="card h-100 ga-card-wrap" id="wrap-sources">
+                <div class="ga-loading-bar"></div>
+                <div id="ga-sources">
+                    <div class="ga-placeholder"><span class="spinner-border"></span> Loading sources…</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6 col-12">
+            <div class="card h-100 ga-card-wrap" id="wrap-engagement">
+                <div class="ga-loading-bar"></div>
+                <div id="ga-engagement">
+                    <div class="ga-placeholder"><span class="spinner-border"></span> Loading engagement…</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-md-6 col-12">
+            <div class="card h-100 ga-card-wrap" id="wrap-devices">
+                <div class="ga-loading-bar"></div>
+                <div id="ga-devices">
+                    <div class="ga-placeholder"><span class="spinner-border"></span> Loading devices…</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Your original member analytics --}}
+    <div class="row sales-board">
+        <div class="col-md-12 d-flex">
+            <div class="card flex-fill">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Member Analytics</h5>
+                    <div class="graph-sets">
+                        <div class="dropdown dropdown-wraper">
+                            <button class="btn btn-white btn-sm dropdown-toggle d-flex align-items-center"
+                                type="button" id="dropdown-sales" data-bs-toggle="dropdown">
+                                <i data-feather="calendar" class="feather-14"></i>
+                                <span id="selectedYear">{{ $currentYear }}</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                @for ($i = 0; $i < 5; $i++)
+                                    <li><a href="javascript:void(0);" class="dropdown-item year-option" data-year="{{ $currentYear - $i }}">{{ $currentYear - $i }}</a></li>
+                                @endfor
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-1 pb-0">
+                    <div id="member_analysis" class="chart-set"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- SECTION 4: Top Pages --}}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card ga-card-wrap" id="wrap-toppages">
+                <div class="ga-loading-bar"></div>
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="ti ti-layout-list me-2" style="color:#667eea;"></i>
+                        Top Pages <small class="text-muted fw-normal ms-1" style="font-size:11px;">(GA4)</small>
+                    </h5>
+                </div>
+                <div class="card-body" id="ga-toppages">
+                    <div class="ga-placeholder"><span class="spinner-border"></span> Loading top pages…</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- SECTION 5: Top Referrers --}}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card ga-card-wrap" id="wrap-referrers">
+                <div class="ga-loading-bar"></div>
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="ti ti-link me-2" style="color:#10b981;"></i>
+                        Top Referrers <small class="text-muted fw-normal ms-1" style="font-size:11px;">(GA4)</small>
+                    </h5>
+                </div>
+                <div class="card-body" id="ga-referrers">
+                    <div class="ga-placeholder"><span class="spinner-border"></span> Loading referrers…</div>
+                </div>
+            </div>
+        </div>
+    </div> 
 </div>
 @endsection
 @push('scripts')
@@ -177,5 +304,17 @@
     window.memberAnalyticsUrl = "{{ route('member.analytics') }}";
 </script>
 <script src="{{ asset('backend/assets/js/pages/member-analytics.js') }}?v={{ config('app.assets_version') }}"></script>
-
+<script>
+window.GA_ROUTES = {
+    summary    : "{{ route('admin.ga.summary') }}",
+    trend      : "{{ route('admin.ga.trend') }}",
+    sources    : "{{ route('admin.ga.sources') }}",
+    engagement : "{{ route('admin.ga.engagement') }}",
+    devices    : "{{ route('admin.ga.devices') }}",
+    toppages   : "{{ route('admin.ga.top-pages') }}",
+    referrers  : "{{ route('admin.ga.referrers') }}",
+};
+window.GA_CSRF = "{{ csrf_token() }}";
+</script>
+<script src="{{ asset('backend/assets/js/pages/ga-dashboard.js') }}?v={{ config('app.assets_version') }}"></script>
 @endpush

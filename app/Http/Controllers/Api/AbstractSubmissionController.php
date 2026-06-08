@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Mail\AbstractSubmissionMail;
+use App\Mail\AbstractSubmissionMailUser;
 use App\Models\AbstractSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -149,17 +150,18 @@ class AbstractSubmissionController extends Controller
             ]);
             try {
                 $recipients = [
-                    'rahulkumarmaurya464@gmail.com',
+                    'shubhankarchandra@gmail.com',
+                    'drsameertrivedi@gmail.com',
+                    'drkamaljeet@gmail.com',
+                    'nzusioffice@gmail.com',
+                    'akshat@gdsons.co.in'
                 ];
-                foreach ($recipients as $email) {
-                    /*
-                    Mail::to($email)->send(
-                        new AbstractSubmissionMail(
-                            $submission,
-                            $absoluteFilePath
-                        )
+                if (!empty($request->email)) {
+                    Mail::to(trim($request->email))->queue(
+                        new AbstractSubmissionMailUser($submission)
                     );
-                    */
+                }
+                foreach ($recipients as $email) {
                     Mail::to($email)->queue(
                         new AbstractSubmissionMail(
                             $submission,
