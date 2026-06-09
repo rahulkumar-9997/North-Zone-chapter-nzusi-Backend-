@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Member;
+use Illuminate\Support\Facades\Validator;
 use App\Models\MemberOfficeAddress;
 use App\Models\MemberResidenceAddress;
 use App\Models\MemberAcademicQualification;
@@ -12,6 +13,9 @@ use App\Models\MemberPresentDesignation;
 use App\Models\MemberUrologyTraining;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use App\Helpers\ImageHelper;
 use Carbon\Carbon;
 
 class MemberController extends Controller
@@ -584,33 +588,6 @@ class MemberController extends Controller
         }
     }
 
-    public function logout(Request $request)
-    {
-        try {
-            $user = $request->user();
-            if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthorized.'
-                ], 401);
-            }
-            $user->currentAccessToken()->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'Logged out successfully.'
-            ], 200);
-        } catch (\Exception $e) {
-            Log::error('Logout error: ' . $e->getMessage(), [
-                'user_id' => $request->user()?->id
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Unable to logout.',
-                'data' => null
-            ], 500);
-        }
-    }
-
     public function getMemberList(Request $request)
     {
         try {
@@ -674,6 +651,95 @@ class MemberController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Unable to fetch members list.',
+                'data' => null
+            ], 500);
+        }
+    }
+
+    public function updateProfileImage(Request $request)
+    {
+        $member = $request->user();
+        $validator = Validator::make($request->all(), [
+            'profile_picture' => [
+                'required',
+                'image',
+                'mimes:jpeg,jpg,png,webp',
+                'max:10240',
+            ],
+        ], [
+            'profile_picture.required' => 'Profile picture is required.',
+            'profile_picture.image'    => 'The uploaded file must be an image.',
+            'profile_picture.mimes'    => 'Only JPEG, JPG, PNG and WEBP images are allowed.',
+            'profile_picture.max'      => 'Profile picture size must not exceed 10 MB.',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed.',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        DB::beginTransaction();
+        try {
+            $imageName = $member->profile_image;
+            if ($request->hasFile('profile_picture')) {
+                $fileName = ImageHelper::generateFileName($member->name);
+                $imageName = ImageHelper::uploadSingleImageWebpOnly(
+                    $request->file('profile_picture'),
+                    $fileName,
+                    'member',
+                    null
+                );
+            }
+            $member->update([
+                'profile_image' => $imageName,
+            ]);
+            Cache::forget('member_profile_' . $member->id);
+            DB::commit();
+            $member->refresh();
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile image updated successfully.',
+                'data' => [
+                    'profile_image' => $member->profile_image
+                        ? asset('storage/images/member/' . $member->profile_image)
+                        : null,
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Update profile image error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to update profile image.',
+                'data' => null
+            ], 500);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            $user = $request->user();
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized.'
+                ], 401);
+            }
+            $user->currentAccessToken()->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Logged out successfully.'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Logout error: ' . $e->getMessage(), [
+                'user_id' => $request->user()?->id
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to logout.',
                 'data' => null
             ], 500);
         }

@@ -28,6 +28,7 @@ Route::prefix('member')->group(function () {
         Route::controller(MemberController::class)->group(function () {
             Route::get('/profile', 'profile');
             Route::post('/update-profile', 'updateProfile');
+            Route::post('/profile-image', 'updateProfileImage');
             Route::get('/profile/address', [MemberController::class, 'getAddress']);
             Route::put('/profile/address', [MemberController::class, 'updateAddress']);
             Route::get('present-appointment-designation', [MemberController::class, 'getPresentAppointmentDesignation']);
