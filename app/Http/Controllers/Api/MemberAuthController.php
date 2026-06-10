@@ -25,7 +25,6 @@ class MemberAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'contact' => 'required|string',
         ]);
-
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -33,7 +32,6 @@ class MemberAuthController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-
         $input = trim($request->contact);
         $isEmail = filter_var($input, FILTER_VALIDATE_EMAIL);
         $isMobileNo = preg_match('/^[6-9]\d{9}$/', $input);
@@ -48,7 +46,8 @@ class MemberAuthController extends Controller
         } else {
             $member = Member::where('membership_no', $input)->first();
             $field = 'membership_no';
-        }        
+        }  
+        
         $isNewUser = false;        
         if (!$member) {
             return response()->json([
@@ -56,6 +55,7 @@ class MemberAuthController extends Controller
                 'message' => 'Member not found'
             ], 404);
         }
+        
         if($member->status == "pending"){
             return response()->json([
                 'success' => false,
@@ -84,11 +84,14 @@ class MemberAuthController extends Controller
         $otp = random_int(100000, 999999);
         cache()->put('otp_' . $member->id, $otp, now()->addMinutes(5));
         cache()->put('otp_sent_' . $member->id, now(), now()->addMinutes(1));
-        if ($member->email) {
-            $this->sendEmailOtp($member->email, $otp);
-        }        
-        if ($member->mobile_no) {
-            $this->sendSmsOtp($member->mobile_no, $otp);
+        if ($isEmail) {
+            if ($member->email) {
+                $this->sendEmailOtp($member->email, $otp);
+            }
+        } elseif ($isMobileNo) {
+            if ($member->mobile_no) {
+                $this->sendSmsOtp($member->mobile_no, $otp);
+            }
         }        
         Log::info("OTP for {$input}: {$otp}");        
         return response()->json([

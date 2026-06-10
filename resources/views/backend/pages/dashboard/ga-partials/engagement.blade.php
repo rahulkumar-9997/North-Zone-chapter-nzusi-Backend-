@@ -1,8 +1,3 @@
-{{--
-    resources/views/backend/ga-partials/engagement.blade.php
-    $data = [ bounce_rate, avg_session_duration, new_user_pct,
-              returning_pct, pages_per_session, sessions ]
---}}
 <style>
 .eng-card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; padding:16px 18px 0; }
 .eng-card-head h6 { font-size:13px; font-weight:700; color:#1f2937; margin:0; }
@@ -15,8 +10,7 @@
 </style>
 
 <div class="eng-card-head">
-    <h6><i class="ti ti-activity me-1" style="color:#10b981;"></i> Engagement Metrics</h6>
-    <span class="eng-chip-g">Live</span>
+    <h4>Engagement Metrics</h4>
 </div>
 <div class="eng-body">
     <div class="eng-grid">

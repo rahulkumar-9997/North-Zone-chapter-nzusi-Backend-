@@ -1,13 +1,5 @@
-{{--
-    resources/views/backend/ga-partials/trend.blade.php
-    $data = [ dates:[], visitors:[], pageviews:[] ]
-    Chart div + hidden JSON script tag (JS reads this to render ApexChart)
---}}
 
-{{-- Chart canvas --}}
 <div id="gaApexTrend" style="min-height:280px;"></div>
-
-{{-- Embedded chart data — JS reads this, chart render karta hai --}}
 <script type="application/json" id="gaChartData">
 {!! json_encode([
     'dates'     => $data['dates']     ?? [],
@@ -15,8 +7,6 @@
     'pageviews' => $data['pageviews'] ?? [],
 ]) !!}
 </script>
-
-{{-- Legend --}}
 <div style="display:flex;gap:16px;margin-top:10px;font-size:11px;color:#9ca3af;padding:0 4px;">
     <span>
         <span style="display:inline-block;width:12px;height:3px;background:#667eea;border-radius:10px;vertical-align:middle;margin-right:4px;"></span>

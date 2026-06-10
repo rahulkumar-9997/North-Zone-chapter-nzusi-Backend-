@@ -49,6 +49,9 @@ class MemberController extends Controller
                     'email' => $user->email,
                     'gender' => $user->gender,
                     'city_name' => $user->city_name,
+					'profile_image' => $user->profile_image
+                        ? asset('storage/images/member/' . $user->profile_image)
+                        : null,
                     'mobile_no' => $user->mobile_no,
                     'membership_type' => $user->type ? $user->type->name : null,
                     'dob' => $user->dob ? $user->dob->format('Y-m-d') : null,
@@ -681,19 +684,22 @@ class MemberController extends Controller
         }
         DB::beginTransaction();
         try {
-            $imageName = $member->profile_image;
-            if ($request->hasFile('profile_picture')) {
-                $fileName = ImageHelper::generateFileName($member->name);
-                $imageName = ImageHelper::uploadSingleImageWebpOnly(
-                    $request->file('profile_picture'),
-                    $fileName,
-                    'member',
-                    null
-                );
-            }
-            $member->update([
-                'profile_image' => $imageName,
-            ]);
+            $old_image_name = $member->profile_image;
+			$imageName = $old_image_name;
+			if ($request->hasFile('profile_picture')) {
+				$fileName = ImageHelper::generateFileName($member->name);
+
+				$imageName = ImageHelper::uploadSingleImageWebpOnly(
+					$request->file('profile_picture'),
+					$fileName,
+					'member',
+					$old_image_name
+				);
+			}
+
+			$member->update([
+				'profile_image' => $imageName,
+			]);
             Cache::forget('member_profile_' . $member->id);
             DB::commit();
             $member->refresh();

@@ -1,8 +1,3 @@
-{{--
-    resources/views/backend/ga-partials/devices.blade.php
-    $data = [ mobile_pct, desktop_pct, tablet_pct ]
-    Bars HTML + hidden JSON (JS reads it to render ApexChart donut)
---}}
 <style>
 .dev-card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; padding:16px 18px 0; }
 .dev-card-head h6 { font-size:13px; font-weight:700; color:#1f2937; margin:0; }
@@ -17,8 +12,7 @@
 </style>
 
 <div class="dev-card-head">
-    <h6><i class="ti ti-devices me-1" style="color:#f59e0b;"></i> Device Breakdown</h6>
-    <span class="dev-chip-a">GA4</span>
+    <h4>Device Breakdown</h4>
 </div>
 <div class="dev-body">
     <div class="dev-big">{{ $data['mobile_pct'] ?? 0 }}%</div>
@@ -27,7 +21,7 @@
     <div class="dev-rows">
         <div>
             <div class="dev-lbl">
-                <span><i class="ti ti-device-mobile" style="font-size:11px;margin-right:3px;"></i> Mobile</span>
+                <span><i class="ti ti-device-mobile" style="font-size:11px;margin-right:3px;"></i> Mobile {{ $data['mobile_count'] }}</span>
                 <strong>{{ $data['mobile_pct'] ?? 0 }}%</strong>
             </div>
             <div class="dev-track">
@@ -36,7 +30,7 @@
         </div>
         <div>
             <div class="dev-lbl">
-                <span><i class="ti ti-device-desktop" style="font-size:11px;margin-right:3px;"></i> Desktop</span>
+                <span><i class="ti ti-device-desktop" style="font-size:11px;margin-right:3px;"></i> Desktop {{ $data['desktop_count'] }}</span>
                 <strong>{{ $data['desktop_pct'] ?? 0 }}%</strong>
             </div>
             <div class="dev-track">
@@ -45,7 +39,7 @@
         </div>
         <div>
             <div class="dev-lbl">
-                <span><i class="ti ti-device-tablet" style="font-size:11px;margin-right:3px;"></i> Tablet</span>
+                <span><i class="ti ti-device-tablet" style="font-size:11px;margin-right:3px;"></i> Tablet {{ $data['tablet_count'] }}</span>
                 <strong>{{ $data['tablet_pct'] ?? 0 }}%</strong>
             </div>
             <div class="dev-track">

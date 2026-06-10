@@ -20,12 +20,7 @@
          </span>
       </a>
       
-      <ul class="nav user-menu">
-         @if(request()->routeIs('dashboard'))
-         <li class="nav-item pos-nav">
-            <input type="text" id="daterange" class="form-control" />
-         </li>
-         @endif         
+      <ul class="nav user-menu">               
          <li class="nav-item pos-nav">
             <a href="{{ route('clear-cache') }}" class="btn btn-dark btn-md d-inline-flex align-items-center">
                <i class="ti ti-device-laptop me-1"></i>Clear Cache

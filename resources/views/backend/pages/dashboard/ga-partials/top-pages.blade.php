@@ -1,7 +1,3 @@
-{{--
-    resources/views/backend/ga-partials/top-pages.blade.php
-    $data = [ pages:[{page, views, bounce, avg_time}] ]
---}}
 <style>
 .ga-pages-table { width:100%; border-collapse:collapse; }
 .ga-pages-table th {
@@ -36,7 +32,6 @@
 
 @if(empty($data['pages']))
     <p class="text-muted text-center" style="padding:24px;font-size:13px;">
-        <i class="ti ti-mood-empty" style="font-size:20px;display:block;margin-bottom:6px;"></i>
         Is period mein koi page data nahi mila.
     </p>
 @else
@@ -47,15 +42,12 @@
                 <th style="width:40px;">#</th>
                 <th>Page</th>
                 <th>Views</th>
-                <th>Bounce Rate</th>
                 <th>Avg. Time</th>
             </tr>
         </thead>
         <tbody>
             @foreach($data['pages'] as $i => $page)
             @php
-                $bounce     = $page['bounce'] ?? 0;
-                $bounceClass = $bounce < 40 ? 'bc-g' : ($bounce < 60 ? 'bc-o' : 'bc-r');
                 $pageName   = $page['page'] ?? '/';
                 $pageTitle  = $page['title'] ?? null;
                 $shortName  = strlen($pageName) > 45 ? substr($pageName, 0, 45) . '…' : $pageName;
@@ -70,8 +62,7 @@
                         @endif
                     </div>
                 </td>
-                <td><span class="views-badge">{{ number_format($page['views'] ?? 0) }}</span></td>
-                <td class="{{ $bounceClass }}">{{ $bounce }}%</td>
+                <td><span class="views-badge">{{ number_format($page['views'] ?? 0) }}</span></td>                
                 <td style="color:#6b7280;">{{ $page['avg_time'] ?? '–' }}</td>
             </tr>
             @endforeach
