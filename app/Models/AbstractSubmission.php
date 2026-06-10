@@ -43,4 +43,9 @@ class AbstractSubmission extends Model
     {
         return $this->belongsTo(User::class, 'post_user');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(AbstractSubmissionReview::class);
+    }
 }

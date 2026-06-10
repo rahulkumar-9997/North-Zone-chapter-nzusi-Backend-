@@ -1,6 +1,32 @@
 @extends('backend.layouts.master')
 @section('title','Abstract Submission')
 @push('styles')
+<style>
+    .abstract-title-column {
+        white-space: normal !important;
+        min-width: 250px;
+    }
+    .status-btn {
+        cursor: pointer;
+    }
+
+    .status-badge {
+        font-size: 13px;
+        padding: 6px 10px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* Hover effect */
+    .status-btn:hover .status-badge {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    /* subtle glow */
+    .status-btn:hover {
+        opacity: 0.9;
+    }
+</style>
 @endpush
 @section('main-content')
 <div class="content">
@@ -112,6 +138,7 @@
 
 @endsection
 @push('scripts')
+<script src="{{ asset('backend/assets/js/pages/abstract-review.js') }}"></script>
 <script>
     $(document).ready(function() {
         $('.delete_abstract').click(function(event) {

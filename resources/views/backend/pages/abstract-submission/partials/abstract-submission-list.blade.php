@@ -6,6 +6,7 @@
                 <th width="260">Participant Details</th>
                 <th width="180">Contact</th>
                 <th width="180">Presentation</th>
+                <th width="180">Status</th>
                 <th width="180">Category</th>
                 <th width="180">Abstract Title</th>
                 <th width="120">File</th>
@@ -103,21 +104,52 @@
                     </span>
                     @endif
                 </td>
+                <td class="text-center">
+                    <button class="btn btn-lg border-0 p-0 open-review-modal status-btn"
+                        data-status="{{ $submission->status }}"
+                        data-title="{{ $submission->first_name }}"
+                        data-size="lg"
+                        data-route="{{ route('abstract-review.create', $submission->id) }}"
+                        data-abstract="true"
+                        title="Click to update status">
+                        @if($submission->status == 'pending')
+                            <span class="badge bg-warning status-badge">
+                                <i class="fa-solid fa-clock me-1"></i>
+                                Pending
+                                <i class="fa-solid fa-pen-to-square ms-1 opacity-75"></i>
+                            </span>
+                        @elseif($submission->status == 'approved')
+                            <span class="badge bg-success status-badge">
+                                <i class="fa-solid fa-check me-1"></i>
+                                Approved
+                                <i class="fa-solid fa-pen-to-square ms-1 opacity-75"></i>
+                            </span>
+
+                        @else
+                            <span class="badge bg-danger status-badge">
+                                <i class="fa-solid fa-xmark me-1"></i>
+                                Rejected
+                                <i class="fa-solid fa-pen-to-square ms-1 opacity-75"></i>
+                            </span>
+                        @endif
+
+                    </button>
+                </td>
                 <td>
                     <span class="fw-medium">
                         {{ $submission->topic_category }}
                     </span>
                 </td>
-                <td>
+                <td class="abstract-title-column">
                     <div class="fw-semibold text-dark">
                         {{ $submission->abstract_title }}
                     </div>
+
                     @if($submission->institution)
-                    <small class="text-muted">
-                        <strong>
-                            Institution / Hospital :
-                        </strong>{{ $submission->institution }}
-                    </small>
+                        <small class="text-muted">
+                            <strong>Institution / Hospital :</strong>
+                            {{ $submission->institution }}
+                        </small>
                     @endif
                 </td>
                 <td class="text-center">

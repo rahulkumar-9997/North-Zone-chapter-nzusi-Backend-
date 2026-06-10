@@ -93,6 +93,10 @@ Route::middleware(['auth:web', 'permission'])->group(function () {
     Route::get('abstract-submission/{id}', [AbstractSubmissionController::class, 'show'])->name('abstract-submission.show');
     Route::delete('abstract-submission/{id}', [AbstractSubmissionController::class, 'destroy'])->name('abstract-submission.destroy');
 
+    Route::get('abstract-review/create/{id}', [AbstractSubmissionController::class, 'abstractReviewForm'])->name('abstract-review.create');
+
+    Route::post('abstract-review/store', [AbstractSubmissionController::class, 'abstractReviewFormSubmit'])->name('abstract-review.store');
+
     // ========== USER MANAGEMENT ROUTES ==========
     Route::resource('users', UserController::class);
     Route::get('users/{user}/roles', [UserController::class, 'roles'])->name('users.roles');
