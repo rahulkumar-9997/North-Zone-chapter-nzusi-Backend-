@@ -97,6 +97,8 @@ Route::middleware(['auth:web', 'permission'])->group(function () {
 
     Route::post('abstract-review/store', [AbstractSubmissionController::class, 'abstractReviewFormSubmit'])->name('abstract-review.store');
 
+    Route::post('abstract-review/{id}/update', [AbstractSubmissionController::class, 'abstractReviewUpdate'])->name('abstract-review.update');
+
     // ========== USER MANAGEMENT ROUTES ==========
     Route::resource('users', UserController::class);
     Route::get('users/{user}/roles', [UserController::class, 'roles'])->name('users.roles');

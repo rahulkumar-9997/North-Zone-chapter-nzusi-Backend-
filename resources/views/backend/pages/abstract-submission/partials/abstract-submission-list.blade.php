@@ -5,9 +5,8 @@
                 <th width="60">#</th>
                 <th width="260">Participant Details</th>
                 <th width="180">Contact</th>
-                <th width="180">Presentation</th>
                 <th width="180">Status</th>
-                <th width="180">Category</th>
+                <th width="180">Category/ Presentation</th>
                 <th width="180">Abstract Title</th>
                 <th width="120">File</th>
                 <th width="120">Date</th>
@@ -66,7 +65,6 @@
                     <div class="mb-1">
                         <a href="tel:{{ $submission->phone }}"
                             class="text-decoration-none">
-                            <i class="fa-solid fa-phone text-success"></i>
                             {{ $submission->phone }}
                         </a>
                     </div>
@@ -75,37 +73,14 @@
                     <div>
                         <a href="mailto:{{ $submission->email }}"
                             class="text-decoration-none">
-                            <i class="fa-solid fa-envelope text-primary"></i>
                             {{ $submission->email }}
                         </a>
                     </div>
                     @endif
                 </td>
-                <td>
-                    @if($submission->presentation_type == 'video')
-                    <span class="badge bg-pink">
-                        Video Presentation (BV)
-                    </span>
-                    @elseif($submission->presentation_type == 'podium')
-                    <span class="badge bg-pink">
-                        Podium / Best Paper (BP)
-                    </span>
-                    @elseif($submission->presentation_type == 'poster')
-                    <span class="badge bg-pink">
-                        Moderated Poster (BPos)
-                    </span>
-                    @elseif($submission->presentation_type == 'eposter')
-                    <span class="badge bg-pink">
-                        Unmoderated e-Poster (UPos)
-                    </span>
-                    @else
-                    <span class="badge bg-secondary">
-                        {{ ucfirst($submission->presentation_type) }}
-                    </span>
-                    @endif
-                </td>
+               
                 <td class="text-center">
-                    <button class="btn btn-lg border-0 p-0 open-review-modal status-btn"
+                    <button class="btn btn-sm border-0 p-0 open-review-modal status-btn"
                         data-status="{{ $submission->status }}"
                         data-title="{{ $submission->first_name }}"
                         data-size="lg"
@@ -138,7 +113,28 @@
                 <td>
                     <span class="fw-medium">
                         {{ $submission->topic_category }}
+                    </span><br>
+                    @if($submission->presentation_type == 'video')
+                    <span class="badge bg-pink">
+                        Video Presentation (BV)
                     </span>
+                    @elseif($submission->presentation_type == 'podium')
+                    <span class="badge bg-pink">
+                        Podium / Best Paper (BP)
+                    </span>
+                    @elseif($submission->presentation_type == 'poster')
+                    <span class="badge bg-pink">
+                        Moderated Poster (BPos)
+                    </span>
+                    @elseif($submission->presentation_type == 'eposter')
+                    <span class="badge bg-pink">
+                        Unmoderated e-Poster (UPos)
+                    </span>
+                    @else
+                    <span class="badge bg-secondary">
+                        {{ ucfirst($submission->presentation_type) }}
+                    </span>
+                    @endif
                 </td>
                 <td class="abstract-title-column">
                     <div class="fw-semibold text-dark">

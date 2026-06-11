@@ -16,6 +16,11 @@ class AbstractSubmissionReview extends Model
         return $this->belongsTo(AbstractSubmission::class, 'abstract_submission_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
     public function reviewer()
     {
         return $this->belongsTo(User::class, 'reviewed_by');

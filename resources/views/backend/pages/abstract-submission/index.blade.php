@@ -11,20 +11,23 @@
     }
 
     .status-badge {
-        font-size: 13px;
-        padding: 6px 10px;
+        font-size: 11px;
+        padding: 5px 5px;
         transition: all 0.2s ease-in-out;
     }
 
     /* Hover effect */
     .status-btn:hover .status-badge {
         transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        /* box-shadow: 0 4px 12px rgba(0,0,0,0.15); */
     }
 
     /* subtle glow */
     .status-btn:hover {
         opacity: 0.9;
+    }
+    #abstract-list .table tbody tr td{
+        font-size: 14px;
     }
 </style>
 @endpush
@@ -128,7 +131,7 @@
         </div>
         <div class="card-body p-0">
             <div class="table-responsive">
-                <div class="abstract-submission-list-table-render" data-url="{{ route('abstract-submission.index') }}">
+                <div class="abstract-submission-list-table-render" id="abstract-list" data-url="{{ route('abstract-submission.index') }}">
                     @include('backend.pages.abstract-submission.partials.abstract-submission-list', ['abstractSubmissions' => $abstractSubmissions ??[]])
                 </div>
             </div>
