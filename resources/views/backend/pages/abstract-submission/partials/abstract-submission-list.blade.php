@@ -164,7 +164,7 @@
                 </td>
                 <td>
                     <div>
-                        {{ $submission->created_at->format('d M Y') }}
+                        {{ $submission->created_at->format('d M Y h:i A') }}
                     </div>
                 </td>
                 <td class="text-center">
