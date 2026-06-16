@@ -103,7 +103,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="mb-3">
-                            <label class="form-label">Reading Title</label>
+                            <label class="form-label">Reading Time</label>
                             <input type="text" name="reading_title" class="form-control" value="{{ old('reading_title', $blog->reading_title ?? '') }}" placeholder="1 Min Read">
                             @error('reading_title')
                             <small class="text-danger">{{ $message }}</small>
