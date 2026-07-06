@@ -155,7 +155,7 @@ class AbstractSubmissionController extends Controller
                     'drkamaljeet@gmail.com',
                     'nzusioffice@gmail.com',
                     'akshat@gdsons.co.in'
-                ];
+                ];				
                 if (!empty($request->email)) {
                     Mail::to(trim($request->email))->queue(
                         new AbstractSubmissionMailUser($submission)

@@ -41,8 +41,8 @@ class MemberController extends Controller
                 'type'
             ]);
             $cacheKey = 'member_profile_' . $user->id;
-            $data = Cache::remember($cacheKey, 3600, function () use ($user) {
-                return [
+            //$data = Cache::remember($cacheKey, 3600, function () use ($user) {
+                $data = [
                     'id' => $user->id,
                     'membership_no' => $user->membership_no,
                     'name' => $user->name,
@@ -53,12 +53,12 @@ class MemberController extends Controller
                         ? asset('storage/images/member/' . $user->profile_image)
                         : null,
                     'mobile_no' => $user->mobile_no,
-                    'membership_type' => $user->type ? $user->type->name : null,
+                    'membership_type' => $user->type ? $user->type->title : null,
                     'dob' => $user->dob ? $user->dob->format('Y-m-d') : null,
                     'usi_member' => $user->usi_member ?? null,
                     'usi_number' => $user->usi_number ?? null,
                     'preferred_address' => $user->preferred_address,
-                    'membership_approved_date' => $user->membership_approved_date ? $user->membership_approved_date->format('Y-m-d') : null,
+                    //'membership_approved_date' => $user->membership_approved_date ? $user->membership_approved_date->format('Y-m-d') : null,
                     'status' => $user->status,
                     'is_active' => $user->is_active,
                     'is_verified' => $user->is_verified,
@@ -110,7 +110,7 @@ class MemberController extends Controller
                         ];
                     }),
                 ];
-            });
+            //});
 
             return response()->json([
                 'success' => true,
@@ -135,25 +135,24 @@ class MemberController extends Controller
         try {
             $user = $request->user();
             $rules = [
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:members,email,' . $user->id,
-                'gender' => 'required|in:male,female,other',
-                'city_name' => 'required|string|max:255',
-                'mobile_no' => 'required|string|max:20',
-                'dob' => 'required|date|before:today',
+                'name' => 'nullable|string|max:255',
+                'email' => 'nullable|email|max:255|unique:members,email,' . $user->id,
+                'gender' => 'nullable|in:male,female,other',
+                'city_name' => 'nullable|string|max:255',
+                'mobile_no' => 'nullable|string|max:20',
+                'dob' => 'nullable|date|before:today',
             ];
             $messages = [
                 'dob.before' => 'Date of birth must be before today.',
             ];
             $validatedData = $request->validate($rules, $messages);
-            $updateData = [
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'gender' => $validatedData['gender'],
-                'city_name' => $validatedData['city_name'],
-                'mobile_no' => $validatedData['mobile_no'],
-                'dob' => $validatedData['dob'],
-            ];
+			$updateData = [
+				'name' => $validatedData['name'] ?? $user->name,
+				'gender' => $validatedData['gender'] ?? $user->gender,
+				'city_name' => $validatedData['city_name'] ?? $user->city_name,
+				'mobile_no' => $validatedData['mobile_no'] ?? $user->mobile_no,
+				'dob' => $validatedData['dob'] ?? $user->dob,
+			];
             $user->update($updateData);
             Cache::forget('member_profile_' . $user->id);
             Cache::forget('member_address_' . $user->id);
@@ -199,7 +198,7 @@ class MemberController extends Controller
         try {
             $user = $request->user();
             $cacheKey = 'member_address_' . $user->id;
-            $data = Cache::remember($cacheKey, 3600, function () use ($user) {
+            //$data = Cache::remember($cacheKey, 3600, function () use ($user) {
                 $user->load(['officeAddress', 'residenceAddress']);
                 return [
                     'preferred_address' => $user->preferred_address,
@@ -222,7 +221,7 @@ class MemberController extends Controller
                         'website' => $user->residenceAddress->residence_website,
                     ] : null,
                 ];
-            });
+            //});
 
             return response()->json([
                 'success' => true,
@@ -620,8 +619,8 @@ class MemberController extends Controller
                     'gender' => $member->gender,
                     'city_name' => $member->city_name,
                     'address' => $member->address,
-                    'profile_image' => $member->image
-                        ? asset('storage/images/member/' . $member->image)
+                    'profile_image' => $member->profile_image
+                        ? asset('storage/images/member/' . $member->profile_image)
                         : null,
                     'status' => $member->status,                    
                     'membership_type' => $member->type ? [
