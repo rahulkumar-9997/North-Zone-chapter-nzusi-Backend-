@@ -101,13 +101,13 @@
                             <label class="form-label">Preferred Address</label>
                             <div class="d-sm-flex align-items-center justify-content-between">
                                 <div class="form-check form-check-md">
-                                    <input class="form-check-input" type="radio" name="preferred_address" id="preferred_office" value="office" {{ (isset($member) && $member->preferred_address == 'office') ? 'checked' : '' }}>
+                                    <input class="form-check-input" type="radio" name="preferred_address" id="preferred_office" value="office"
+                                        {{ (isset($member) && $member->preferred_address == 'office') ? 'checked' : '' }}>
                                     <label class="form-check-label" for="preferred_office">Office</label>
                                 </div>
                                 <div class="form-check form-check-md">
-                                    <input class="form-check-input" type="radio" name="preferred_address" id="preferred_residence" value="residence" 
-                                      {{ (!isset($member) || empty($member->preferred_address) || $member->preferred_address == 'residence') ? 'checked' : '' }}
-                                    >
+                                    <input class="form-check-input" type="radio" name="preferred_address" id="preferred_residence" value="residence"
+                                        {{ (isset($member) && $member->preferred_address == 'residence') ? 'checked' : '' }}>
                                     <label class="form-check-label" for="preferred_residence">Residence</label>
                                 </div>
                             </div>
@@ -271,9 +271,12 @@ $(document).ready(function () {
         if (selected === 'office') {
             $('#office_address_section').show();
             $('#residence_address_section').hide();
-        } else {
+        } else if (selected === 'residence') {
             $('#office_address_section').hide();
             $('#residence_address_section').show();
+        } else {
+            $('#office_address_section').hide();
+            $('#residence_address_section').hide();
         }
     }
     toggleAddress();

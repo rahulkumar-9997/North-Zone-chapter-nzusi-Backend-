@@ -34,7 +34,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr) {
-                    submitButton.prop("disabled", false).html("Save Category");
+                    submitButton.prop("disabled", false).html("Save and Next");
                     if (xhr.status === 422) {
                         let errors = xhr.responseJSON.errors;
                         $.each(errors, function (key, value) {
@@ -97,7 +97,7 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr) {
-                    submitButton.prop("disabled", false).html("Save Category");
+                    submitButton.prop("disabled", false).html("Save and Next");
                     if (xhr.status === 422) {
                         let errors = xhr.responseJSON.errors;
                         $.each(errors, function (key, value) {

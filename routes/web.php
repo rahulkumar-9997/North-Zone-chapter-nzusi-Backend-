@@ -19,6 +19,7 @@ use App\Http\Controllers\Backend\MenuController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\RoleController;
 
+Route::get('/', [LoginController::class, 'showLoginForm']);
 Route::prefix('admin')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm']);
     Route::post('/login', [LoginController::class, 'login'])->name('login');

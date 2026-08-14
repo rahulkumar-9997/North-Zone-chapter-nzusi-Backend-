@@ -116,7 +116,7 @@ class ManageMemberController extends Controller
             'gender' => 'nullable|in:male,female,other',
             'city_name' => 'nullable|string|max:255',
             'dob' => 'nullable|date',
-            'preferred_address' => 'required|in:office,residence',
+            'preferred_address' => 'nullable|in:office,residence',
             'status' => 'required|in:pending,approved,rejected',
             'office_state' => 'required_if:preferred_address,office|nullable|string|max:255',
             'office_city' => 'required_if:preferred_address,office|nullable|string|max:255',
@@ -155,7 +155,7 @@ class ManageMemberController extends Controller
                 'preferred_address' => $request->preferred_address,
                 'status' => $request->status,
                 'is_active' => 1,
-				'is_verified' => 1,
+                'is_verified' => 1,
                 'user_id' => Auth::id(),
                 'password' => Hash::make(Str::random(8)),
             ]);
@@ -171,7 +171,7 @@ class ManageMemberController extends Controller
                     'office_email' => $request->office_email,
                     'office_website' => $request->office_website,
                 ]);
-            } else {
+            } elseif ($request->preferred_address == 'residence') {
                 MemberResidenceAddress::create([
                     'member_id' => $member->id,
                     'residence_state' => $request->residence_state,
@@ -212,7 +212,7 @@ class ManageMemberController extends Controller
             'gender' => 'nullable|in:male,female,other',
             'city_name' => 'nullable|string|max:255',
             'dob' => 'nullable|date',
-            'preferred_address' => 'required|in:office,residence',
+            'preferred_address' => 'nullable|in:office,residence',
             'status' => 'required|in:pending,approved,rejected',
             'office_state' => 'required_if:preferred_address,office|nullable|string|max:255',
             'office_city' => 'required_if:preferred_address,office|nullable|string|max:255',
@@ -266,7 +266,7 @@ class ManageMemberController extends Controller
                     ]
                 );
                 MemberResidenceAddress::where('member_id', $member->id)->delete();
-            } else {
+            } elseif ($request->preferred_address == 'residence') {
                 MemberResidenceAddress::updateOrCreate(
                     ['member_id' => $member->id],
                     [
@@ -280,6 +280,9 @@ class ManageMemberController extends Controller
                     ]
                 );
                 MemberOfficeAddress::where('member_id', $member->id)->delete();
+            } else {
+                MemberOfficeAddress::where('member_id', $member->id)->delete();
+                MemberResidenceAddress::where('member_id', $member->id)->delete();
             }
             DB::commit();
             $this->clearMemberCache($member->id);
