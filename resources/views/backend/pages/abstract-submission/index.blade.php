@@ -27,7 +27,7 @@
         opacity: 0.9;
     }
     #abstract-list .table tbody tr td{
-        font-size: 14px;
+        font-size: 13px;
     }
 </style>
 @endpush
@@ -35,15 +35,7 @@
 <div class="content">
     <div class="filter-section mb-3">
         <div id="example-2_wrapper" class="filter-box">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-light border-bottom">
-                    <div class="d-flex align-items-center gap-2">
-                        <i class="fa fa-filter text-primary"></i>
-                        <h5 class="mb-0 fw-semibold">
-                            Filter Abstract Submissions
-                        </h5>
-                    </div>
-                </div>
+            <div class="card border-0 shadow-sm">                
                 <div class="card-body p-2">
                     <div class="row g-3 align-items-end">
                         <div class="col-lg-4 col-md-6">
@@ -130,7 +122,7 @@
             <h4 class="card-title">Abstract Submission List</h4>
         </div>
         <div class="card-body p-0">
-            <div class="table-responsive">
+            <div class="table-responsive1">
                 <div class="abstract-submission-list-table-render" id="abstract-list" data-url="{{ route('abstract-submission.index') }}">
                     @include('backend.pages.abstract-submission.partials.abstract-submission-list', ['abstractSubmissions' => $abstractSubmissions ??[]])
                 </div>

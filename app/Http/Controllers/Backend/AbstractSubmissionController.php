@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AbstractReviewMail;
 use App\Models\AbstractSubmission;
+use App\Models\AbstractAssignment;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -18,6 +20,9 @@ class AbstractSubmissionController extends Controller
 {
     public function index(Request $request)
     {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        /** @var \App\Models\User $user */
+
         $query = AbstractSubmission::query();
         if ($request->filled('presentation_type')) {
             $query->where(
@@ -32,23 +37,30 @@ class AbstractSubmissionController extends Controller
                 $request->topic_category
             );
         }
+        if (!($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))) {
+            $query->assignedTo($user->id);
+        }
 
+        $reviewers = User::whereHas('roles', function ($q) {
+            $q->where('slug', 'abstract-reviewer');
+        })->select('id', 'name')->get();
 
-        $abstractSubmissions = $query
-            ->latest()
-            ->paginate(30);
-
+        $abstractSubmissions = $query->with('assignedUser.assignedUser')
+        ->latest()
+        ->paginate(30);       
+        
         if ($request->ajax()) {
             return view(
                 'backend.pages.abstract-submission.partials.abstract-submission-list',
-                compact('abstractSubmissions')
+                compact('abstractSubmissions', 'reviewers')
             )->render();
         }
         return view(
             'backend.pages.abstract-submission.index',
-            compact('abstractSubmissions')
+            compact('abstractSubmissions', 'reviewers')
         );
     }
+    
 
     public function show($id)
     {
@@ -254,10 +266,29 @@ class AbstractSubmissionController extends Controller
             'status' => $request->status,
             'comment' => $request->comment
         ]);
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+        /** @var \App\Models\User $user */
+
+        $query = AbstractSubmission::query();
+
+        if (!($user->is_admin == 1 || $user->hasRole('admin'))) {
+            $query->assignedTo($user->id);
+        }
+
+        $reviewers = User::whereHas('roles', function ($q) {
+            $q->where('slug', 'abstract-reviewer');
+        })->select('id', 'name')->get();
+
+        $abstractSubmissions = $query->with('assignedUser.assignedUser')
+            ->latest()
+            ->paginate(30);
+
+
         $html = view(
             'backend.pages.abstract-submission.partials.abstract-submission-list',
             [
-                'abstractSubmissions' => AbstractSubmission::latest()->paginate(10)
+                'abstractSubmissions' => $abstractSubmissions
             ]
         )->render();
         if (!empty($abstract_submission_email)) {
@@ -307,6 +338,52 @@ class AbstractSubmissionController extends Controller
             'status' => 'success',
             'message' => 'Review updated successfully.',
             'html' => $html
+        ]);
+    }
+
+    public function assignReviewer(Request $request, AbstractSubmission $abstract)
+    {
+        $request->validate([
+            'reviewer_id' => 'nullable|exists:users,id',
+        ]);
+        AbstractAssignment::where('abstract_submission_id', $abstract->id)->delete();
+
+        if ($request->filled('reviewer_id')) {
+            AbstractAssignment::create([
+                'abstract_submission_id' => $abstract->id,
+                'assigned_to' => $request->reviewer_id,
+                'assigned_by' => Auth::id(),
+                'assigned_at' => now(),
+            ]);
+        }
+        $user = \Illuminate\Support\Facades\Auth::user();
+        /** @var \App\Models\User $user */
+        
+        $query = AbstractSubmission::query();
+
+        if (!($user->is_admin == 1 || $user->hasRole('admin'))) {
+            $query->assignedTo($user->id);
+        }
+
+        $reviewers = User::whereHas('roles', function ($q) {
+            $q->where('slug', 'abstract-reviewer');
+        })->select('id', 'name')->get();
+
+        $abstractSubmissions = $query->with('assignedUser.assignedUser')
+            ->latest()
+            ->paginate(30);
+
+        $html = view(
+            'backend.pages.abstract-submission.partials.abstract-submission-list',
+            compact('abstractSubmissions', 'reviewers')
+        )->render();
+
+        return response()->json([
+            'status' => 'success',
+            'html' => $html,
+            'message' => $request->filled('reviewer_id')
+                ? 'Reviewer assigned successfully.'
+                : 'Reviewer unassigned successfully.',
         ]);
     }
 }

@@ -8,8 +8,6 @@
                 <th width="180">Status</th>
                 <th width="180">Category/ Presentation</th>
                 <th width="180">Abstract Title</th>
-                <th width="120">File</th>
-                <th width="120">Date</th>
                 <th width="120" class="text-center">Actions</th>
             </tr>
         </thead>
@@ -59,6 +57,17 @@
                     </span>
                     </div>
                     @endif
+                    <div>
+                        @if($submission->supporting_file)
+                        <a href="{{ asset('storage/images/abstract-submission/' . $submission->supporting_file) }}"
+                            target="_blank"
+                            class="btn btn-sm btn-outline-primary">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            View
+                        </a>
+                        </span>
+                        @endif
+                    </div>
                 </td>
                 <td>
                     @if($submission->phone)
@@ -76,7 +85,11 @@
                             {{ $submission->email }}
                         </a>
                     </div>
-                    @endif
+                    @endif                
+                    
+                    <div class="text-idn_to_utf8">
+                        {{ $submission->created_at->format('d M Y h:i A') }}
+                    </div>
                 </td>
                
                 <td class="text-center">
@@ -138,46 +151,42 @@
                 </td>
                 <td class="abstract-title-column">
                     <div class="fw-semibold text-dark">
-                        {{ $submission->abstract_title }}
+                       {{ Str::limit($submission->abstract_title, 50) }}
                     </div>
 
                     @if($submission->institution)
                         <small class="text-muted">
-                            <strong>Institution / Hospital :</strong>
+                            <strong>Institution / Hospital :</strong><br>
                             {{ $submission->institution }}
                         </small>
                     @endif
                 </td>
-                <td class="text-center">
-                    @if($submission->supporting_file)
-                    <a href="{{ asset('storage/images/abstract-submission/' . $submission->supporting_file) }}"
-                        target="_blank"
-                        class="btn btn-sm btn-outline-primary">
-                        <i class="fa-solid fa-file-pdf"></i>
-                        View
-                    </a>
-                    @else
-                    <span class="text-muted">
-                        N/A
-                    </span>
-                    @endif
-                </td>
-                <td>
-                    <div>
-                        {{ $submission->created_at->format('d M Y h:i A') }}
-                    </div>
-                </td>
+                
                 <td class="text-center">
                     <div class="d-flex gap-1 justify-content-center">
+                        @php
+                            $user = auth()->user();
+                        @endphp
+                        @if($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))
+                            <select class="form-select form-select-sm assign-reviewer-select"
+                                data-route="{{ route('abstract-submission.assign-reviewer', $submission->id) }}"
+                                style="width: 150px;"
+                                {{ $submission->status == 'approved' ? 'disabled' : '' }}
+                                title="{{ $submission->status == 'approved' ? 'Cannot reassign, abstract already approved' : '' }}">
+                                <option value="">-- Not Assigned --</option>
+                                @foreach($reviewers as $reviewer)
+                                    <option value="{{ $reviewer->id }}"
+                                        {{ optional($submission->assignedUser)->assigned_to == $reviewer->id ? 'selected' : '' }}>
+                                        {{ $reviewer->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        @endif
                         <a href="{{ route('abstract-submission.show', $submission->id) }}"
                             class="btn btn-sm btn-primary"
                             title="View">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                        @php
-                            $user = auth()->user();
-                        @endphp
-
                         @if($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))
                             <form action="{{ route('abstract-submission.destroy', $submission->id) }}"
                                 method="POST"

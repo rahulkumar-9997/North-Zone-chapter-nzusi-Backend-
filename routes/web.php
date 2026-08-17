@@ -100,6 +100,8 @@ Route::middleware(['auth:web', 'permission'])->group(function () {
 
     Route::post('abstract-review/{id}/update', [AbstractSubmissionController::class, 'abstractReviewUpdate'])->name('abstract-review.update');
 
+    Route::post('abstract-submission/{abstract}/assign-reviewer', [AbstractSubmissionController::class, 'assignReviewer'])
+    ->name('abstract-submission.assign-reviewer');
     // ========== USER MANAGEMENT ROUTES ==========
     Route::resource('users', UserController::class);
     Route::get('users/{user}/roles', [UserController::class, 'roles'])->name('users.roles');

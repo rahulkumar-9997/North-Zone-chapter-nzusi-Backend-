@@ -48,4 +48,23 @@ class AbstractSubmission extends Model
     {
         return $this->hasMany(AbstractSubmissionReview::class);
     }
+    /* Abstract assignments*/
+    public function assignments()
+    {
+        return $this->hasMany(AbstractAssignment::class, 'abstract_submission_id');
+    }
+
+    public function assignedUser()
+    {
+        // agar ek abstract ek hi reviewer ko assign hota hai
+        return $this->hasOne(AbstractAssignment::class, 'abstract_submission_id')->latest();
+    }
+
+    public function scopeAssignedTo($query, $userId)
+    {
+        return $query->whereHas('assignments', function ($q) use ($userId) {
+            $q->where('assigned_to', $userId);
+        });
+    }
+
 }
