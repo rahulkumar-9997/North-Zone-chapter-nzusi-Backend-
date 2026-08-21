@@ -5,8 +5,8 @@
                 <th width="60">#</th>
                 <th width="260">Participant Details</th>
                 <th width="180">Contact</th>
-                <th width="180">Status</th>
-                <th width="180">Category/ Presentation</th>
+                <th width="130">Status</th>
+                <th width="150">Category/ Presentation</th>
                 <th width="180">Abstract Title</th>
                 <th width="120" class="text-center">Actions</th>
             </tr>
