@@ -14,6 +14,7 @@ use App\Http\Controllers\Backend\ManageMemberController;
 use App\Http\Controllers\Backend\MemberTypeController;
 use App\Http\Controllers\Backend\LabelController;
 use App\Http\Controllers\Backend\AbstractSubmissionController;
+use App\Http\Controllers\Backend\AbstractReviewerController;
 use App\Http\Controllers\Backend\MenuController;
 
 use App\Http\Controllers\Backend\UserController;
@@ -94,11 +95,10 @@ Route::middleware(['auth:web', 'permission'])->group(function () {
     Route::get('abstract-submission/{id}', [AbstractSubmissionController::class, 'show'])->name('abstract-submission.show');
     Route::delete('abstract-submission/{id}', [AbstractSubmissionController::class, 'destroy'])->name('abstract-submission.destroy');
 
-    Route::get('abstract-review/create/{id}', [AbstractSubmissionController::class, 'abstractReviewForm'])->name('abstract-review.create');
+    Route::get('abstract-review/{submission}/score', [AbstractReviewerController::class, 'score'])->name('abstract-review.score');
+    Route::post('abstract-review/{submission}/score', [AbstractReviewerController::class, 'storeScore'])->name('abstract-review.score.store');
 
-    Route::post('abstract-review/store', [AbstractSubmissionController::class, 'abstractReviewFormSubmit'])->name('abstract-review.store');
-
-    Route::post('abstract-review/{id}/update', [AbstractSubmissionController::class, 'abstractReviewUpdate'])->name('abstract-review.update');
+    Route::get('abstract-review/show/{id}', [AbstractReviewerController::class, 'abstractReviewerDetail'])->name('abstract-review.show'); 
 
     Route::post('abstract-submission/{abstract}/assign-reviewer', [AbstractSubmissionController::class, 'assignReviewer'])
     ->name('abstract-submission.assign-reviewer');

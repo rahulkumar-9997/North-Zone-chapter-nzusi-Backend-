@@ -96,31 +96,26 @@
                     <button class="btn btn-sm border-0 p-0 open-review-modal status-btn"
                         data-status="{{ $submission->status }}"
                         data-title="{{ $submission->first_name }}"
-                        data-size="lg"
-                        data-route="{{ route('abstract-review.create', $submission->id) }}"
+                        data-size="xl"
+                        data-route="{{ route('abstract-review.show', $submission->id) }}"
                         data-abstract="true"
                         title="Click to update status">
                         @if($submission->status == 'pending')
                             <span class="badge bg-warning status-badge">
                                 <i class="fa-solid fa-clock me-1"></i>
                                 Pending
-                                <i class="fa-solid fa-pen-to-square ms-1 opacity-75"></i>
                             </span>
                         @elseif($submission->status == 'approved')
                             <span class="badge bg-success status-badge">
                                 <i class="fa-solid fa-check me-1"></i>
-                                Approved
-                                <i class="fa-solid fa-pen-to-square ms-1 opacity-75"></i>
+                                Reviewed                               
                             </span>
-
                         @else
                             <span class="badge bg-danger status-badge">
                                 <i class="fa-solid fa-xmark me-1"></i>
                                 Rejected
-                                <i class="fa-solid fa-pen-to-square ms-1 opacity-75"></i>
                             </span>
                         @endif
-
                     </button>
                 </td>
                 <td>
@@ -167,11 +162,11 @@
                         @php
                             $user = auth()->user();
                         @endphp
+                        <!-- {{ $submission->status == 'approved' ? 'disabled' : '' }} -->
                         @if($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))
                             <select class="form-select form-select-sm assign-reviewer-select"
                                 data-route="{{ route('abstract-submission.assign-reviewer', $submission->id) }}"
-                                style="width: 150px;"
-                                {{ $submission->status == 'approved' ? 'disabled' : '' }}
+                                style="width: 150px;"                                
                                 title="{{ $submission->status == 'approved' ? 'Cannot reassign, abstract already approved' : '' }}">
                                 <option value="">-- Not Assigned --</option>
                                 @foreach($reviewers as $reviewer)
@@ -186,6 +181,11 @@
                             class="btn btn-sm btn-primary"
                             title="View">
                             <i class="fa-solid fa-eye"></i>
+                        </a>
+                         <a href="{{ route('abstract-review.score', $submission->id) }}"
+                            class="btn btn-sm btn-info"
+                            title=" Review Abstract">
+                            Review Abstract
                         </a>
                         @if($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))
                             <form action="{{ route('abstract-submission.destroy', $submission->id) }}"
