@@ -1,9 +1,27 @@
-// public/backend/assets/js/pages/abstract-review-score.js
 $(document).ready(function () {
     $("#guidelines-continue-btn").on("click", function () {
         $("#review-guidelines-block").addClass("d-none");
         $("#review-score-form-block").removeClass("d-none");
     });
+    /*Tab code js */
+    var hash = window.location.hash;
+    if (hash) {
+        var tabTriggerEl = document.querySelector(
+            '#reviewTab button[data-bs-target="' + hash + '"]'
+        );
+        if (tabTriggerEl) {
+            new bootstrap.Tab(tabTriggerEl).show();
+        }
+    }    
+    $('#reviewTab button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = e.target.getAttribute('data-bs-target');
+        if (history.replaceState) {
+            history.replaceState(null, null, target);
+        } else {
+            window.location.hash = target;
+        }
+    });
+    /*Tab code js */
 
     function recalcTotal() {
         let total = 0;

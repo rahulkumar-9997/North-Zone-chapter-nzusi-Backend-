@@ -47,4 +47,20 @@ class AbstractSubmissionReview extends Model
     {
         return $this->belongsTo(PresentationCategory::class);
     }
+
+    public function scopeCompleted($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNotNull('total_score')
+            ->orWhere('conflict_of_interest', true);
+        });
+    }
+    
+    /**
+     * Completed reviews belonging to a specific reviewer.
+     */
+    public function scopeCompletedBy($query, $userId)
+    {
+        return $query->completed()->where('reviewed_by', $userId);
+    }
 }

@@ -22,7 +22,7 @@ class AbstractSubmissionController extends Controller
     {
         $user = \Illuminate\Support\Facades\Auth::user();
         /** @var \App\Models\User $user */
-
+        $isAdmin = $user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']);
         $query = AbstractSubmission::query();
         if ($request->filled('presentation_type')) {
             $query->where(
@@ -45,9 +45,18 @@ class AbstractSubmissionController extends Controller
             $q->where('slug', 'abstract-reviewer');
         })->select('id', 'name')->get();
 
-        $abstractSubmissions = $query->with('assignedUser.assignedUser')
+        $abstractSubmissions = $query->with([
+            'assignedUser.assignedUser',
+            'reviews' => function ($q) use ($user, $isAdmin) {
+                if ($isAdmin) {
+                    $q->completed();
+                } else {
+                    $q->completedBy($user->id);
+                }
+            },
+        ])
         ->latest()
-        ->paginate(30);       
+        ->paginate(30);      
         
         if ($request->ajax()) {
             return view(

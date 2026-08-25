@@ -28,6 +28,14 @@
                         @if($existingReview)<span class="badge-lock"><i class="fa-solid fa-lock"></i></span>@endif
                     </button>
                 </li>
+                @if($isAdmin)
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviewer-details-tab" data-bs-toggle="tab" data-bs-target="#reviewer-details-tab-pane"
+                        type="button" role="tab" aria-controls="reviewer-details-tab-pane" aria-selected="false">
+                        <i class="fa-solid fa-users"></i> Reviewer Details
+                    </button>
+                </li>
+                @endif
             </ul>
 
             <div class="tab-content" id="reviewTabContent">
@@ -56,10 +64,18 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- <div class="px-4 pb-4">
+                            @include('backend.pages.abstract-reviewer.partials.review-item', ['mode' => 'item', 'review' => $existingReview])
+                        </div> -->
                     @else
                         @include('backend.pages.abstract-reviewer.partials.review-guidelines-and-form', compact('submission','criteria','presentationTypes','presentationCategories','existingReview'))
                     @endif
+                </div>                
+                @if($isAdmin)
+                <div class="tab-pane fade" id="reviewer-details-tab-pane" role="tabpanel" aria-labelledby="reviewer-details-tab" tabindex="0">
+                    @include('backend.pages.abstract-reviewer.partials.review-item', ['mode' => 'list', 'submission' => $submission])
                 </div>
+                @endif
             </div>
         </div>
     </div>

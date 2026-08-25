@@ -158,7 +158,7 @@
                 </td>
                 
                 <td class="text-center">
-                    <div class="d-flex gap-1 justify-content-center">
+                    <div class="gap-1 justify-content-center">
                         @php
                             $user = auth()->user();
                         @endphp
@@ -182,11 +182,20 @@
                             title="View">
                             <i class="fa-solid fa-eye"></i>
                         </a>
-                         <a href="{{ route('abstract-review.score', $submission->id) }}"
-                            class="btn btn-sm btn-info"
-                            title=" Review Abstract">
-                            Review Abstract
-                        </a>
+                        @if($submission->reviews->isNotEmpty())
+                            <a href="{{ route('abstract-review.score', $submission->id) }}"
+                                class="btn btn-sm btn-success"
+                                title="You have already submitted your review for this abstract">
+                                <i class="fa-solid fa-check me-1"></i>
+                                Reviewed
+                            </a>
+                        @else
+                            <a href="{{ route('abstract-review.score', $submission->id) }}"
+                                class="btn btn-sm btn-info"
+                                title="Review Abstract">
+                                Review Abstract
+                            </a>
+                        @endif
                         @if($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))
                             <form action="{{ route('abstract-submission.destroy', $submission->id) }}"
                                 method="POST"
