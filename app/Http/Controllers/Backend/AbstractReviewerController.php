@@ -144,6 +144,12 @@ class AbstractReviewerController extends Controller
         ]);
     }
 
+    public function guidelines()
+    {
+        $criteria = ScientificScore::where('status', 'active')->orderBy('id')->get();
+        return view('backend.pages.abstract-reviewer.guidelines', compact('criteria'));
+    }
+
     
 }
 

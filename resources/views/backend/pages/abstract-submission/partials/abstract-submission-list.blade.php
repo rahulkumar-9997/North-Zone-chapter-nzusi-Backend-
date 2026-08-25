@@ -29,7 +29,7 @@
                         data-bs-placement="top"
                         title="Unique Abstract Submission ID">
                         <i class="fa-solid fa-id-badge me-1"></i>
-                        {{ $submission->abstract_id }}
+                        {{ Str::limit($submission->abstract_id, 20) }}
                     </span>
                     </div>
                     @endif
@@ -41,7 +41,7 @@
                         title="NZUSI Membership Number">
                         <i class="fa-solid fa-user-check me-1"></i>
                         NZUSI:
-                        {{ $submission->nzusi_membership_no }}
+                        {{ Str::limit($submission->nzusi_membership_no, 20) }}
                     </span>
                     </div>
                     @endif
@@ -53,7 +53,7 @@
                         title="USI Membership Number">
                         <i class="fa-solid fa-users me-1"></i>
                         USI:
-                        {{ $submission->usi_membership_no }}
+                        {{ Str::limit($submission->usi_membership_no, 20) }}
                     </span>
                     </div>
                     @endif

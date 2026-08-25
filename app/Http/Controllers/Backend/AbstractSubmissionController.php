@@ -124,7 +124,7 @@ class AbstractSubmissionController extends Controller
         $user = \Illuminate\Support\Facades\Auth::user();
         /** @var \App\Models\User $user */        
         $query = AbstractSubmission::query();
-        if (!($user->is_admin == 1 || $user->hasRole('admin'))) {
+        if (!($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))) {
             $query->assignedTo($user->id);
         }
 

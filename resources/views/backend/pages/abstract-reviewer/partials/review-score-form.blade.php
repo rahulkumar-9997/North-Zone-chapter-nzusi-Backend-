@@ -98,17 +98,18 @@
         <input type="text" class="form-control mb-3 mt-2 d-none" id="other-category-text" name="other_category_text" placeholder="Please specify category">
         <div class="invalid-feedback" id="other-category-error">Please specify the category.</div>
     </div>
-
-    <div class="alert alert-secondary py-2 small mb-3 mt-3">
-        <i class="fa-solid fa-circle-info me-1"></i>
-        Please ensure your abstract review is final before submitting. Once submitted, it cannot be edited or modified.
-    </div>
-
     <div class="mt-3 mb-3">
-        <h6 class="text-danger">
-            If an abstract fits more than one category, select the single category that best represents its primary subject.
+        <h6>
+           Note:: If an abstract fits more than one category, select the single category that best represents its primary subject.
         </h6>
     </div>
-
-    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane me-1"></i> Submit Review</button>
+    <div class="mb-3 mt-3">
+       <h6 class="text-danger"> 
+        Please ensure your abstract review is final before submitting. Once submitted, it cannot be edited or modified.
+       </h6>
+    </div>
+    <div class="border-top pt-3 text-end">
+        <a href="{{ route('abstract-submission.index') }}" class="btn btn-secondary me-2">Cancel</a>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane me-1"></i> Submit Review</button>
+    </div>
 </form>

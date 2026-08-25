@@ -133,7 +133,7 @@
 
 @endsection
 @push('scripts')
-<script src="{{ asset('backend/assets/js/pages/abstract-review.js') }}"></script>
+<script src="{{ asset('backend/assets/js/pages/abstract-review.js') }}?v={{ config('app.assets_version') }}"></script>
 <script>
     $(document).ready(function() {
         $('.delete_abstract').click(function(event) {

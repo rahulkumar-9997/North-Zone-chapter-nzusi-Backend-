@@ -99,6 +99,8 @@ Route::middleware(['auth:web', 'permission'])->group(function () {
     Route::post('abstract-review/{submission}/score', [AbstractReviewerController::class, 'storeScore'])->name('abstract-review.score.store');
 
     Route::get('abstract-review/show/{id}', [AbstractReviewerController::class, 'abstractReviewerDetail'])->name('abstract-review.show'); 
+    Route::get('abstract-review/guidelines', [AbstractReviewerController::class, 'guidelines'])
+    ->name('abstract-review.guidelines');
 
     Route::post('abstract-submission/{abstract}/assign-reviewer', [AbstractSubmissionController::class, 'assignReviewer'])
     ->name('abstract-submission.assign-reviewer');

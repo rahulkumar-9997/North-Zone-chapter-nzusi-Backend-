@@ -9,9 +9,14 @@
         <div class="rev-card">
             <div class="rev-card-header">
                 <h4 class="rev-title">Abstract Review</h4>
-                <a href="{{ route('abstract-submission.index') }}" class="btn-rev-outline text-decoration-none">
-                    <i class="fa-solid fa-arrow-left me-1"></i> Back to List
-                </a>
+                <div class="d-flex gap-2">
+                    <a href="{{ route('abstract-review.guidelines') }}" target="_blank" class="btn-rev-outline text-decoration-none">
+                        <i class="fa-solid fa-book me-1"></i> Review Guidelines
+                    </a>
+                    <a href="{{ route('abstract-submission.index') }}" class="btn-rev-outline text-decoration-none">
+                        <i class="fa-solid fa-arrow-left me-1"></i> Back to List
+                    </a>
+                </div>
             </div>
 
             <ul class="nav nav-tabs rev-tabs" id="reviewTab" role="tablist">
@@ -82,5 +87,5 @@
 </div>
 @endsection
 @push('scripts')
-<script src="{{ asset('backend/assets/js/pages/abstract-review-score.js') }}"></script>
+<script src="{{ asset('backend/assets/js/pages/abstract-review-score.js') }}?v={{ config('app.assets_version') }}"></script>
 @endpush
