@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Log;
 use App\Models\AbstractSubmissionReview;
 use Illuminate\Support\Facades\Auth;
 
-
 class AbstractSubmissionController extends Controller
 {
     public function index(Request $request)

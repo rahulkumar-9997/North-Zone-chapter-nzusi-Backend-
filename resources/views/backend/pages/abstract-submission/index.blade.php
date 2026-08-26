@@ -124,7 +124,7 @@
         <div class="card-body p-0">
             <div class="table-responsive1">
                 <div class="abstract-submission-list-table-render" id="abstract-list" data-url="{{ route('abstract-submission.index') }}">
-                    @include('backend.pages.abstract-submission.partials.abstract-submission-list', ['abstractSubmissions' => $abstractSubmissions ??[]])
+                    @include('backend.pages.abstract-submission.partials.abstract-submission-list', ['abstractSubmissions' => $abstractSubmissions ?? [], 'isAdmin' => $isAdmin ?? false, 'maskVisible' => $maskVisible ?? 0])
                 </div>
             </div>
         </div>

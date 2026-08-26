@@ -112,19 +112,27 @@
             <table class="info-table" width="100%">
                 <tr>
                     <th>First Name</th>
-                    <td>{{ $abstractSubmission->first_name }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->first_name, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Last Name</th>
-                    <td>{{ $abstractSubmission->last_name }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->last_name, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Email</th>
-                    <td>{{ $abstractSubmission->email }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->email, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Phone</th>
-                    <td>{{ $abstractSubmission->phone }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->phone, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Institution</th>
@@ -136,7 +144,9 @@
                 </tr>
                 <tr>
                     <th>City</th>
-                    <td>{{ $abstractSubmission->city }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->city, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Presentation Type</th>
@@ -164,19 +174,27 @@
                 </tr>
                 <tr>
                     <th>Authors</th>
-                    <td>{{ $abstractSubmission->authors }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->authors, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Corresponding Author</th>
-                    <td>{{ $abstractSubmission->corresponding_author }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->corresponding_author, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>NZUSI Membership No</th>
-                    <td>{{ $abstractSubmission->nzusi_membership_no }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->nzusi_membership_no, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>USI Membership No</th>
-                    <td>{{ $abstractSubmission->usi_membership_no }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->usi_membership_no, 1) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Conference Reg No</th>

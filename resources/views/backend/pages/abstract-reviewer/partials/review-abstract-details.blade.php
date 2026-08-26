@@ -8,19 +8,19 @@
     <table class="table table-hover" width="100%">
         <tr>
             <th>First Name</th>
-            <td>{{ $submission->first_name }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->first_name, 1) }}</td>
         </tr>
         <tr>
             <th>Last Name</th>
-            <td>{{ $submission->last_name }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->last_name, 1) }}</td>
         </tr>
         <tr>
             <th>Email</th>
-            <td>{{ $submission->email }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->email, 1) }}</td>
         </tr>
         <tr>
             <th>Phone</th>
-            <td>{{ $submission->phone }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->phone, 2) }}</td>
         </tr>
         <tr>
             <th>Institution</th>
@@ -32,7 +32,7 @@
         </tr>
         <tr>
             <th>City</th>
-            <td>{{ $submission->city }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->city, 2) }}</td>
         </tr>
         <tr>
             <th>Presentation Type</th>
@@ -60,23 +60,23 @@
         </tr>
         <tr>
             <th>Authors</th>
-            <td>{{ $submission->authors }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->authors, 2) }}</td>
         </tr>
         <tr>
             <th>Corresponding Author</th>
-            <td>{{ $submission->corresponding_author }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->corresponding_author, 2) }}</td>
         </tr>
         <tr>
             <th>NZUSI Membership No</th>
-            <td>{{ $submission->nzusi_membership_no }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->nzusi_membership_no, 2) }}</td>
         </tr>
         <tr>
             <th>USI Membership No</th>
-            <td>{{ $submission->usi_membership_no }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->usi_membership_no, 2) }}</td>
         </tr>
         <tr>
             <th>Conference Reg No</th>
-            <td>{{ $submission->conf_reg_no }}</td>
+            <td>{{ \App\Helpers\MaskHelper::mask($submission->conf_reg_no, 2) }}</td>
         </tr>
         <tr>
             <th>Video Link</th>
