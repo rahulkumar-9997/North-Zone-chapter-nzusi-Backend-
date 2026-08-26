@@ -5,8 +5,8 @@
             Applicant Name
         </h4>
         <div class="fw-semibold">
-            {{ \App\Helpers\MaskHelper::mask($submission->first_name, 1) }}
-            {{ \App\Helpers\MaskHelper::mask($submission->last_name, 1) }}
+            {{ \App\Helpers\MaskHelper::mask($submission->first_name, 0) }}
+            {{ \App\Helpers\MaskHelper::mask($submission->last_name, 0) }}
         </div>
     </div>
     <div class="mb-3">

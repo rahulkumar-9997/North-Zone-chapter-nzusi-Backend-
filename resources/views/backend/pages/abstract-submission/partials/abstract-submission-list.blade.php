@@ -20,8 +20,8 @@
                 </td>
                 <td>
                     <div class="fw-semibold text-dark">
-                        {{ \App\Helpers\MaskHelper::mask($submission->first_name, 1) }}
-                        {{ \App\Helpers\MaskHelper::mask($submission->last_name, 1) }}
+                        {{ \App\Helpers\MaskHelper::mask($submission->first_name, 0) }}
+                        {{ \App\Helpers\MaskHelper::mask($submission->last_name, 0) }}
                     </div>
                     @if ($submission->abstract_id)
                     <div class="mt-1">
@@ -30,7 +30,7 @@
                         data-bs-placement="top"
                         title="Unique Abstract Submission ID">
                         <i class="fa-solid fa-id-badge me-1"></i>
-                       {{ \App\Helpers\MaskHelper::maskLimit($submission->abstract_id, 20, 2) }}
+                       {{ \App\Helpers\MaskHelper::maskLimit($submission->abstract_id, 20, 0) }}
                     </span>
                     </div>
                     @endif
@@ -42,7 +42,7 @@
                         title="NZUSI Membership Number">
                         <i class="fa-solid fa-user-check me-1"></i>
                         NZUSI:
-                        {{ \App\Helpers\MaskHelper::maskLimit($submission->nzusi_membership_no, 20, 2) }}
+                        {{ \App\Helpers\MaskHelper::maskLimit($submission->nzusi_membership_no, 20, 0) }}
                     </span>
                     </div>
                     @endif
@@ -54,7 +54,7 @@
                         title="USI Membership Number">
                         <i class="fa-solid fa-users me-1"></i>
                         USI:
-                        {{ \App\Helpers\MaskHelper::maskLimit($submission->usi_membership_no, 20, 2) }}
+                        {{ \App\Helpers\MaskHelper::maskLimit($submission->usi_membership_no, 20, 0) }}
                     </span>
                     </div>
                     @endif
@@ -73,17 +73,17 @@
                 <td>
                     @if($submission->phone)
                     <div class="mb-1">
-                        <a href="tel:{{ \App\Helpers\MaskHelper::mask($submission->phone, 2) }}"
+                        <a href="tel:{{ \App\Helpers\MaskHelper::mask($submission->phone, 0) }}"
                             class="text-decoration-none">
-                            {{ \App\Helpers\MaskHelper::mask($submission->phone, 2) }}
+                            {{ \App\Helpers\MaskHelper::mask($submission->phone, 0) }}
                         </a>
                     </div>
                     @endif
                     @if($submission->email)
                     <div>
-                        <a href="mailto:{{ \App\Helpers\MaskHelper::mask($submission->email, 1) }}"
+                        <a href="mailto:{{ \App\Helpers\MaskHelper::mask($submission->email, 0) }}"
                             class="text-decoration-none">
-                            {{ \App\Helpers\MaskHelper::mask($submission->email, 1) }}
+                            {{ \App\Helpers\MaskHelper::mask($submission->email, 0) }}
                         </a>
                     </div>
                     @endif                
