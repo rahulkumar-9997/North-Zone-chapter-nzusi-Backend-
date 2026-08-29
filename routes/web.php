@@ -94,6 +94,9 @@ Route::middleware(['auth:web', 'permission'])->group(function () {
     Route::get('abstract-submission', [AbstractSubmissionController::class, 'index'])->name('abstract-submission.index');
     Route::get('abstract-submission/{id}', [AbstractSubmissionController::class, 'show'])->name('abstract-submission.show');
     Route::delete('abstract-submission/{id}', [AbstractSubmissionController::class, 'destroy'])->name('abstract-submission.destroy');
+    Route::get('abstract-submissions/export', [AbstractSubmissionController::class, 'export'])
+    ->name('abstract-submission.export');
+
 
     Route::get('abstract-review/{submission}/score', [AbstractReviewerController::class, 'score'])->name('abstract-review.score');
     Route::post('abstract-review/{submission}/score', [AbstractReviewerController::class, 'storeScore'])->name('abstract-review.score.store');

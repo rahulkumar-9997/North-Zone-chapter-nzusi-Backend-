@@ -11,7 +11,7 @@
                 <th width="120" class="text-center">Actions</th>
             </tr>
         </thead>
-        <tbody> 
+        <tbody>
             <!-- {{ auth()->user()->role_names }} -->
             @forelse($abstractSubmissions as $submission)
             <tr>
@@ -153,7 +153,7 @@
                     @if($submission->institution)
                         <small class="text-muted">
                             <strong>Institution / Hospital :</strong><br>
-                            {{ $submission->institution }}
+                            {{ \App\Helpers\MaskHelper::mask($submission->institution , 0) }}
                         </small>
                     @endif
                 </td>

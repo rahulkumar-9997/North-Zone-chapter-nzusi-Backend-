@@ -24,11 +24,15 @@
         </tr>
         <tr>
             <th>Institution</th>
-            <td>{{ $submission->institution }}</td>
+            <td>
+                {{ \App\Helpers\MaskHelper::mask($submission->institution, 0) }}
+            </td>
         </tr>
         <tr>
             <th>Designation</th>
-            <td>{{ $submission->designation }}</td>
+            <td>
+                {{ \App\Helpers\MaskHelper::mask($submission->designation, 0) }}
+            </td>
         </tr>
         <tr>
             <th>City</th>

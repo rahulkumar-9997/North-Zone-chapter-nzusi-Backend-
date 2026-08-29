@@ -12,7 +12,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use App\Models\AbstractSubmissionReview;
+use App\Exports\AbstractSubmissionsExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 
 class AbstractSubmissionController extends Controller
@@ -67,15 +68,13 @@ class AbstractSubmissionController extends Controller
             'backend.pages.abstract-submission.index',
             compact('abstractSubmissions', 'reviewers')
         );
-    }
-    
+    }    
 
     public function show($id)
     {
         $abstractSubmission = AbstractSubmission::findOrFail($id);
         return view('backend.pages.abstract-submission.show', compact('abstractSubmission'));
     }
-
     public function destroy($id)
     {
         DB::beginTransaction();
@@ -102,7 +101,7 @@ class AbstractSubmissionController extends Controller
                 'Something went wrong while deleting.'
             );
         }
-    }   
+    }  
     
 
     public function assignReviewer(Request $request, AbstractSubmission $abstract)
@@ -147,5 +146,20 @@ class AbstractSubmissionController extends Controller
                 ? 'Reviewer assigned successfully.'
                 : 'Reviewer unassigned successfully.',
         ]);
+    }
+
+    public function export(Request $request)
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        if (! ($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))) {
+            abort(403);
+        }
+
+        $filters = $request->only(['presentation_type', 'topic_category', 'date_from', 'date_to']);
+
+        return Excel::download(
+            new AbstractSubmissionsExport($filters),
+            'abstract-submissions-' . now()->format('Y-m-d_His') . '.xlsx'
+        );
     }
 }

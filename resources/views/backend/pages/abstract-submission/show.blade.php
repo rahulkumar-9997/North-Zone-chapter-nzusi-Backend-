@@ -136,11 +136,15 @@
                 </tr>
                 <tr>
                     <th>Institution</th>
-                    <td>{{ $abstractSubmission->institution }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->institution, 0) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>Designation</th>
-                    <td>{{ $abstractSubmission->designation }}</td>
+                    <td>
+                        {{ \App\Helpers\MaskHelper::mask($abstractSubmission->designation , 0) }}
+                    </td>
                 </tr>
                 <tr>
                     <th>City</th>

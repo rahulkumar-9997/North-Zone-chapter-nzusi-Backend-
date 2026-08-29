@@ -38,7 +38,7 @@
             <div class="card border-0 shadow-sm">                
                 <div class="card-body p-2">
                     <div class="row g-3 align-items-end">
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label fw-semibold">
                                 Presentation Type
                             </label>
@@ -60,7 +60,7 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="col-lg-4 col-md-6">
+                        <div class="col-md-4">
                             <label class="form-label fw-semibold">
                                 Topic / Category
                             </label>
@@ -103,7 +103,7 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="col-lg-2 col-md-4">
+                        <div class="col-md-2">
                             <button
                                 id="reset-button"
                                 class="btn btn-danger w-100"
@@ -112,6 +112,16 @@
                                 Reset
                             </button>
                         </div>
+                        <div class="col-md-2">
+                            @if(auth()->user()->is_admin == 1 || auth()->user()->hasAnyRole(['webadmin', 'admin']))
+                               <a href="{{ route('abstract-submission.export') }}"
+                                    id="export-excel-btn"
+                                    class="btn btn-success">
+                                    <i class="fa-solid fa-file-excel me-1"></i>
+                                    <span class="btn-text">Export to Excel</span>
+                                </a>
+                            @endif
+                        </div>                        
                     </div>
                 </div>
             </div>
@@ -120,6 +130,11 @@
     <div class="card">
         <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
             <h4 class="card-title">Abstract Submission List</h4>
+            <div class="d-flex gap-2">
+                <a href="{{ route('abstract-review.guidelines') }}" target="_blank" class="btn btn-danger">
+                    <i class="fa-solid fa-book me-1"></i> Review Guidelines
+                </a>               
+            </div>
         </div>
         <div class="card-body p-0">
             <div class="table-responsive1">
@@ -135,6 +150,29 @@
 @push('scripts')
 <script src="{{ asset('backend/assets/js/pages/abstract-review.js') }}?v={{ config('app.assets_version') }}"></script>
 <script>
+    /*Excel Export abstarct list */
+    $('#export-excel-btn').on('click', function(e) {
+        e.preventDefault();
+        let $btn = $(this);
+        if ($btn.hasClass('disabled')) {
+            return;
+        }
+        let params = $.param({
+            presentation_type: $('#member_type').val(),
+            topic_category: $('#topic_category').val(),
+            date_from: $('#date_from').val(),
+            date_to: $('#date_to').val(),
+        });
+        let exportUrl = $btn.attr('href') + '?' + params;
+        $btn.addClass('disabled').attr('aria-disabled', 'true');
+        $btn.find('.btn-text').text('Exporting...');
+        window.location.href = exportUrl;
+        setTimeout(function() {
+            $btn.removeClass('disabled').removeAttr('aria-disabled');
+            $btn.find('.btn-text').text('Export to Excel');
+        }, 3000);
+    });
+    /*Excel Export abstarct list */
     $(document).ready(function() {
         $('.delete_abstract').click(function(event) {
             var form = $(this).closest("form");

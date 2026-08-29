@@ -17,7 +17,36 @@
                 @include('backend.layouts.footer')
                 @include('backend.layouts.common-modal-form')
             </div>
-        </div>
+        </div>        
+        @auth
+            @php
+                $user = auth()->user();
+                $isAdmin = $user->is_admin == 1 || $user->hasAnyRole([
+                    'webadmin',
+                    'admin'
+                ]);
+                $canReviewGuidelines = $isAdmin || $user->hasRole('abstract-reviewer');
+            @endphp
+            @if(
+                $canReviewGuidelines &&
+                request()->routeIs([
+                    'dashboard',
+                    'abstract-submission.index',
+                    'abstract-submission.show',
+                    'abstract-review.score'
+                ])
+            )
+            @include('backend.pages.abstract-reviewer.partials.review-guidelines-modal')
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var modalEl = document.getElementById('reviewGuidelinesModal');
+                    if (modalEl && typeof bootstrap !== 'undefined') {
+                        new bootstrap.Modal(modalEl).show();
+                    }
+                });
+            </script>
+            @endif 
+        @endauth
         @include('backend.layouts.footer-js')        
     </body>
 </html>
