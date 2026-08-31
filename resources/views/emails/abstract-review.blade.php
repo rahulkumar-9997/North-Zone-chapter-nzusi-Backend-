@@ -84,6 +84,46 @@
                                     </td>
                                 </tr>
                             </table>
+
+                            @if($scores && $scores->count() > 0)
+                            <br>
+                            <p style="margin-bottom:8px;"><strong>Score Breakdown</strong></p>
+                            <table width="100%" cellpadding="10"
+                                style="border-collapse:collapse;border:1px solid #dee2e6;">
+                                <tr style="background:#0d6efd;color:#fff;">
+                                    <td><strong>Criterion</strong></td>
+                                    <td align="center"><strong>Score</strong></td>
+                                </tr>
+                                @foreach($scores as $scoreItem)
+                                <tr>
+                                    <td style="background:#f8f9fa;">
+                                        {{ optional($scoreItem->criterion)->criterion ?? 'N/A' }}
+                                    </td>
+                                    <td align="center">{{ $scoreItem->score }}</td>
+                                </tr>
+                                @endforeach
+                                @if(!is_null($totalScore))
+                                <tr>
+                                    <td style="background:#e9ecef;"><strong>Total Score</strong></td>
+                                    <td align="center" style="background:#e9ecef;">
+                                        <strong>{{ $totalScore }}</strong>
+                                    </td>
+                                </tr>
+                                @endif
+                            </table>
+                            @elseif(!is_null($totalScore))
+                            <br>
+                            <table width="100%" cellpadding="10"
+                                style="border-collapse:collapse;border:1px solid #dee2e6;">
+                                <tr>
+                                    <td width="30%" style="background:#f8f9fa;">
+                                        <strong>Total Score</strong>
+                                    </td>
+                                    <td>{{ $totalScore }}</td>
+                                </tr>
+                            </table>
+                            @endif
+
                             <br>
                             @if($submission->status == 'approved')
                             <div style="padding:15px;background:#e8fff0;border-left:4px solid #198754;">

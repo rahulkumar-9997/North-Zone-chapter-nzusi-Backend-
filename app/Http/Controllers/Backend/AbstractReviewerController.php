@@ -123,14 +123,42 @@ class AbstractReviewerController extends Controller
             AbstractAssignment::where('abstract_submission_id', $submission->id)
             ->where('assigned_to', $user->id)
             ->delete();
-            if (!empty($submission->email)) {
-                Mail::to($submission->email)
-                    ->queue(
+
+            // ---- MAIL SENDING: submitter + reviewer + admin ----
+            $comment = 'Your abstract has been reviewed by our scientific committee.';
+            $adminRecipients = [
+                'drsameertrivedi@gmail.com',
+            ];
+            try {
+                /* Mail to submitter */
+                if (!empty($submission->email)) {
+                    Mail::to(trim($submission->email))->queue(
                         new AbstractReviewMail(
                             $submission,
-                            'Your abstract has been reviewed by our scientific committee.'
+                            $comment,
+                            $totalScore,
+                            $review->scores 
                         )
                     );
+                }
+
+                /* Mail to reviewer (jo review kar raha hai — current logged-in user) */
+                if (!empty($user->email) && $user->email !== $submission->email) {
+                    Mail::to(trim($user->email))->queue(
+                        new AbstractReviewMail($submission, $comment)
+                    );
+                }
+
+                /* Mail to admin(s) */
+                foreach ($adminRecipients as $adminEmail) {
+                    if ($adminEmail !== $submission->email && $adminEmail !== $user->email) {
+                        Mail::to($adminEmail)->queue(
+                            new AbstractReviewMail($submission, $comment)
+                        );
+                    }
+                }
+            } catch (\Exception $mailException) {
+                Log::error('Abstract Review Mail Error: ' . $mailException->getMessage());
             }
         });
         return response()->json([
