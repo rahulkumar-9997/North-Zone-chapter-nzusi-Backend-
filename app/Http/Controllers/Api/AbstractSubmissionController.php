@@ -150,10 +150,10 @@ class AbstractSubmissionController extends Controller
             ]);
             try {
                 $recipients = [
-                    'shubhankarchandra@gmail.com',
+                    'info.shubhcc@gmail.com',
                     'drsameertrivedi@gmail.com',
-                    'drkamaljeet@gmail.com',
-                    'nzusioffice@gmail.com',
+                    //'drkamaljeet@gmail.com',
+                    //'nzusioffice@gmail.com',
                     'akshat@gdsons.co.in'
                 ];				
                 if (!empty($request->email)) {

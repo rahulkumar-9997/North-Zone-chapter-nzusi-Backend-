@@ -100,6 +100,7 @@ class AbstractReviewerController extends Controller
                 'other_category_text'      => $validated['other_category_text'] ?? null,
                 'status'                   => 'approved',
             ]);
+
             if (!empty($validated['scores'])) {
                 foreach ($validated['scores'] as $criterionId => $score) {
                     $score = (int) $score;
@@ -112,10 +113,25 @@ class AbstractReviewerController extends Controller
                 $review->update([
                     'total_score' => $totalScore,
                 ]);
+
             }
+            // AbstractSubmission status update
+            $submission->update([
+                'status' => 'approved',
+            ]);
+
             AbstractAssignment::where('abstract_submission_id', $submission->id)
             ->where('assigned_to', $user->id)
             ->delete();
+            if (!empty($submission->email)) {
+                Mail::to($submission->email)
+                    ->queue(
+                        new AbstractReviewMail(
+                            $submission,
+                            'Your abstract has been reviewed by our scientific committee.'
+                        )
+                    );
+            }
         });
         return response()->json([
             'success'     => true,
