@@ -23,15 +23,11 @@ class AbstractReviewerController extends Controller
 {
     public function score($submissionId)
     {      
-        $user = \Illuminate\Support\Facades\Auth::user();
-        /** @var \App\Models\User $user */
-
-        $submission = AbstractSubmission::with('assignedUser')->findOrFail($submissionId);
         $user = Auth::user();
-
+        /** @var \App\Models\User $user */
+        $submission = AbstractSubmission::with('assignments')->findOrFail($submissionId);
         $isAdmin = $user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']);
-        $isAssignedReviewer = optional($submission->assignedUser)->assigned_to == $user->id;
-
+        $isAssignedReviewer = $submission->assignments->contains('assigned_to', $user->id);
         abort_unless($isAdmin || $isAssignedReviewer, 403, 'You are not assigned to review this abstract.');
         if ($isAdmin) {
             $submission->load([
@@ -42,8 +38,8 @@ class AbstractReviewerController extends Controller
             ]);
         }
 
-        $criteria               = ScientificScore::where('status', 'active')->orderBy('id')->get();
-        $presentationTypes      = PresentationType::where('status', 'active')->orderBy('id')->get();
+        $criteria = ScientificScore::where('status', 'active')->orderBy('id')->get();
+        $presentationTypes = PresentationType::where('status', 'active')->orderBy('id')->get();
         $presentationCategories = PresentationCategory::where('status', 'active')->orderBy('id')->get();
 
         $existingReview = AbstractSubmissionReview::where('abstract_submission_id', $submission->id)

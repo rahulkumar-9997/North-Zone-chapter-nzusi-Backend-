@@ -11,6 +11,7 @@
                 <th width="120" class="text-center">Actions</th>
             </tr>
         </thead>
+
         <tbody>
             <!-- {{ auth()->user()->role_names }} -->
             @forelse($abstractSubmissions as $submission)
@@ -165,18 +166,23 @@
                         @endphp
                         <!-- {{ $submission->status == 'approved' ? 'disabled' : '' }} -->
                         @if($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))
-                            <select class="form-select form-select-sm assign-reviewer-select"
-                                data-route="{{ route('abstract-submission.assign-reviewer', $submission->id) }}"
-                                style="width: 150px;"                                
-                                title="{{ $submission->status == 'approved' ? 'Cannot reassign, abstract already approved' : '' }}">
-                                <option value="">-- Not Assigned --</option>
-                                @foreach($reviewers as $reviewer)
-                                    <option value="{{ $reviewer->id }}"
-                                        {{ optional($submission->assignedUser)->assigned_to == $reviewer->id ? 'selected' : '' }}>
-                                        {{ $reviewer->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            @php
+                                $assignedIds = $submission->assignments->pluck('assigned_to')->toArray();
+                            @endphp
+                            <div class="reviewer-select-wrapper">
+                                <select class="form-control select2 assign-reviewer-select"
+                                    name="reviewer_id[]"
+                                    multiple
+                                    data-route="{{ route('abstract-submission.assign-reviewer', $submission->id) }}"
+                                    title="{{ $submission->status == 'approved' ? 'Cannot reassign, abstract already approved' : '' }}">
+                                    @foreach($reviewers as $reviewer)
+                                        <option value="{{ $reviewer->id }}"
+                                            {{ in_array($reviewer->id, $assignedIds) ? 'selected' : '' }}>
+                                            {{ $reviewer->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
                         @endif
                         <a href="{{ route('abstract-submission.show', $submission->id) }}"
                             class="btn btn-sm btn-primary"

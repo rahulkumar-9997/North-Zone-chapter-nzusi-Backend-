@@ -30,13 +30,30 @@ class AbstractSubmissionController extends Controller
                 $request->presentation_type
             );
         }
-
         if ($request->filled('topic_category')) {
             $query->where(
                 'topic_category',
                 $request->topic_category
             );
         }
+
+        if ($request->filled('name')) {
+            $name = trim($request->name);
+            $query->where(function ($q) use ($name) {
+                $q->where('first_name', 'like', "%{$name}%")
+                ->orWhere('last_name', 'like', "%{$name}%")
+                ->orWhereRaw("CONCAT(first_name, ' ', last_name) LIKE ?", ["%{$name}%"]);
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('submitted_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('submitted_at', '<=', $request->date_to);
+        }
+
         if (!($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))) {
             $query->assignedTo($user->id);
         }
@@ -107,20 +124,27 @@ class AbstractSubmissionController extends Controller
     public function assignReviewer(Request $request, AbstractSubmission $abstract)
     {
         $request->validate([
-            'reviewer_id' => 'nullable|exists:users,id',
+            'reviewer_id'   => 'nullable|array|max:5',
+            'reviewer_id.*' => 'exists:users,id',
+        ], [
+            'reviewer_id.max' => 'You can assign a maximum of 5 reviewers per abstract.',
         ]);
-        AbstractAssignment::where('abstract_submission_id', $abstract->id)->delete();        
+        
+        AbstractAssignment::where('abstract_submission_id', $abstract->id)->delete();
         if ($request->filled('reviewer_id')) {
-            AbstractAssignment::create([
-                'abstract_submission_id' => $abstract->id,
-                'assigned_to' => $request->reviewer_id,
-                'assigned_by' => Auth::id(),
-                'assigned_at' => now(),
-                'status' =>'completed'
-            ]);
+            foreach ($request->reviewer_id as $reviewerId) {
+                AbstractAssignment::create([
+                    'abstract_submission_id' => $abstract->id,
+                    'assigned_to'            => $reviewerId,
+                    'assigned_by'            => Auth::id(),
+                    'assigned_at'            => now(),
+                    'status'                 => 'completed',
+                ]);
+            }
         }
-        $user = \Illuminate\Support\Facades\Auth::user();
-        /** @var \App\Models\User $user */        
+
+        $user = Auth::user();
+        /** @var \App\Models\User $user */
         $query = AbstractSubmission::query();
         if (!($user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']))) {
             $query->assignedTo($user->id);
@@ -130,7 +154,7 @@ class AbstractSubmissionController extends Controller
             $q->where('slug', 'abstract-reviewer');
         })->select('id', 'name')->get();
 
-        $abstractSubmissions = $query->with('assignedUser.assignedUser')
+        $abstractSubmissions = $query->with('assignments')
             ->latest()
             ->paginate(30);
 
@@ -140,11 +164,11 @@ class AbstractSubmissionController extends Controller
         )->render();
 
         return response()->json([
-            'status' => 'success',
-            'html' => $html,
+            'status'  => 'success',
+            'html'    => $html,
             'message' => $request->filled('reviewer_id')
-                ? 'Reviewer assigned successfully.'
-                : 'Reviewer unassigned successfully.',
+                ? 'Reviewer(s) assigned successfully.'
+                : 'Reviewer(s) unassigned successfully.',
         ]);
     }
 

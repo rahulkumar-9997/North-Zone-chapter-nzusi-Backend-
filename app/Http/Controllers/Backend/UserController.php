@@ -20,18 +20,18 @@ class UserController extends Controller
         if ($authUser->is_admin == 1) {
             $users = User::with('roles')
                 ->latest()
-                ->paginate(10);
+                ->paginate(30);
 
         } elseif ($authUser->hasAnyRole(['webadmin', 'admin'])) {
             $users = User::with('roles')
                 ->where('is_admin', '!=', 1)
                 ->latest()
-                ->paginate(10);
+                ->paginate(30);
 
         } else {
             $users = User::with('roles')
                 ->where('id', $authUser->id)
-                ->paginate(10);
+                ->paginate(30);
         }
 
         return view('backend.pages.users.index', compact('users'));

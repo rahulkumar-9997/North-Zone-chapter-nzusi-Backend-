@@ -1,4 +1,24 @@
+function initReviewerSelect2(context) {
+    let $scope = context ? $(context) : $(document);
+    $scope.find('.assign-reviewer-select').each(function () {
+        let $select = $(this);
+        // agar pehle se select2 laga hai to phir se init mat karo
+        if ($select.hasClass('select2-hidden-accessible')) {
+            $select.select2('destroy');
+        }
+        $select.select2({
+            width: 'resolve',
+            placeholder: 'Assign reviewer(s)',
+            allowClear: true,
+            closeOnSelect: false,
+            maximumSelectionLength: 5,
+            dropdownParent: $('body')
+        });
+    });
+}
+
 $(document).ready(function () {
+    initReviewerSelect2();
     $(document).on('click', 'button[data-abstract="true"]', function () {
         var title = $(this).data('title');
         var size = ($(this).data('size') == '') ? 'md' : $(this).data('size');
@@ -21,15 +41,13 @@ $(document).ready(function () {
             }
         });
     });
-    
-    
 
     /*Assign abstract to user */
     $(document).off('change', '.assign-reviewer-select').on('change', '.assign-reviewer-select', function (event) {
         event.preventDefault();
         let select = $(this);
         let route = select.data('route');
-        let reviewerId = select.val();
+        let reviewerId = select.val() || [];
         select.prop('disabled', true);
         $.ajax({
             url: route,
@@ -42,6 +60,7 @@ $(document).ready(function () {
                 select.prop('disabled', false);
                 if (response.status === 'success') {
                     $('.abstract-submission-list-table-render').html(response.html);
+                    initReviewerSelect2('.abstract-submission-list-table-render');
                     Toastify({
                         text: response.message,
                         duration: 3000,
@@ -53,25 +72,112 @@ $(document).ready(function () {
             },
             error: function (xhr) {
                 select.prop('disabled', false);
-                if (xhr.status === 422) {
-                    Toastify({
-                        text: xhr.responseJSON?.message || "Validation error",
-                        duration: 3000,
-                        gravity: "top",
-                        position: "right",
-                        className: "bg-danger"
-                    }).showToast();
-                } else {
-                    Toastify({
-                        text: xhr.responseJSON?.message || "Something went wrong",
-                        duration: 3000,
-                        gravity: "top",
-                        position: "right",
-                        className: "bg-danger"
-                    }).showToast();
+                let message = "Something went wrong";
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    let errors = xhr.responseJSON.errors;
+                    let firstKey = Object.keys(errors)[0];
+                    message = errors[firstKey][0];
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
                 }
+                Toastify({
+                    text: message,
+                    duration: 3000,
+                    gravity: "top",
+                    position: "right",
+                    className: "bg-danger"
+                }).showToast();
             }
         });
     });
-    /*Assign abstract to user */
+
+});
+
+
+$(document).ready(function() {
+    function fetchAbstractSubmissions(page = 1) {
+        let presentation_type = $('#member_type').val();
+        let topic_category = $('#topic_category').val();
+        let name = $('#filter_name').val();
+        let date_from = $('#date_from').val();
+        let date_to = $('#date_to').val();
+        let url = $('.abstract-submission-list-table-render').data('url');
+        $("#loader").show();
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: {
+                presentation_type: presentation_type,
+                topic_category: topic_category,
+                name: name,
+                date_from: date_from,
+                date_to: date_to,
+                page: page
+            },
+            success: function(response) {
+                $('.abstract-submission-list-table-render').html(response);
+                initReviewerSelect2('.abstract-submission-list-table-render');
+                toggleResetButton();
+            },
+            error: function() {
+                alert('Something went wrong.');
+            },
+            complete: function() {
+                $("#loader").hide();
+            }
+        });
+    }
+
+    $('#member_type, #topic_category').on('change', function () {
+        fetchAbstractSubmissions();
+    });
+
+    let nameSearchTimer;
+    $('#filter_name').on('keyup', function () {
+        clearTimeout(nameSearchTimer);
+        nameSearchTimer = setTimeout(function () {
+            fetchAbstractSubmissions();
+        }, 400);
+    });
+
+    $('#date_from, #date_to').on('change', function () {
+        fetchAbstractSubmissions();
+    });
+
+    $(document).on('click', '.pagination a', function(e) {
+        e.preventDefault();
+        let href = $(this).attr('href');
+        let urlParams = new URLSearchParams(href.split('?')[1]);
+        let page = urlParams.get('page') || 1;
+        fetchAbstractSubmissions(page);
+    });
+
+    $('#reset-button').on('click', function() {
+        $('#member_type').val('');
+        $('#topic_category').val('');
+        $('#filter_name').val('');
+        $('#date_from').val('');
+        $('#date_to').val('');
+        fetchAbstractSubmissions();
+    });
+
+    function toggleResetButton() {
+        let presentation_type = $('#member_type').val();
+        let topic_category = $('#topic_category').val();
+        let name = $('#filter_name').val();
+        let date_from = $('#date_from').val();
+        let date_to = $('#date_to').val();
+        if (
+            presentation_type !== '' ||
+            topic_category !== '' ||
+            name !== '' ||
+            date_from !== '' ||
+            date_to !== ''
+        ) {
+            $("#reset-button").show();
+        } else {
+            $("#reset-button").hide();
+        }
+    }
+    toggleResetButton();
 });

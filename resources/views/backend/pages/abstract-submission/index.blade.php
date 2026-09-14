@@ -2,6 +2,39 @@
 @section('title','Abstract Submission')
 @push('styles')
 <style>
+    .select2-dropdown {
+        width: auto !important;
+        max-width: 280px;
+        min-width: 220px;
+    }
+    .reviewer-select-wrapper {
+        min-width: 200px;
+        max-width: 260px;
+    }
+    .assign-reviewer-select + .select2-container {
+    width: 100% !important;
+    min-width: 180px;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        min-height: 38px;
+        max-height: 100px;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .select2-selection__rendered {
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+
+    .abstract-title-column,
+    td:has(.assign-reviewer-select) {
+        min-width: 220px;
+    }
     .abstract-title-column {
         white-space: normal !important;
         min-width: 250px;
@@ -38,7 +71,7 @@
             <div class="card border-0 shadow-sm">                
                 <div class="card-body p-2">
                     <div class="row g-3 align-items-end">
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <label class="form-label fw-semibold">
                                 Presentation Type
                             </label>
@@ -60,7 +93,7 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <label class="form-label fw-semibold">
                                 Topic / Category
                             </label>
@@ -102,6 +135,18 @@
                                     Other
                                 </option>
                             </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Name</label>
+                            <input type="text" id="filter_name" class="form-control" placeholder="Search by name">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">From Date</label>
+                            <input type="text" name="date_from" id="date_from" class="form-control datepicker">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">To Date</label>
+                            <input type="text" name="date_to" id="date_to" class="form-control datepicker">
                         </div>
                         <div class="col-md-2">
                             <button
@@ -150,6 +195,33 @@
 @push('scripts')
 <script src="{{ asset('backend/assets/js/pages/abstract-review.js') }}?v={{ config('app.assets_version') }}"></script>
 <script>
+$(document).ready(function(){
+    let fromPicker = $('#date_from').flatpickr({
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d M Y",
+        maxDate: "today", 
+        disableMobile: true,
+        onChange: function(selectedDates, dateStr) {
+            toPicker.set('minDate', dateStr);
+        }
+    });
+
+    let toPicker = $('#date_to').flatpickr({
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        altInput: true,
+        altFormat: "d M Y",
+        maxDate: "today",
+        disableMobile: true,
+        onChange: function(selectedDates, dateStr) {
+            fromPicker.set('maxDate', dateStr || "today");
+        }
+    });
+});
+</script>
+<script>
     /*Excel Export abstarct list */
     $('#export-excel-btn').on('click', function(e) {
         e.preventDefault();
@@ -192,68 +264,7 @@
                 }
             });
         });
-    });
-
-    $(document).ready(function() {
-        function fetchAbstractSubmissions(page = 1) {
-            let presentation_type = $('#member_type').val();
-            let topic_category = $('#topic_category').val();
-            let url = $('.abstract-submission-list-table-render').data('url');
-            $("#loader").show();
-            $.ajax({
-                url: url,
-                type: "GET",
-                data: {
-                    presentation_type: presentation_type,
-                    topic_category: topic_category,
-                    page: page
-                },
-                success: function(response) {
-                    $('.abstract-submission-list-table-render').html(response);
-                    $("#loader").hide();
-                    toggleResetButton();
-                },
-                error: function() {
-                    $("#loader").hide();
-                    alert('Something went wrong.');
-                }
-            });
-        }
-        $('#member_type, #topic_category').on('change', function () {
-            fetchAbstractSubmissions();
-        });
-
-        $(document).on(
-            'click',
-            '.pagination a',
-            function(e) {
-                e.preventDefault();
-                let page = $(this)
-                    .attr('href')
-                    .split('page=')[1];
-                fetchAbstractSubmissions(page);
-            }
-        );
-        $('#reset-button').on('click', function() {
-            $('#member_type').val('');
-            $('#topic_category').val('');
-            fetchAbstractSubmissions();
-        });
-
-         function toggleResetButton() {
-            let presentation_type = $('#member_type').val();
-            let topic_category = $('#topic_category').val();
-            if (
-                presentation_type !== '' ||
-                topic_category !== ''
-            ) {
-                $("#reset-button").show();
-            } else {
-                $("#reset-button").hide();
-            }
-        }
-        toggleResetButton();
-    });
+    });    
 </script>
 
 @endpush

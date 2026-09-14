@@ -57,7 +57,7 @@ class AbstractSubmission extends Model
     public function assignedUser()
     {
         // agar ek abstract ek hi reviewer ko assign hota hai
-        return $this->hasOne(AbstractAssignment::class, 'abstract_submission_id')->latest();
+        return $this->hasMany(AbstractAssignment::class, 'abstract_submission_id')->latest();
     }
 
     public function scopeAssignedTo($query, $userId)

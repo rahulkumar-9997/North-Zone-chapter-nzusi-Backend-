@@ -3,7 +3,7 @@
         <table class="table table-bordered table-striped align-middle">
             <thead>
                 <tr>
-                    <th width="70">ID</th>
+                    <th width="70">Sr. No.</th>
                     <th width="80">Photo</th>
                     <th>Name</th>
                     <th>Email</th>
@@ -17,7 +17,7 @@
                 @forelse($users as $user)
                 
                     <tr>
-                        <td>{{ $user->id }}</td>
+                        <td>{{ $loop->iteration }}</td>
                         <td>
                             @if($user->profile_img)
                                 <img
@@ -120,7 +120,7 @@
         </table>
     </div>
     <div class="mt-3">
-        {{ $users->links() }}
+        {{ $users->links('pagination::bootstrap-5') }}
     </div>
 @else
     <div class="text-center p-5">
