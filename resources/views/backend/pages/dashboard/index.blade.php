@@ -19,6 +19,7 @@
         font-size: 0.75rem;
         white-space: nowrap;
     }
+
     .ga-datebar {
         position: sticky;
         top: 0;
@@ -51,6 +52,7 @@
         font-size: 14px;
         color: #667eea;
     }
+
     #daterange {
         border: 1.5px solid #d1d5db;
         border-radius: 8px;
@@ -114,6 +116,7 @@
             transform: rotate(360deg);
         }
     }
+
     .ga-section-divider {
         display: flex;
         align-items: center;
@@ -208,6 +211,7 @@
             transform: translateY(0);
         }
     }
+
     .ga-placeholder {
         padding: 32px;
         text-align: center;
@@ -243,6 +247,7 @@
             background-position: -400% 0;
         }
     }
+
     .ga-error-block {
         padding: 12px 16px;
         background: #fef2f2;
@@ -255,6 +260,7 @@
         gap: 8px;
         animation: ga-fade .3s ease-out;
     }
+
     .daterangepicker {
         z-index: 1055 !important;
         border-radius: 10px !important;
@@ -307,6 +313,7 @@
     .daterangepicker .cancelBtn {
         border-radius: 6px !important;
     }
+
     .dash-animate {
         animation: slide-up .4s ease-out both;
     }
@@ -442,197 +449,191 @@
             </div>
         </div>
     </div>
-    <div class="row sales-board">
-        <div class="col-md-12 col-lg-12 col-sm-12 col-12 d-flex">
-            <div class="card flex-fill">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Member Analytics</h5>
-                    <div class="graph-sets">
-                        <div class="dropdown dropdown-wraper">
-                            <button class="btn btn-white btn-sm dropdown-toggle d-flex align-items-center"
-                                type="button" id="dropdown-sales" data-bs-toggle="dropdown">
-                                <i data-feather="calendar" class="feather-14"></i>
-                                <span id="selectedYear">{{ $currentYear }}</span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                @for ($i = 0; $i < 5; $i++)
-                                    <li>
-                                    <a href="javascript:void(0);"
-                                        class="dropdown-item year-option"
-                                        data-year="{{ $currentYear - $i }}">
-                                        {{ $currentYear - $i }}
-                                    </a>
-                                    </li>
-                                    @endfor
-                            </ul>
+    @if(!auth()->user()->hasRole('abstract-reviewer'))
+        <div class="row sales-board">
+            <div class="col-md-12 col-lg-12 col-sm-12 col-12 d-flex">
+                <div class="card flex-fill">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Member Analytics</h5>
+                        <div class="graph-sets">
+                            <div class="dropdown dropdown-wraper">
+                                <button class="btn btn-white btn-sm dropdown-toggle d-flex align-items-center"
+                                    type="button" id="dropdown-sales" data-bs-toggle="dropdown">
+                                    <i data-feather="calendar" class="feather-14"></i>
+                                    <span id="selectedYear">{{ $currentYear }}</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @for ($i = 0; $i < 5; $i++)
+                                        <li>
+                                        <a href="javascript:void(0);"
+                                            class="dropdown-item year-option"
+                                            data-year="{{ $currentYear - $i }}">
+                                            {{ $currentYear - $i }}
+                                        </a>
+                                        </li>
+                                        @endfor
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body pt-1 pb-0">
-                    <div id="member_analysis" class="chart-set"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="ga-datebar dash-animate">
-        <span class="ga-datebar-label">
-            <i class="ti ti-brand-google"></i>
-            <h3>Analytics Period</h3>
-        </span>
-        <input type="text"
-            id="daterange"
-            class="form-control"
-            placeholder="Select date range…"
-            readonly />
-        <div class="ga-bar-spinner" id="gaBarSpinner">
-            <span class="ga-spin"><i class="ti ti-refresh" style="font-size:13px;"></i></span>
-            Refreshing data…
-        </div>
-        <div class="ga-active-period">
-            <i class="ti ti-calendar-check"></i>
-            <span id="gaPeriodLabel">Last 30 Days</span>
-        </div>
-    </div>
-    <div class="ga-section-divider">
-        <i class="ti ti-brand-google" style="color:#4285F4;font-size:15px;"></i>
-        Google Analytics
-        <span class="ga-period-badge">
-            <i class="ti ti-calendar" style="font-size:11px;"></i>
-            <span id="gaPeriodBadge">Last 30 Days</span>
-        </span>
-    </div>
-    <div class="ga-card-wrap mb-3" id="wrap-summary">
-        <div class="ga-loading-bar"></div>
-        <div id="ga-summary">
-            {{-- Skeleton --}}
-            <div class="row g-3">
-                @for($i = 0; $i < 4; $i++)
-                    <div class="col-xl-3 col-sm-6 col-12">
-                    <div class="card p-3">
-                        <span class="skel-line" style="width:40%;height:10px;"></span>
-                        <span class="skel-line" style="width:60%;height:26px;margin-top:8px;"></span>
-                        <span class="skel-line" style="width:35%;height:10px;"></span>
-                    </div>
-            </div>
-            @endfor
-        </div>
-    </div>
-</div>
-
-{{-- ══════════════════════════════════════════════
-         SECTION 2 — TRAFFIC TREND CHART
-    ══════════════════════════════════════════════ --}}
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="card ga-card-wrap" id="wrap-trend">
-            <div class="ga-loading-bar"></div>
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <h4 class="card-title mb-0">
-                    Traffic Trend
-                </h4>
-                <div style="font-size:11px;color:#9ca3af;display:flex;gap:14px;">
-                    <span><span style="display:inline-block;width:12px;height:3px;background:#667eea;border-radius:10px;vertical-align:middle;margin-right:4px;"></span>Visitors</span>
-                    <span><span style="display:inline-block;width:12px;height:0;border-top:2px dashed #06b6d4;vertical-align:middle;margin-right:4px;"></span>Page Views</span>
-                </div>
-            </div>
-            <div class="card-body" id="ga-trend">
-                <div style="height:280px;background:#f9fafb;border-radius:8px;overflow:hidden;position:relative;">
-                    <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;gap:6px;">
-                        @for($i = 0; $i < 5; $i++)
-                            <span class="skel-line" style="width:100%;height:{{ 40 + $i*10 }}px;opacity:{{ 0.4 + $i*0.12 }};"></span>
-                            @endfor
+                    <div class="card-body pt-1 pb-0">
+                        <div id="member_analysis" class="chart-set"></div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-{{-- ══════════════════════════════════════════════
-         SECTION 3 — SOURCES + DEVICES
-    ══════════════════════════════════════════════ --}}
-<div class="row g-3 mb-3">
-    <div class="col-xl-6 col-md-6 col-12">
-        <div class="card h-100 ga-card-wrap" id="wrap-sources">
+        <div class="ga-datebar dash-animate">
+            <span class="ga-datebar-label">
+                <i class="ti ti-brand-google"></i>
+                <h3>Analytics Period</h3>
+            </span>
+            <input type="text"
+                id="daterange"
+                class="form-control"
+                placeholder="Select date range…"
+                readonly />
+            <div class="ga-bar-spinner" id="gaBarSpinner">
+                <span class="ga-spin"><i class="ti ti-refresh" style="font-size:13px;"></i></span>
+                Refreshing data…
+            </div>
+            <div class="ga-active-period">
+                <i class="ti ti-calendar-check"></i>
+                <span id="gaPeriodLabel">Last 30 Days</span>
+            </div>
+        </div>
+        <div class="ga-section-divider">
+            <i class="ti ti-brand-google" style="color:#4285F4;font-size:15px;"></i>
+            Google Analytics
+            <span class="ga-period-badge">
+                <i class="ti ti-calendar" style="font-size:11px;"></i>
+                <span id="gaPeriodBadge">Last 30 Days</span>
+            </span>
+        </div>
+        <div class="ga-card-wrap mb-3" id="wrap-summary">
             <div class="ga-loading-bar"></div>
-            <div id="ga-sources">
-                <div class="p-3">
-                    <span class="skel-line" style="width:50%;height:14px;"></span>
+            <div id="ga-summary">
+                {{-- Skeleton --}}
+                <div class="row g-3">
                     @for($i = 0; $i < 4; $i++)
-                        <div class="mt-3">
-                        <span class="skel-line" style="width:70%;height:11px;"></span>
-                        <span class="skel-line" style="width:100%;height:7px;"></span>
-                </div>
-                @endfor
-            </div>
-        </div>
-    </div>
-</div>
-<div class="col-xl-6 col-md-6 col-12">
-    <div class="card h-100 ga-card-wrap" id="wrap-devices">
-        <div class="ga-loading-bar"></div>
-        <div id="ga-devices">
-            <div class="p-3">
-                <span class="skel-line" style="width:40%;height:14px;"></span>
-                <span class="skel-line" style="width:30%;height:26px;margin-top:10px;"></span>
-                @for($i = 0; $i < 3; $i++)
-                    <div class="mt-3">
-                    <span class="skel-line" style="width:60%;height:11px;"></span>
-                    <span class="skel-line" style="width:100%;height:7px;"></span>
-            </div>
-            @endfor
-        </div>
-    </div>
-</div>
-</div>
-</div>
-<div class="row mb-3">
-    <div class="col-md-6 mb-3 mb-md-0">
-        <div class="card ga-card-wrap h-100" id="wrap-toppages">
-            <div class="ga-loading-bar"></div>
-            <div class="card-header">
-                <h4 class="card-title mb-0">
-                    Top Pages
-                </h4>
-            </div>
-            <div class="card-body" id="ga-toppages">
-                <div class="p-2">
-                    @for($i = 0; $i < 5; $i++)
-                        <div class="d-flex gap-2 align-items-center mb-3">
-                        <span class="skel-line" style="width:22px;height:22px;border-radius:6px;flex-shrink:0;"></span>
-                        <div class="flex-fill">
-                            <span class="skel-line" style="width:{{ 55 + $i*5 }}%;height:12px;"></span>
-                            <span class="skel-line" style="width:30%;height:10px;"></span>
+                        <div class="col-xl-3 col-sm-6 col-12">
+                        <div class="card p-3">
+                            <span class="skel-line" style="width:40%;height:10px;"></span>
+                            <span class="skel-line" style="width:60%;height:26px;margin-top:8px;"></span>
+                            <span class="skel-line" style="width:35%;height:10px;"></span>
                         </div>
                 </div>
                 @endfor
             </div>
         </div>
-    </div>
-</div>
-<div class="col-md-6">
-    <div class="card ga-card-wrap h-100" id="wrap-countries">
-        <div class="ga-loading-bar"></div>
-        <div class="card-header">
-            <h4 class="card-title mb-0">
-                Top Countries
-            </h4>
         </div>
-        <div class="card-body" id="ga-countries">
-            <div class="p-2">
-                @for($i = 0; $i < 5; $i++)
-                    <div class="d-flex gap-2 align-items-center mb-3">
-                    <span class="skel-line" style="width:28px;height:20px;border-radius:4px;flex-shrink:0;"></span>
-                    <div class="flex-fill">
-                        <span class="skel-line" style="width:{{ 45 + $i*8 }}%;height:12px;"></span>
-                        <span class="skel-line" style="width:100%;height:6px;"></span>
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card ga-card-wrap" id="wrap-trend">
+                    <div class="ga-loading-bar"></div>
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                        <h4 class="card-title mb-0">
+                            Traffic Trend
+                        </h4>
+                        <div style="font-size:11px;color:#9ca3af;display:flex;gap:14px;">
+                            <span><span style="display:inline-block;width:12px;height:3px;background:#667eea;border-radius:10px;vertical-align:middle;margin-right:4px;"></span>Visitors</span>
+                            <span><span style="display:inline-block;width:12px;height:0;border-top:2px dashed #06b6d4;vertical-align:middle;margin-right:4px;"></span>Page Views</span>
+                        </div>
                     </div>
-                    <span class="skel-line" style="width:32px;height:12px;flex-shrink:0;"></span>
+                    <div class="card-body" id="ga-trend">
+                        <div style="height:280px;background:#f9fafb;border-radius:8px;overflow:hidden;position:relative;">
+                            <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;gap:6px;">
+                                @for($i = 0; $i < 5; $i++)
+                                    <span class="skel-line" style="width:100%;height:{{ 40 + $i*10 }}px;opacity:{{ 0.4 + $i*0.12 }};"></span>
+                                    @endfor
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            @endfor
         </div>
-    </div>
-</div>
+        <div class="row g-3 mb-3">
+            <div class="col-xl-6 col-md-6 col-12">
+                <div class="card h-100 ga-card-wrap" id="wrap-sources">
+                    <div class="ga-loading-bar"></div>
+                    <div id="ga-sources">
+                        <div class="p-3">
+                            <span class="skel-line" style="width:50%;height:14px;"></span>
+                            @for($i = 0; $i < 4; $i++)
+                                <div class="mt-3">
+                                <span class="skel-line" style="width:70%;height:11px;"></span>
+                                <span class="skel-line" style="width:100%;height:7px;"></span>
+                        </div>
+                        @endfor
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 col-md-6 col-12">
+            <div class="card h-100 ga-card-wrap" id="wrap-devices">
+                <div class="ga-loading-bar"></div>
+                <div id="ga-devices">
+                    <div class="p-3">
+                        <span class="skel-line" style="width:40%;height:14px;"></span>
+                        <span class="skel-line" style="width:30%;height:26px;margin-top:10px;"></span>
+                        @for($i = 0; $i < 3; $i++)
+                            <div class="mt-3">
+                            <span class="skel-line" style="width:60%;height:11px;"></span>
+                            <span class="skel-line" style="width:100%;height:7px;"></span>
+                    </div>
+                    @endfor
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <div class="card ga-card-wrap h-100" id="wrap-toppages">
+                    <div class="ga-loading-bar"></div>
+                    <div class="card-header">
+                        <h4 class="card-title mb-0">
+                            Top Pages
+                        </h4>
+                    </div>
+                    <div class="card-body" id="ga-toppages">
+                        <div class="p-2">
+                            @for($i = 0; $i < 5; $i++)
+                                <div class="d-flex gap-2 align-items-center mb-3">
+                                <span class="skel-line" style="width:22px;height:22px;border-radius:6px;flex-shrink:0;"></span>
+                                <div class="flex-fill">
+                                    <span class="skel-line" style="width:{{ 55 + $i*5 }}%;height:12px;"></span>
+                                    <span class="skel-line" style="width:30%;height:10px;"></span>
+                                </div>
+                        </div>
+                        @endfor
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card ga-card-wrap h-100" id="wrap-countries">
+                <div class="ga-loading-bar"></div>
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        Top Countries
+                    </h4>
+                </div>
+                <div class="card-body" id="ga-countries">
+                    <div class="p-2">
+                        @for($i = 0; $i < 5; $i++)
+                            <div class="d-flex gap-2 align-items-center mb-3">
+                            <span class="skel-line" style="width:28px;height:20px;border-radius:4px;flex-shrink:0;"></span>
+                            <div class="flex-fill">
+                                <span class="skel-line" style="width:{{ 45 + $i*8 }}%;height:12px;"></span>
+                                <span class="skel-line" style="width:100%;height:6px;"></span>
+                            </div>
+                            <span class="skel-line" style="width:32px;height:12px;flex-shrink:0;"></span>
+                    </div>
+                    @endfor
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 </div>
 
