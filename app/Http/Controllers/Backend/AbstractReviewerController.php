@@ -60,7 +60,7 @@ class AbstractReviewerController extends Controller
         $submission = AbstractSubmission::with('assignedUser')->findOrFail($submissionId);
         $user = Auth::user();
         $isAdmin = $user->is_admin == 1 || $user->hasAnyRole(['webadmin', 'admin']);
-        $isAssignedReviewer = optional($submission->assignedUser)->assigned_to == $user->id;
+        $isAssignedReviewer = $submission->assignments->contains('assigned_to', $user->id);
         abort_unless($isAdmin || $isAssignedReviewer, 403);
 
         $alreadyReviewed = AbstractSubmissionReview::where('abstract_submission_id', $submission->id)
