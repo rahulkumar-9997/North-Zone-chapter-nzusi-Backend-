@@ -46,7 +46,9 @@
                                     <td style="background:#f8f9fa;"><strong>Status</strong></td>
                                     <td>
                                         @if($submission->status == 'approved')
-                                        <span style="color:#198754;font-weight:bold;">APPROVED</span>
+                                        <span style="color:#198754;font-weight:bold;">
+                                              Reviewed & Under Consideration
+                                        </span>
                                         @elseif($submission->status == 'rejected')
                                         <span style="color:#dc3545;font-weight:bold;">REJECTED</span>
                                         @else

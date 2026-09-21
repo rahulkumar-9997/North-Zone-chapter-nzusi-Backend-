@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\AbstractReviewMail;
+use App\Mail\AbstractReviewMailAdmin;
 use App\Models\AbstractSubmission;
 use App\Models\ScientificScore;
 use App\Models\PresentationCategory;
@@ -127,6 +128,7 @@ class AbstractReviewerController extends Controller
             ];
             try {
                 /* Mail to submitter */
+                /*
                 if (!empty($submission->email)) {
                     Mail::to(trim($submission->email))->queue(
                         new AbstractReviewMail(
@@ -137,21 +139,22 @@ class AbstractReviewerController extends Controller
                         )
                     );
                 }
+                */   
 
                 /* Mail to reviewer (jo review kar raha hai — current logged-in user) */
+                /*
                 if (!empty($user->email) && $user->email !== $submission->email) {
                     Mail::to(trim($user->email))->queue(
                         new AbstractReviewMail($submission, $comment)
                     );
                 }
+                */
 
                 /* Mail to admin(s) */
-                foreach ($adminRecipients as $adminEmail) {
-                    if ($adminEmail !== $submission->email && $adminEmail !== $user->email) {
-                        Mail::to($adminEmail)->queue(
-                            new AbstractReviewMail($submission, $comment)
-                        );
-                    }
+                foreach ($adminRecipients as $adminEmail) {                    
+                    Mail::to($adminEmail)->queue(
+                        new AbstractReviewMailAdmin($submission, $user, $totalScore)
+                    );
                 }
             } catch (\Exception $mailException) {
                 Log::error('Abstract Review Mail Error: ' . $mailException->getMessage());

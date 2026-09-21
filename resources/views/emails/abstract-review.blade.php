@@ -61,7 +61,7 @@
                                     <td>
                                         @if($submission->status == 'approved')
                                         <span style="color:#198754;font-weight:bold;">
-                                            APPROVED
+                                            Reviewed & Under Consideration
                                         </span>
 
                                         @elseif($submission->status == 'rejected')
@@ -123,11 +123,10 @@
                                 </tr>
                             </table>
                             @endif
-
                             <br>
                             @if($submission->status == 'approved')
                             <div style="padding:15px;background:#e8fff0;border-left:4px solid #198754;">
-                                Congratulations! Your abstract has been accepted.
+                                Congratulations! Your abstract is under consideration.
                             </div>
                             @elseif($submission->status == 'rejected')
                             <div style="padding:15px;background:#fff1f1;border-left:4px solid #dc3545;">

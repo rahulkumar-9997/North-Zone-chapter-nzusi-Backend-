@@ -29,4 +29,5 @@ class AbstractReviewMailAdmin extends Mailable
         ->replyTo(config('mail.from.address'), config('mail.from.name'))
         ->view('emails.abstract-review-admin');
     }
+    
 }
