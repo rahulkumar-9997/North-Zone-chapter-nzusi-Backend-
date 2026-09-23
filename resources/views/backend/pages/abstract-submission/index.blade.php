@@ -63,6 +63,187 @@
         font-size: 13px;
     }
 </style>
+<style>
+    #abstract-list .abs-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #abstract-list .abs-table {
+        width: 100%;
+        min-width: 1050px;
+        margin-bottom: 0;
+    }
+
+    #abstract-list .abs-table th {
+        white-space: nowrap;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    #abstract-list .abs-table td {
+        font-size: 13px;
+        vertical-align: top;
+    }
+
+    /* ---------- Column widths ---------- */
+    #abstract-list .col-sno {
+        width: 45px;
+    }
+
+    #abstract-list .col-participant {
+        width: 260px;
+    }
+
+    #abstract-list .col-status {
+        width: 105px;
+    }
+
+    #abstract-list .col-reviewers {
+        width: 200px;
+    }
+
+    #abstract-list .col-abstract {
+        min-width: 240px;
+        white-space: normal;
+    }
+
+    #abstract-list .col-actions {
+        width: 230px;
+        min-width: 230px;
+    }
+
+    /* ---------- Sticky Actions column ---------- */
+    #abstract-list .abs-table th.col-actions,
+    #abstract-list .abs-table td.col-actions {
+        position: sticky;
+        right: 0;
+        z-index: 2;
+        box-shadow: -4px 0 6px -4px rgba(0, 0, 0, .15);
+    }
+
+    #abstract-list .abs-table td.col-actions {
+        background: #fff;
+    }
+
+    #abstract-list .abs-table th.col-actions {
+        background: #212529;
+    }
+
+    #abstract-list .abs-table tbody tr:hover td.col-actions {
+        background: #f5f5f5;
+    }
+
+    /* ---------- Participant ---------- */
+    #abstract-list .contact-line {
+        font-size: 12px;
+        word-break: break-all;
+        line-height: 1.4;
+    }
+
+    #abstract-list .abs-badges .badge {
+        font-size: 10.5px;
+        font-weight: 500;
+    }
+
+    /* ---------- Status ---------- */
+    #abstract-list .status-btn {
+        cursor: pointer;
+    }
+
+    #abstract-list .status-badge {
+        font-size: 11px;
+        padding: 5px 7px;
+        transition: transform .2s ease-in-out;
+    }
+
+    #abstract-list .status-btn:hover .status-badge {
+        transform: scale(1.05);
+    }
+
+    #abstract-list .review-progress {
+        font-size: 11px;
+    }
+
+    /* ---------- Reviewers ---------- */
+    #abstract-list .reviewer-group-title {
+        display: block;
+        font-weight: 600;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+        margin-bottom: 3px;
+    }
+
+    #abstract-list .reviewer-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
+    }
+
+    #abstract-list .reviewer-name {
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    #abstract-list .reviewer-item .badge {
+        font-size: 10.5px;
+        min-width: 28px;
+    }
+
+    #abstract-list .reviewer-date {
+        font-size: 10.5px;
+        color: #6c757d;
+        margin-bottom: 4px;
+        padding-bottom: 3px;
+        border-bottom: 1px dashed #e9ecef;
+    }
+
+    #abstract-list .reviewer-group .reviewer-date:last-child {
+        border-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    /* ---------- Abstract ---------- */
+    #abstract-list .abstract-title {
+        font-weight: 600;
+        color: #212529;
+        line-height: 1.35;
+    }
+
+    #abstract-list .abstract-meta {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    /* ---------- Actions ---------- */
+    #abstract-list .col-actions .select2-container {
+        width: 100% !important;
+    }
+
+    #abstract-list .col-actions .select2-selection--multiple {
+        min-height: 34px;
+        max-height: 80px;
+        overflow-y: auto;
+    }
+
+    #abstract-list .action-btns .btn {
+        font-size: 12px;
+        padding: 3px 8px;
+        white-space: nowrap;
+    }
+
+    .select2-results__option[aria-disabled="true"] {
+        color: #198754 !important;
+        font-style: italic;
+    }
+</style>
 @endpush
 @section('main-content')
 <div class="content">

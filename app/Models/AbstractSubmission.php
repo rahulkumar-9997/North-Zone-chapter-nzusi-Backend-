@@ -67,4 +67,15 @@ class AbstractSubmission extends Model
         });
     }
 
+    public function scopeVisibleToReviewer($query, $userId)
+    {
+        return $query->where(function ($q) use ($userId) {
+            $q->whereHas('assignments', function ($a) use ($userId) {
+                $a->where('assigned_to', $userId);
+            })->orWhereHas('reviews', function ($r) use ($userId) {
+                $r->where('reviewed_by', $userId);
+            });
+        });
+    }
+
 }
